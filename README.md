@@ -27,50 +27,124 @@ Kebermanfaatan aplikasi ini juga dapat diperluas untuk pelajar, jurnalis olahrag
 
 <details> <Summary><b>📱 Daftar Modul Implementasi Flutter (Mobile Client)</b></Summary>
 
-Aplikasi mobile ini dikembangkan menggunakan pendekatan modular, di mana setiap fitur utama dibangun sebagai modul mandiri yang ditempatkan dalam folder lib/screen/[nama_modul]. Pendekatan ini memastikan setiap bagian aplikasi mudah dikembangkan, diuji, dan dipelihara oleh anggota tim yang berbeda. Berikut adalah penjelasan menyeluruh mengenai setiap modul yang telah diimplementasikan.
+📱 Daftar Modul Implementasi Flutter (Mobile Client)
+Setiap modul diimplementasikan sebagai fitur independen dalam folder lib/screen/[nama_modul].
 
-1. Modul Pemain (players) — Muhammad Rafi Sugianto
-    Modul pemain menangani seluruh halaman yang berhubungan dengan data pemain. Struktur datanya dibuat lewat beberapa model seperti Player,         CareerHistory, SeasonStats, dan Achievement. Semua model ini bertugas mengubah data JSON dari API jadi objek yang bisa dipakai di aplikasi.
-    Untuk berkomunikasi dengan server, modul ini memakai PlayerApiService, yang berfungsi mengambil daftar pemain, detail pemain, maupun riwayat dan statistik musiman.
-    
-    Tampilan utamanya ada tiga:
-        - PlayerListScreen untuk menampilkan daftar pemain,
-        - PlayerDetailScreen untuk melihat informasi lengkap seorang pemain,
-        - PlayerCard, widget kecil untuk menampilkan ringkasan pemain di dalam list.
-2. Modul Klub (clubs) — Elizabeth Meilanny Sitanggang
-    Modul klub berisi seluruh informasi mengenai klub, termasuk profil dan ranking. Datanya ditangani oleh model Club dan ClubRanking.
-    Semua pemanggilan API dilakukan lewat ClubApiService—mulai dari mengambil daftar klub sampai detail dan ranking musimannya.
-    Halaman yang ditampilkan ke pengguna:
-        - ClubListScreen untuk daftar klub,
-        - ClubDetailScreen untuk deskripsi lengkap,
-        - ClubRankingScreen untuk melihat ranking klub di musim tertentu.
-3. Modul Event (events) — Vidia Qonita Ahmad
-    Modul event digunakan untuk menampilkan kompetisi yang sedang berlangsung atau pernah berlangsung, beserta siapa saja yang ikut di dalamnya. Struktur data event disusun lewat model Event dan EventParticipation.
-    EventApiService menangani operasi API, termasuk mengambil daftar event, detail event, dan mengelola data partisipasi (khusus admin).
-    Untuk tampilan, tersedia:
-        - EventListScreen, daftar event,
-        - EventDetailScreen, yang menunjukkan detail dan daftar peserta event.
-4. Modul Pencarian (search) — A. Sheriqa Dewina Ihsan
-    Modul pencarian memudahkan pengguna menemukan pemain atau klub berdasarkan kata kunci tertentu. Modul ini memanfaatkan PlayerApiService dan ClubApiService untuk mengambil data sesuai parameter pencarian.
-    Fitur riwayat pencarian ini dapat:
-        - menyimpan history,
-        - menghapus satu item history, bahkan menghapus seluruh history jika pengguna ingin membersihkan semuanya.
-    Antarmukanya terdiri dari:
-        - SearchScreen sebagai halaman input pencarian,
-        - SearchResultsWidget untuk menampilkan hasil,
-        - SearchHistoryWidget untuk menampilkan daftar riwayat dan tombol delete/delete all.
-5. Modul Komentar (comments) — Angelo Johenry Apituley
-    Modul komentar dipakai untuk menampilkan dan mengelola komentar pada halaman pemain maupun klub. Datanya diatur oleh CommentModel, sedangkan CommentApiService mengurus GET, POST, PUT, dan DELETE komentar.
-    Di bagian UI, tersedia:
-        - CommentSectionWidget yang ditaruh di halaman detail pemain atau klub,
-        - CommentForm untuk menulis komentar baru.
-6. Modul Galeri Media (media_gallery) — Nisriina Wakhdah Haris
-    Modul ini menangani tampilan foto dan video terkait pemain atau klub. Data disusun lewat MediaModel.
-    API-nya dikelola lewat MediaApiService: mengambil daftar media, menambah media baru, mengedit, atau menghapus media—khususnya untuk admin.
-    Tampilan yang disediakan:
-        - GalleryListScreen untuk melihat galeri,
-        - MediaUploadForm untuk admin mengunggah foto atau video.
-        
+1. Manajemen Data Pemain (Feature: players) (Muhammad Rafi Sugianto)
+
+    Fokus: Pengambilan data profil dan statistik pemain dari API.
+
+- Data Models (lib/screen/players/data/models/):
+
+    - player_model.dart (Player, CareerHistory, SeasonStats, Achievement) → Struktur data untuk deserialisasi JSON.
+
+- API Services (lib/screen/players/data/services/):
+
+    - player_api_service.dart → Logika pemanggilan endpoint API untuk GET Daftar, Detail, Riwayat, dan Statistik pemain.
+
+- Presentation (lib/screen/players/presentation/):
+
+    - PlayerListScreen (screen/player_list_screen.dart) → Menampilkan daftar pemain.
+
+    - PlayerDetailScreen (screen/player_detail_screen.dart) → Menampilkan detail profil, statistik, riwayat karier, dan pencapaian.
+
+    - PlayerCard (widgets/player_card.dart) → Widget kartu untuk ringkasan pemain dalam daftar.
+
+2. Manajemen Data Klub (Feature: clubs) (Elizabeth Meilanny Sitanggang)
+
+Fokus: Pengambilan data profil klub dan ranking.
+
+- Data Models (lib/screen/clubs/data/models/):
+
+    - club_model.dart (Club, ClubRanking) → Struktur data untuk deserialisasi JSON.
+
+- API Services (lib/screen/clubs/data/services/):
+
+    - club_api_service.dart → Logika pemanggilan endpoint API untuk GET Daftar Klub, Detail Klub, dan Ranking Musiman.
+
+- Presentation (lib/screen/clubs/presentation/):
+
+    - ClubListScreen (screen/club_list_screen.dart) → Menampilkan daftar klub.
+
+    - ClubDetailScreen (screen/club_detail_screen.dart) → Menampilkan detail informasi klub.
+
+    - ClubRankingScreen (screen/ranking_list_screen.dart) → Menampilkan daftar ranking klub.
+
+3. Event Kompetisi (Feature: events) (Vidia Qonita Ahmad)
+
+Fokus: Menampilkan informasi event dan partisipan.
+
+- Data Models (lib/screen/events/data/models/):
+
+    - event_model.dart (Event, EventParticipation) → Struktur data event dan partisipasi.
+
+- API Services (lib/screen/events/data/services/):
+
+    - event_api_service.dart → Logika pemanggilan API untuk GET Daftar Event dan Detail Event.
+
+- Fungsi untuk POST/PUT/DELETE data Partisipasi (untuk admin).
+
+- Presentation (lib/screen/events/presentation/):
+
+    - EventListScreen (screen/event_list_screen.dart) → Menampilkan daftar event.
+
+    - EventDetailScreen (screen/event_detail_screen.dart) → Menampilkan detail event dan daftar partisipan.
+
+4. Pencarian & Filter (Feature: search) (A. Sheriqa Dewina Ihsan)
+
+Fokus: Menerjemahkan input pengguna menjadi parameter API dan menampilkan hasil gabungan.
+
+- API Interaction (lib/screen/search/data/services/):
+
+    - Menggunakan PlayerApiService dan ClubApiService yang sudah ada, dengan penambahan parameter query / filter.
+
+- State Management (lib/screen/search/presentation/bloc/):
+
+    - SearchBloc/Cubit → Mengelola state kata kunci, jenis pencarian (pemain/klub), dan status loading hasil.
+
+- Presentation (lib/screen/search/presentation/):
+
+    - SearchScreen (screen/search_screen.dart) → Antarmuka untuk input pencarian.
+
+    - SearchResultsWidget (widgets/search_results_widget.dart) → Menampilkan hasil yang dikelompokkan (pemain/klub) dari Views search_players / search_clubs API.
+
+    - SearchHistoryWidget (widgets/search_history_widget.dart) → Menampilkan riwayat pencarian pengguna dan menghapus riwayat pencarian
+
+5. Komentar & Interaksi Pengguna (Feature: comments) (Angelo Johenry Apituley)
+
+Fokus: Mengelola interaksi pengguna (CRUD komentar) terkait entitas (pemain/klub).
+
+- Data Models (lib/screen/comments/data/models/):
+
+    - comment_model.dart → Struktur data komentar.
+
+- API Services (lib/screen/comments/data/services/):
+
+    - comment_api_service.dart → Logika GET daftar komentar, POST komentar baru, PUT/DELETE komentar (membutuhkan otorisasi).
+
+- Presentation (lib/screen/comments/presentation/):
+
+    - CommentSectionWidget (widgets/comment_section_widget.dart) → Widget yang dapat disematkan di Detail Pemain (PlayerDetailScreen) atau Detail Klub (ClubDetailScreen).
+
+    - CommentForm (widgets/comment_form.dart) → Input komentar baru.
+
+6. Galeri Media (Feature: media_gallery) (Nisriina Wakhdah Haris)
+
+Fokus: Menampilkan media (foto/video) terkait pemain atau klub.
+
+- Data Models (lib/screen/media_gallery/data/models/):
+
+    - media_model.dart → Struktur data media.
+
+- API Services (lib/screen/media_gallery/data/services/):
+
+    - media_api_service.dart → Logika GET daftar media dan POST/PUT/DELETE media (khusus admin, memerlukan penanganan multipart form-data untuk upload file).
+
+- Presentation (lib/screen/media_gallery/presentation/):
+
+    - GalleryListScreen (screen/gallery_list_screen.dart) → Menampilkan galeri foto/video untuk entitas terkait.
+
+    - MediaUploadForm (widgets/media_upload_form.dart) → Form untuk upload media (khusus admin).
 </details>
 <details>
 <Summary><b>📚Sumber initial dataset kategori utama produk</b></Summary>
