@@ -177,3 +177,29 @@ Deskripsi Singkat: Dataset ini berisi statistik lengkap pemain sepak bola dari b
 2. Link Design = ristek.link/figmaB11
 
 </details>
+
+<details>
+    <Summary><b>📲Penjelasan Alur Pengintegrasian Data Aplikasi dengan Aplikasi Web (PWS) Berbasis Web Service</b></Summary>
+
+Integrasi data antara aplikasi (ex: aplikasi mobile atau desktop) dengan aplikasi web (PWS) dilakukan melalui sebuah web service yang berfungsi sebagai perantara komunikasi antara client dan server. Berikut ini adalah alur pengintegrasiannya:
+
+1. Client mengirimkan Request ke Web Service
+   Aplikasi client tidak dapat berkomunikasi langsung dengan database namun hanya bisa mengakses data melalui endpoint API yang disediakan oleh PWS. Request biasanya berupa HTPP, yaitu GET, POST, PUT/PATCH, dan DELETE
+
+2. Web service menerima dan memvalidasi request
+   Setelah client mengirimkan request, PWS akan menerima request tersebut dan mengecek format data, parameter, autentikasi, dan memastikan request sesuai dengan aturan API. Apabila request dari client tidak valid, maka PWS akan mengembalikan error ke client
+
+3. Web service berinteraksi dengan database
+   Jika request dari client valid, maka web service akan mengolah data sesuai logika yang sudah dibuat pada aplikasi sebelumnya, seperti add, update, dan delete data
+
+4. Web sevice mengembalikan response ke client
+   Setelah proses yang berkaitan dengan database selesai, API akan mengirimkan response dalam format JSON yang berisi status, pesan yang sesuai, dan data yang dihasilkan pada tahap sebelumnya (jika ada)
+
+5. Client menampilkan atau mengolah data
+   Aplikasi client akan menerima JSON yang dikirimkan oleh web service dan kemudian terdapat beberapa hal yang dapat dilakukan, seperti:
+   - Menampilkannya ke user
+   - Menyimpannya ke dalam local storage
+   - Memperbarui tampilan UI
+   - Menampilkan pesan error
+    
+</details>
