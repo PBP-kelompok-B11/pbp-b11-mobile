@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
 
 class ClubCard extends StatelessWidget {
   final String imageUrl;
@@ -22,75 +23,73 @@ class ClubCard extends StatelessWidget {
         width: 220,
         margin: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFD9D9D9), // light gray background
+          color: const Color(0xFFD9D9D9), // Grey card background (Figma)
           borderRadius: BorderRadius.circular(35),
-          border: Border.all(color: Colors.black, width: 2),
         ),
         child: Column(
           children: [
-            // 🖼️ IMAGE PART
+            // IMAGE
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
               child: Image.network(
                 imageUrl,
-                height: 160,
+                height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // 🏟️ CLUB NAME
+            // CLUB NAME
             Text(
               clubName,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 24, // text-6xl equivalent scaled
+                fontSize: 32, // 6xl approx (sama Player/Event)
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF261893), // text-indigo-900
                 fontFamily: 'Geologica',
-                height: 1.2, // leading adjustment
+                color: AppColors.indigo,
+                height: 1.2,
               ),
             ),
 
             const SizedBox(height: 8),
 
-            // 📍 LOCATION
+            // LOCATION
             Text(
               location,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18, // text-3xl scaled
-                color: Color(0xFF261893),
+                fontSize: 22,
                 fontFamily: 'Geologica',
+                color: AppColors.indigo,
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
-            // 🔘 DETAILS BUTTON
+            // DETAILS BUTTON
             Container(
-              width: 160,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              width: 150,
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFB0FE08), // lime button #B0FE08
+                color: AppColors.lime,
                 borderRadius: BorderRadius.circular(34),
-                border: Border.all(color: Colors.black, width: 2),
               ),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Details',
-                  style: const TextStyle(
-                    fontSize: 20, // text-4xl scaled
-                    color: Color(0xFF261893),
+                  style: TextStyle(
+                    fontSize: 24,
                     fontFamily: 'Geologica',
+                    color: AppColors.indigo,
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
 
 class HistoryHeader extends StatelessWidget {
   final VoidCallback onDeleteAll;
@@ -15,38 +16,40 @@ class HistoryHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // 🟩 History Label (HANYA LABEL, tidak clickable)
+          // History Label (NOT CLICKABLE)
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFB0FE08), // lime
+              color: AppColors.lime,
               borderRadius: BorderRadius.circular(36),
             ),
             child: const Text(
               "History",
               style: TextStyle(
-                fontSize: 18, // text-2xl approx
+                fontSize: 22,
                 fontFamily: 'Geologica',
-                color: Color(0xFF261893), // indigo-900
+                color: AppColors.indigo,
+                height: 1.2,
               ),
             ),
           ),
 
-          // ❌ Delete All button (clickable)
+          // Delete All button (CLICKABLE)
           GestureDetector(
             onTap: onDeleteAll,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFB0FE08),
+                color: AppColors.lime,
                 borderRadius: BorderRadius.circular(36),
               ),
               child: const Text(
                 "Delete All",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 22,
                   fontFamily: 'Geologica',
-                  color: Color(0xFF261893),
+                  color: AppColors.indigo,
+                  height: 1.2,
                 ),
               ),
             ),

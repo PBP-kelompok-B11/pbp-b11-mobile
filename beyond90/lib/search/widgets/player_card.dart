@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
 
 class PlayerCard extends StatelessWidget {
   final String imageUrl;
@@ -19,20 +20,20 @@ class PlayerCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 220, // adjust grid size
+        width: 220,
         decoration: BoxDecoration(
-          color: const Color(0xFFD9D9D9), // Gray background
+          color: const Color(0xFFD9D9D9), // sesuai Figma grey
           borderRadius: BorderRadius.circular(35),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 🖼️ Player Image
+            // Player Image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
               child: Image.network(
                 imageUrl,
-                height: 160,
+                height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -40,43 +41,40 @@ class PlayerCard extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // ✍️ Player Name
+            // Player Name
             Text(
               name,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 24, // text-6xl scaled
+                fontSize: 32, // 6xl approx sesuai desain
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF261893), // Indigo 900
                 fontFamily: 'Geologica',
+                color: AppColors.indigo,
                 height: 1.2,
               ),
             ),
 
             const SizedBox(height: 6),
 
-            // 🏷️ Position Badge area
+            // Position with Badge Icon
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Icon placeholder (role icon)
                 Container(
                   width: 24,
                   height: 24,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF261893),
+                    color: AppColors.indigo,
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 8),
-
-                // Position text
                 Text(
                   position,
                   style: const TextStyle(
-                    fontSize: 18, // text-3xl scaled
+                    fontSize: 22,
                     fontFamily: 'Geologica',
-                    color: Color(0xFF261893),
+                    color: AppColors.indigo,
                   ),
                 ),
               ],
@@ -84,22 +82,21 @@ class PlayerCard extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // 🔘 Details Button
+            // Details Button
             Container(
               width: 150,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFB0FE08), // Lime button
+                color: AppColors.lime,
                 borderRadius: BorderRadius.circular(34),
-                border: Border.all(color: Colors.black, width: 2),
               ),
               child: const Center(
                 child: Text(
                   'Details',
                   style: TextStyle(
-                    fontSize: 20, // text-4xl scaled
+                    fontSize: 24,
                     fontFamily: 'Geologica',
-                    color: Color(0xFF261893),
+                    color: AppColors.indigo,
                   ),
                 ),
               ),

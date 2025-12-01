@@ -1,5 +1,5 @@
-// lib/search/widgets/result_title.dart
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
 
 class ResultTitle extends StatelessWidget {
   final String keyword;
@@ -19,20 +19,20 @@ class ResultTitle extends StatelessWidget {
             text: 'Result for ',
             style: const TextStyle(
               fontFamily: 'Geologica',
-              fontSize: 32, // 6xl approx
+              fontSize: 48, // mendekati 6xl di Figma
               fontWeight: FontWeight.bold,
-              height: 1.2, // leading approx
-              color: Colors.white,
+              height: 1.3,
+              color: AppColors.white,
             ),
           ),
           TextSpan(
             text: '“$keyword”',
             style: const TextStyle(
               fontFamily: 'Geologica',
-              fontSize: 32,
+              fontSize: 48,
               fontWeight: FontWeight.bold,
-              height: 1.2,
-              color: Color(0xFFB0FE08), // neon green
+              height: 1.3,
+              color: AppColors.lime,
             ),
           ),
         ],
