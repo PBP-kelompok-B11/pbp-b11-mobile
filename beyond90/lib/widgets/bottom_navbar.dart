@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:beyond90/app_colors.dart'; // sesuaikan path kamu ya!
+import 'package:beyond90/app_colors.dart'; 
 
 class BottomNavbar extends StatelessWidget {
   final int selectedIndex;
