@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:beyond90/landing_page.dart';
+import 'package:beyond90/landing_page/screeen/landing_page.dart';
 
 void main() {
   runApp(const MyApp());
