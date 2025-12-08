@@ -49,4 +49,17 @@ class ClubService {
       throw Exception("Gagal mengupdate club");
     }
   }
+
+  static Future<void> deleteClub(int id) async {
+    final response = await http.delete(
+      Uri.parse("$baseUrl$id/"),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception("Gagal menghapus club");
+    }
+  }
 }
