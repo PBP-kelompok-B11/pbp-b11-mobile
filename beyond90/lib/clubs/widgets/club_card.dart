@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/club.dart';
-import '../screens/club_detail.dart';
+import '../screens/club_detail_user.dart';
 
 class ClubCard extends StatelessWidget {
   final Club club;
@@ -14,7 +14,7 @@ class ClubCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => ClubDetailPage(id: club.id),
+            builder: (_) => ClubDetailUser(clubId: club.id),
           ),
         );
       },

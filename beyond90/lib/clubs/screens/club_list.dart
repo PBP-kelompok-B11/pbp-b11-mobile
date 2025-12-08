@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../service/club_service.dart';
 import '../models/club.dart';
-import 'club_detail.dart';
+import 'club_detail_user.dart';
 
 class ClubListPage extends StatefulWidget {
   @override
@@ -49,7 +49,7 @@ class _ClubListPageState extends State<ClubListPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ClubDetailPage(id: club.id),
+                      builder: (_) => ClubDetailUser(clubId: club.id),
                     ),
                   );
                 },

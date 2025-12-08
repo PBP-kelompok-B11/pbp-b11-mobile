@@ -23,15 +23,12 @@ class MyHomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 60),
 
-                // BEYOND + 90
                 const MainTitle(),
                 const SizedBox(height: 32),
 
-                // Tagline atas
                 const TaglineSection(),
                 const SizedBox(height: 48),
 
-                // Stats + Divider + Tagline Section 2
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -53,7 +50,6 @@ class MyHomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Button Gallery
                 const GalleryButton(),
                 const SizedBox(height: 100),
               ],
@@ -63,11 +59,22 @@ class MyHomePage extends StatelessWidget {
       ),
 
       bottomNavigationBar: BottomNavbar(
-  selectedIndex: 0,
-  onTap: (index) {
-    // TODO: nanti buat navigate ke halaman lain
-  },
-),
+        selectedIndex: 0,
+        onTap: (index) {
+          if (index == 0) return;
+
+          switch (index) {
+            case 1:
+              Navigator.pushReplacementNamed(context, '/explore');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/category');
+              break;
+            case 3:
+              break; // Media belum ada
+          }
+        },
+      ),
     );
   }
 }
