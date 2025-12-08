@@ -6,6 +6,7 @@ import 'package:beyond90/landing_page/widgets/stat_section.dart';
 import 'package:beyond90/landing_page/widgets/tagline_section_2.dart';
 import 'package:beyond90/landing_page/widgets/gallery_button.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -63,11 +64,47 @@ class MyHomePage extends StatelessWidget {
       ),
 
       bottomNavigationBar: BottomNavbar(
-  selectedIndex: 0,
-  onTap: (index) {
-    // TODO: nanti buat navigate ke halaman lain
-  },
-),
+        selectedIndex: 0,
+        onTap: (index) {
+          // TODO: nanti buat navigate ke halaman lain
+          switch(index){
+            case 0:
+              // halaman utama
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => MyHomePage()
+                ));
+              break;
+            case 1:
+              // Halaman explore
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => //ExplorePage
+                  ));
+              break;
+            case 2:
+              // Halaman category
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => //CategoryPage() 
+                  ));
+              break;
+            case 3:
+              // Halaman media gallery
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MediaFormPage())
+              );
+              break;
+
+
+
+          }
+        },
+      ),
     );
   }
 }
