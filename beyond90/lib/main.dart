@@ -1,14 +1,10 @@
+import 'package:beyond90/authentication/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'landing_page/screeen/landing_page.dart';
+import 'search/screen/search_default_page.dart';
+import 'category/category_page.dart';
 
-// FIXED: Lokasi yang benar!
-import 'package:beyond90/landing_page/screeen/landing_page.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
-
-import 'package:beyond90/search/screen/search_default_page.dart';
-import 'package:beyond90/category/category_page.dart';
-
-void main() {
+void main() { // WAAAAJIB untuk cookie Django!
   runApp(const MyApp());
 }
 
@@ -19,7 +15,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
       title: 'Beyond90',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -27,14 +22,13 @@ class MyApp extends StatelessWidget {
         ),
       ),
 
-      // ROUTES untuk navbar
       routes: {
         '/home': (context) => const MyHomePage(),
         '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
       },
 
-      home: const MyHomePage(),
+      home: const LoginPage(),
     );
   }
 }
