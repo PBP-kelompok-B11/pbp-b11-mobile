@@ -72,9 +72,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
             child: Center(
               child: Column(
                 children: [
-                  // ================================
-                  //    WHITE BIG CARD (Figma Style)
-                  // ================================
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     margin: const EdgeInsets.symmetric(vertical: 24),
@@ -85,7 +82,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                     ),
                     child: Column(
                       children: [
-                        // ====== IMAGE TOP ======
                         Container(
                           height: 260,
                           decoration: BoxDecoration(
@@ -104,7 +100,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                         const SizedBox(height: 24),
 
-                        // CLUB NAME
                         Text(
                           club.nama.toUpperCase(),
                           textAlign: TextAlign.center,
@@ -118,7 +113,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                         const SizedBox(height: 8),
 
-                        // LOCATION ROW
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -138,9 +132,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                         const SizedBox(height: 30),
 
-                        // ===========================
-                        //    LIME BARS (3 rows)
-                        // ===========================
 
                         _limeBar("Stadion: ${club.stadion}"),
                         _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
@@ -166,7 +157,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                         ),
                         const SizedBox(height: 32),
 
-                        // CHAT ICON GREEN BOX
                         Container(
                           width: 70,
                           height: 70,
@@ -192,9 +182,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
         },
       ),
 
-      // ========================
-      //     BOTTOM NAVBAR
-      // ========================
       bottomNavigationBar: Container(
         height: 80,
         color: lime,
@@ -211,9 +198,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
     );
   }
 
-  // ============================================================
-  //                   REUSABLE LIME BAR
-  // ============================================================
   Widget _limeBar(String text) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
@@ -236,9 +220,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
     );
   }
 
-  // ============================================================
-  //                   NAVBAR ITEM
-  // ============================================================
   Widget _navItem(IconData icon, String label, {bool isActive = false}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

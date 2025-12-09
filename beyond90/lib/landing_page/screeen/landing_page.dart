@@ -32,17 +32,17 @@ class MyHomePage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 100),
 
-                const MainTitle(),
-                const SizedBox(height: 32),
+                      const MainTitle(),
+                      const SizedBox(height: 32),
 
-                const TaglineSection(),
-                const SizedBox(height: 48),
+                      const TaglineSection(),
+                      const SizedBox(height: 48),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const StatsSection(),
-                    const SizedBox(width: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const StatsSection(),
+                          const SizedBox(width: 24),
 
                           Container(
                             width: 4,
@@ -65,11 +65,6 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-
-                const GalleryButton(),
-                const SizedBox(height: 100),
-              ],
             ),
           ],
         ),
@@ -95,3 +90,4 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
+
