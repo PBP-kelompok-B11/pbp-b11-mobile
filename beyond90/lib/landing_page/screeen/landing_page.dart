@@ -24,15 +24,12 @@ class MyHomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 60),
 
-                // BEYOND + 90
                 const MainTitle(),
                 const SizedBox(height: 32),
 
-                // Tagline atas
                 const TaglineSection(),
                 const SizedBox(height: 48),
 
-                // Stats + Divider + Tagline Section 2
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -54,7 +51,6 @@ class MyHomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 48),
 
-                // Button Gallery
                 const GalleryButton(),
                 const SizedBox(height: 100),
               ],
@@ -66,42 +62,17 @@ class MyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 0,
         onTap: (index) {
-          // TODO: nanti buat navigate ke halaman lain
-          switch(index){
-            case 0:
-              // halaman utama
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => MyHomePage()
-                ));
-              break;
+          if (index == 0) return;
+
+          switch (index) {
             case 1:
-              // Halaman explore
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => //ExplorePage
-                  ));
+              Navigator.pushReplacementNamed(context, '/explore');
               break;
             case 2:
-              // Halaman category
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => //CategoryPage() 
-                  ));
+              Navigator.pushReplacementNamed(context, '/category');
               break;
             case 3:
-              // Halaman media gallery
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MediaFormPage())
-              );
-              break;
-
-
-
+              break; // Media belum ada
           }
         },
       ),
