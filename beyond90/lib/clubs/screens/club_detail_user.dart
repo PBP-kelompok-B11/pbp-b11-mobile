@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/club.dart';
+import '../models/club_ranking.dart';
 import '../service/club_service.dart';
+import '../service/club_ranking_service.dart';
 
 class ClubDetailUser extends StatefulWidget {
   final int clubId;
@@ -13,6 +15,7 @@ class ClubDetailUser extends StatefulWidget {
 
 class _ClubDetailUserState extends State<ClubDetailUser> {
   late Future<Club> futureClub;
+  late Future<List<ClubRanking>> futureRankings;
 
   Color get indigo => const Color(0xFF1E1B4B);
   Color get lime => const Color(0xFFBEF264);
@@ -21,6 +24,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
   void initState() {
     super.initState();
     futureClub = ClubService.fetchClubDetail(widget.clubId);
+    futureRankings = ClubRankingService.fetchAllRankings();
   }
 
   @override
@@ -68,7 +72,9 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
             child: Center(
               child: Column(
                 children: [
-                  // WHITE BIG CARD
+                  // ================================
+                  //    WHITE BIG CARD (Figma Style)
+                  // ================================
                   Container(
                     width: MediaQuery.of(context).size.width * 0.9,
                     margin: const EdgeInsets.symmetric(vertical: 24),
@@ -79,7 +85,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                     ),
                     child: Column(
                       children: [
-                        // IMAGE SECTION
+                        // ====== IMAGE TOP ======
                         Container(
                           height: 260,
                           decoration: BoxDecoration(
@@ -112,14 +118,11 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                         const SizedBox(height: 8),
 
-                        // LOCATION
+                        // LOCATION ROW
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              "📍",
-                              style: TextStyle(fontSize: 28),
-                            ),
+                            const Text("📍", style: TextStyle(fontSize: 28)),
                             const SizedBox(width: 6),
                             Text(
                               club.negara,
@@ -135,14 +138,35 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                         const SizedBox(height: 30),
 
-                        // 3 LONG LIME BARS (Figma style)
+                        // ===========================
+                        //    LIME BARS (3 rows)
+                        // ===========================
+
                         _limeBar("Stadion: ${club.stadion}"),
                         _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
-                        _limeBar("ID Klub: ${club.id}"),
 
+                        FutureBuilder<List<ClubRanking>>(
+                          future: futureRankings,
+                          builder: (context, rankSnapshot) {
+                            if (!rankSnapshot.hasData) {
+                              return _limeBar("Ranking Klub: -");
+                            }
+
+                            final allRankings = rankSnapshot.data!;
+                            final filtered = allRankings.where((r) => r.club == club.id).toList();
+
+                            if (filtered.isEmpty) {
+                              return _limeBar("Ranking Klub: -");
+                            }
+
+                            final ranking = filtered.first;
+
+                            return _limeBar("Ranking Klub: ${ranking.peringkat}");
+                          },
+                        ),
                         const SizedBox(height: 32),
 
-                        // CHAT ICON (green)
+                        // CHAT ICON GREEN BOX
                         Container(
                           width: 70,
                           height: 70,
@@ -168,7 +192,9 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
         },
       ),
 
-      // BOTTOM NAVBAR (lime, Figma style)
+      // ========================
+      //     BOTTOM NAVBAR
+      // ========================
       bottomNavigationBar: Container(
         height: 80,
         color: lime,
@@ -185,7 +211,9 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
     );
   }
 
-  // LIME BAR COMPONENT
+  // ============================================================
+  //                   REUSABLE LIME BAR
+  // ============================================================
   Widget _limeBar(String text) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
@@ -208,7 +236,9 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
     );
   }
 
-  // NAVBAR ITEM (bottom)
+  // ============================================================
+  //                   NAVBAR ITEM
+  // ============================================================
   Widget _navItem(IconData icon, String label, {bool isActive = false}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
