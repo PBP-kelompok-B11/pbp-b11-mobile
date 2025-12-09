@@ -1,3 +1,4 @@
+import 'package:beyond90/search/screen/search_default_page.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/landing_page/widgets/main_title.dart';
@@ -66,7 +67,7 @@ class MyHomePage extends StatelessWidget {
 
           switch (index) {
             case 1:
-              Navigator.pushReplacementNamed(context, '/explore');
+              Navigator.pushReplacementNamed(context, 'search');
               break;
             case 2:
               Navigator.pushReplacementNamed(context, '/category');

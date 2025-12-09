@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       // ROUTES untuk navbar
       routes: {
         '/home': (context) => const MyHomePage(),
+        '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
       },
 
