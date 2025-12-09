@@ -1,12 +1,12 @@
 class ClubRanking {
   final int id;
-  final int clubId; 
+  final int club;
   final String musim;
   final int peringkat;
 
   ClubRanking({
     required this.id,
-    required this.clubId,
+    required this.club,
     required this.musim,
     required this.peringkat,
   });
@@ -14,7 +14,7 @@ class ClubRanking {
   factory ClubRanking.fromJson(Map<String, dynamic> json) {
     return ClubRanking(
       id: json['id'],
-      clubId: json['club'],       
+      club: json['club'],    
       musim: json['musim'],
       peringkat: json['peringkat'],
     );

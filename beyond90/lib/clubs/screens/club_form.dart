@@ -3,7 +3,7 @@ import '../models/club.dart';
 import '../service/club_service.dart';
 
 class ClubFormPage extends StatefulWidget {
-  final Club? club; // null = create, not null = edit
+  final Club? club; 
 
   const ClubFormPage({super.key, this.club});
 
