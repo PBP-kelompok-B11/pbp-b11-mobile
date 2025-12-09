@@ -1,3 +1,4 @@
+import 'package:beyond90/search/screen/search_default_page.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 
@@ -9,6 +10,7 @@ import 'package:beyond90/landing_page/widgets/gallery_button.dart';
 import 'package:beyond90/landing_page/widgets/login_button.dart';
 
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -30,17 +32,17 @@ class MyHomePage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 100),
 
-                      const MainTitle(),
-                      const SizedBox(height: 32),
+                const MainTitle(),
+                const SizedBox(height: 32),
 
-                      const TaglineSection(),
-                      const SizedBox(height: 48),
+                const TaglineSection(),
+                const SizedBox(height: 48),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const StatsSection(),
-                          const SizedBox(width: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const StatsSection(),
+                    const SizedBox(width: 24),
 
                           Container(
                             width: 4,
@@ -65,15 +67,9 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
 
-            // ==== LOGIN BUTTON FLOATING ====
-            Positioned(
-              top: 16,
-              right: 20,
-              child: LoginButton(
-                onPressed: () {
-                  // TODO: Navigate ke Login Page
-                },
-              ),
+                const GalleryButton(),
+                const SizedBox(height: 100),
+              ],
             ),
           ],
         ),
@@ -82,7 +78,18 @@ class MyHomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 0,
         onTap: (index) {
-          // TODO: navigate nanti
+          if (index == 0) return;
+
+          switch (index) {
+            case 1:
+              Navigator.pushReplacementNamed(context, 'search');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/category');
+              break;
+            case 3:
+              break; // Media belum ada
+          }
         },
       ),
     );
