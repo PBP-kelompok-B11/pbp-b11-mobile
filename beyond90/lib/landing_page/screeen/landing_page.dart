@@ -6,6 +6,7 @@ import 'package:beyond90/landing_page/widgets/stat_section.dart';
 import 'package:beyond90/landing_page/widgets/tagline_section_2.dart';
 import 'package:beyond90/landing_page/widgets/gallery_button.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});

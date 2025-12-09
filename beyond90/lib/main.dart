@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // FIXED: Lokasi yang benar!
 import 'package:beyond90/landing_page/screeen/landing_page.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'package:beyond90/search/screen/search_default_page.dart';
 import 'package:beyond90/category/category_page.dart';
