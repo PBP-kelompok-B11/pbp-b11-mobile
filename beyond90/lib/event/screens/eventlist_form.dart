@@ -26,11 +26,19 @@ class EventFormPageState extends State<EventFormPage> {
   final TextEditingController _tanggalController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _tanggal = DateTime.now();
+    _tanggalController.text =
+        "${_tanggal!.year}-${_tanggal!.month}-${_tanggal!.day}";
+  }
+
+  @override
   void dispose() {
     _tanggalController.dispose();
     super.dispose();
   }
-
+  
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
