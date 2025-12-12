@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../category/widgets/category_card.dart';
 import '../../clubs/screens/club_list_custom.dart';
-
+import '../../event/screens/menu_event.dart';
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
 
@@ -62,7 +62,12 @@ class CategoryPage extends StatelessWidget {
               buttonText: "See all events",
               highlightColor: lime,
               mainColor: bg,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => EventHomePage()),
+                );
+              },
             ),
           ],
         ),
