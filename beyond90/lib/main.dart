@@ -7,10 +7,8 @@ import 'landing_page/screeen/landing_page.dart';
 import 'search/screen/search_default_page.dart';
 import 'category/category_page.dart';
 
-<<<<<<< HEAD
 void main() { 
   runApp(const MyApp());
-=======
 void main() {
   runApp(
     Provider<CookieRequest>(
@@ -18,7 +16,6 @@ void main() {
       child: const MyApp(),
     ),
   );
->>>>>>> 169a8759ddc689b86fab51edcbf52c50544eb88e
 }
 
 class MyApp extends StatelessWidget {
@@ -39,12 +36,8 @@ class MyApp extends StatelessWidget {
         '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
       },
-<<<<<<< HEAD
-
       home: const ClubListAdmin(),
-=======
       home: const LoginPage(),
->>>>>>> 169a8759ddc689b86fab51edcbf52c50544eb88e
     );
   }
 }

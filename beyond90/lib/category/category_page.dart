@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../category/widgets/category_card.dart';
-<<<<<<< HEAD
 import '../clubs/screens/club_list_user.dart';
-
 import '../../clubs/screens/club_list_custom.dart';
 import '../../event/screens/menu_event.dart';
 class CategoryPage extends StatelessWidget {
