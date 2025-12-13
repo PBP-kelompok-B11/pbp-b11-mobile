@@ -3,24 +3,24 @@ import '../service/club_service.dart';
 import '../models/club.dart';
 import 'club_detail_user.dart';
 
-class ClubListCustom extends StatefulWidget {
-  const ClubListCustom({super.key});
+class ClubListUser extends StatefulWidget {
+  const ClubListUser({super.key});
 
   @override
-  State<ClubListCustom> createState() => _ClubListCustomState();
+  State<ClubListUser> createState() => _ClubListUserState();
 }
 
-class _ClubListCustomState extends State<ClubListCustom> {
+class _ClubListUserState extends State<ClubListUser> {
   late Future<List<Club>> _futureClubs;
+
+  Color get indigo => const Color(0xFF1E1B4B);
+  Color get lime => const Color(0xFFBEF264);
 
   @override
   void initState() {
     super.initState();
     _futureClubs = ClubService.fetchClubs();
   }
-
-  Color get indigo => const Color(0xFF1E1B4B);
-  Color get lime => const Color(0xFFBEF264);
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +38,8 @@ class _ClubListCustomState extends State<ClubListCustom> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: false,
       ),
+
       body: FutureBuilder<List<Club>>(
         future: _futureClubs,
         builder: (context, snapshot) {
@@ -51,10 +51,8 @@ class _ClubListCustomState extends State<ClubListCustom> {
 
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                "Error: ${snapshot.error}",
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text("Error: ${snapshot.error}",
+                  style: const TextStyle(color: Colors.white)),
             );
           }
 
@@ -62,10 +60,8 @@ class _ClubListCustomState extends State<ClubListCustom> {
 
           if (clubs.isEmpty) {
             return const Center(
-              child: Text(
-                "No clubs available",
-                style: TextStyle(color: Colors.white),
-              ),
+              child: Text("No clubs available",
+                  style: TextStyle(color: Colors.white)),
             );
           }
 
@@ -73,11 +69,12 @@ class _ClubListCustomState extends State<ClubListCustom> {
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
               itemCount: clubs.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 20,
-                childAspectRatio: 0.72, // biar mirip Figma
+                childAspectRatio: 0.72,
               ),
               itemBuilder: (context, index) {
                 final club = clubs[index];
@@ -108,11 +105,11 @@ class _ClubListCustomState extends State<ClubListCustom> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IMAGE
             Container(
               height: 140,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(35)),
                 color: Colors.grey.shade300,
                 image: club.urlGambar != null
                     ? DecorationImage(
@@ -122,10 +119,7 @@ class _ClubListCustomState extends State<ClubListCustom> {
                     : null,
               ),
             ),
-
             const SizedBox(height: 12),
-
-            // NAME
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
@@ -138,39 +132,31 @@ class _ClubListCustomState extends State<ClubListCustom> {
                 ),
               ),
             ),
-
             const SizedBox(height: 4),
-
-            // LOCATION ROW
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
                 children: [
-                  const Text(
-                    "📍",
-                    style: TextStyle(fontSize: 20),
-                  ),
+                  const Text("📍", style: TextStyle(fontSize: 20)),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       club.negara,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: "Geologica",
                         fontSize: 18,
                         color: indigo,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
             ),
-
             const Spacer(),
-
-            // DETAILS BUTTON
             Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+              padding:
+                  const EdgeInsets.only(left: 12, right: 12, bottom: 12),
               child: Container(
                 height: 42,
                 decoration: BoxDecoration(
@@ -184,12 +170,11 @@ class _ClubListCustomState extends State<ClubListCustom> {
                       fontFamily: "Geologica",
                       fontSize: 20,
                       color: indigo,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

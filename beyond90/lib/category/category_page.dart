@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../category/widgets/category_card.dart';
-import '../../clubs/screens/club_list_custom.dart';
+import '../clubs/screens/club_list_user.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
@@ -50,7 +50,7 @@ class CategoryPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ClubListCustom()),
+                  MaterialPageRoute(builder: (_) => const ClubListUser()),
                 );
               },
             ),

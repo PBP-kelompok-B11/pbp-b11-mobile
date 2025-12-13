@@ -6,7 +6,7 @@ class AuthService {
 
   // LOGIN
   static Future<Map<String, dynamic>> login(String username, String password) async {
-    final url = Uri.parse("$baseUrl/authentication/login/");
+    final url = Uri.parse("$baseUrl/login/");
 
     try {
       final response = await http.post(
@@ -42,7 +42,7 @@ class AuthService {
     required String nomorHp,
     required String role,
   }) async {
-    final url = Uri.parse("$baseUrl/authentication/register/");
+    final url = Uri.parse("$baseUrl/register/");
 
     try {
       final response = await http.post(

@@ -2,142 +2,166 @@ import 'package:flutter/material.dart';
 import '../models/club.dart';
 import '../service/club_service.dart';
 
-class ClubFormPage extends StatefulWidget {
-  final Club? club; 
+class ClubForm extends StatefulWidget {
+  final Club? club; // null = add, not null = edit
 
-  const ClubFormPage({super.key, this.club});
+  const ClubForm({super.key, this.club});
 
   @override
-  _ClubFormPageState createState() => _ClubFormPageState();
+  State<ClubForm> createState() => _ClubFormState();
 }
 
-class _ClubFormPageState extends State<ClubFormPage> {
-  final _formKey = GlobalKey<FormState>();
+class _ClubFormState extends State<ClubForm> {
+  final Color indigo = const Color(0xFF1E1B4B);
+  final Color lime = const Color(0xFFBEF264);
 
-  late TextEditingController namaController;
-  late TextEditingController negaraController;
-  late TextEditingController stadionController;
-  late TextEditingController tahunController;
-  late TextEditingController urlGambarController;
-
-  bool get isEdit => widget.club != null;
+  late TextEditingController nameCtrl;
+  late TextEditingController countryCtrl;
+  late TextEditingController stadiumCtrl;
+  late TextEditingController yearCtrl;
+  late TextEditingController imageCtrl;
+  late TextEditingController rankingCtrl; // NEW
 
   @override
   void initState() {
     super.initState();
 
-    namaController = TextEditingController(text: widget.club?.nama ?? "");
-    negaraController = TextEditingController(text: widget.club?.negara ?? "");
-    stadionController = TextEditingController(text: widget.club?.stadion ?? "");
-    tahunController = TextEditingController(
-        text: widget.club?.tahunBerdiri.toString() ?? "");
-    urlGambarController =
-        TextEditingController(text: widget.club?.urlGambar ?? "");
+    nameCtrl = TextEditingController(text: widget.club?.nama ?? "");
+    countryCtrl = TextEditingController(text: widget.club?.negara ?? "");
+    stadiumCtrl = TextEditingController(text: widget.club?.stadion ?? "");
+    yearCtrl = TextEditingController(text: widget.club?.tahunBerdiri?.toString() ?? "");
+    imageCtrl = TextEditingController(text: widget.club?.urlGambar ?? "");
+    rankingCtrl = TextEditingController(); // only for ADD
   }
 
-  @override
-  void dispose() {
-    namaController.dispose();
-    negaraController.dispose();
-    stadionController.dispose();
-    tahunController.dispose();
-    urlGambarController.dispose();
-    super.dispose();
-  }
+  Future<void> saveClub() async {
+    if (nameCtrl.text.isEmpty ||
+        countryCtrl.text.isEmpty ||
+        stadiumCtrl.text.isEmpty ||
+        yearCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("All fields required")));
+      return;
+    }
 
-  Future<void> _saveClub() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final clubData = {
-      "nama": namaController.text,
-      "negara": negaraController.text,
-      "stadion": stadionController.text,
-      "tahun_berdiri": int.tryParse(tahunController.text) ?? 0,
-      "url_gambar": urlGambarController.text.isEmpty
-          ? null
-          : urlGambarController.text,
+    final data = {
+      "nama": nameCtrl.text,
+      "negara": countryCtrl.text,
+      "stadion": stadiumCtrl.text,
+      "tahun_berdiri": int.tryParse(yearCtrl.text) ?? 0,
+      "url_gambar": imageCtrl.text,
     };
 
     try {
-      if (isEdit) {
-        // UPDATE club
-        await ClubService.updateClub(widget.club!.id, clubData);
+      if (widget.club == null) {
+        // ADD MODE
+        final newId = await ClubService.createClub(data);
+
+        // create ranking
+        if (rankingCtrl.text.isNotEmpty) {
+          await ClubService.createRanking(newId, int.parse(rankingCtrl.text));
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Club Added!")));
       } else {
-        // CREATE new club
-        await ClubService.createClub(clubData);
+        // EDIT MODE
+        await ClubService.updateClub(widget.club!.id, data);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Club Updated!")));
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(isEdit ? "Club updated!" : "Club created!")),
-      );
-
-      Navigator.pop(context, true);
+      Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.club != null;
+
     return Scaffold(
+      backgroundColor: indigo,
       appBar: AppBar(
-        title: Text(isEdit ? "Edit Club" : "Buat Club Baru"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: namaController,
-                decoration: InputDecoration(labelText: "Nama Club"),
-                validator: (value) =>
-                    value!.isEmpty ? "Nama wajib diisi" : null,
-              ),
-              SizedBox(height: 16),
-
-              TextFormField(
-                controller: negaraController,
-                decoration: InputDecoration(labelText: "Negara"),
-                validator: (value) =>
-                    value!.isEmpty ? "Negara wajib diisi" : null,
-              ),
-              SizedBox(height: 16),
-
-              TextFormField(
-                controller: stadionController,
-                decoration: InputDecoration(labelText: "Stadion"),
-                validator: (value) =>
-                    value!.isEmpty ? "Stadion wajib diisi" : null,
-              ),
-              SizedBox(height: 16),
-
-              TextFormField(
-                controller: tahunController,
-                decoration: InputDecoration(labelText: "Tahun Berdiri"),
-                keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value!.isEmpty ? "Tahun wajib diisi" : null,
-              ),
-              SizedBox(height: 16),
-
-              TextFormField(
-                controller: urlGambarController,
-                decoration: InputDecoration(labelText: "URL Gambar (optional)"),
-              ),
-              SizedBox(height: 32),
-
-              ElevatedButton(
-                onPressed: _saveClub,
-                child: Text(isEdit ? "Update Club" : "Simpan Club"),
-              ),
-            ],
+        backgroundColor: indigo,
+        elevation: 0,
+        title: Text(
+          isEdit ? "EDIT CLUB" : "ADD CLUB",
+          style: TextStyle(
+            fontFamily: "Geologica",
+            fontSize: 32,
+            color: lime,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        child: Column(
+          children: [
+            _field("Club Name", nameCtrl),
+            _field("Country", countryCtrl),
+            _field("Stadium", stadiumCtrl),
+            _field("Year Founded", yearCtrl),
+            _field("Image URL", imageCtrl),
+
+            if (!isEdit) _field("Ranking (1-100)", rankingCtrl),
+
+            const SizedBox(height: 40),
+
+            GestureDetector(
+              onTap: saveClub,
+              child: Container(
+                width: 200,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: lime,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  isEdit ? "Save" : "Add",
+                  style: TextStyle(
+                    fontFamily: "Geologica",
+                    fontSize: 20,
+                    color: indigo,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _field(String label, TextEditingController ctrl) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 18),
+        Text(label, style: TextStyle(color: lime, fontSize: 18)),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: lime),
+          ),
+          child: TextField(
+            controller: ctrl,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

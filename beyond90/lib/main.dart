@@ -1,10 +1,11 @@
 import 'package:beyond90/authentication/screens/login.dart';
+import 'package:beyond90/clubs/screens/club_list_admin.dart';
 import 'package:flutter/material.dart';
 import 'landing_page/screeen/landing_page.dart';
 import 'search/screen/search_default_page.dart';
 import 'category/category_page.dart';
 
-void main() { // WAAAAJIB untuk cookie Django!
+void main() { 
   runApp(const MyApp());
 }
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         '/category': (context) => const CategoryPage(),
       },
 
-      home: const LoginPage(),
+      home: const ClubListAdmin(),
     );
   }
 }
