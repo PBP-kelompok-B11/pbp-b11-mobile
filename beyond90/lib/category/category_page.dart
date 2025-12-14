@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../category/widgets/category_card.dart';
-import '../../clubs/screens/club_list_custom.dart';
+import '../clubs/screens/club_list_user.dart';
+import '../../clubs/screens/club_list_user.dart';
 import '../../event/screens/menu_event.dart';
 import 'package:beyond90/app_colors.dart';
 
@@ -52,7 +53,7 @@ class CategoryPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ClubListCustom()),
+                  MaterialPageRoute(builder: (_) => const ClubListUser()),
                 );
               },
             ),

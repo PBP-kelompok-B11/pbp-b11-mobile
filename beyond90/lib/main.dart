@@ -1,4 +1,5 @@
 import 'package:beyond90/authentication/screens/login.dart';
+import 'package:beyond90/clubs/screens/club_list_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -34,7 +35,8 @@ class MyApp extends StatelessWidget {
         '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
       },
-      home: const LoginPage(),
+      home: const ClubListAdmin(),
     );
   }
 }
+

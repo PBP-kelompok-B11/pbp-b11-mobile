@@ -5,15 +5,15 @@ import '../models/club.dart';
 class ClubService {
   static const String baseUrl = "http://localhost:8000/clubs/api/";
 
+  // CLUB
   static Future<List<Club>> fetchClubs() async {
     final response = await http.get(Uri.parse(baseUrl));
 
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.body);
+      final List data = jsonDecode(response.body);
       return data.map((json) => Club.fromJson(json)).toList();
-    } else {
-      throw Exception("Gagal mengambil data clubs");
     }
+    throw Exception("Failed to fetch clubs: ${response.body}");
   }
 
   static Future<Club> fetchClubDetail(int id) async {
@@ -21,45 +21,74 @@ class ClubService {
 
     if (response.statusCode == 200) {
       return Club.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception("Gagal mengambil detail club");
     }
+    throw Exception("Failed to fetch club detail: ${response.body}");
   }
 
-  static Future<void> createClub(Map<String, dynamic> clubData) async {
+  static Future<int> createClub(Map<String, dynamic> data) async {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(clubData),
+      body: jsonEncode(data),
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception("Gagal membuat club baru");
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body)['id'];
     }
+    throw Exception("Failed to create club: ${response.body}");
   }
 
-  static Future<void> updateClub(int id, Map<String, dynamic> clubData) async {
+  static Future<void> updateClub(int id, Map<String, dynamic> data) async {
     final response = await http.put(
       Uri.parse("$baseUrl$id/"),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(clubData),
+      body: jsonEncode(data),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception("Gagal mengupdate club");
+      throw Exception("Failed to update club: ${response.body}");
     }
   }
 
   static Future<void> deleteClub(int id) async {
-    final response = await http.delete(
-      Uri.parse("$baseUrl$id/"),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    final response = await http.delete(Uri.parse("$baseUrl$id/"));
+
+    if (response.statusCode != 204) {
+      throw Exception("Failed to delete club: ${response.body}");
+    }
+  }
+
+  // RANKING
+
+ // CREATE ranking: /clubs/api/<club_pk>/ranking/
+  static Future<void> createRanking(int clubId, int ranking) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl$clubId/ranking/"),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "peringkat": ranking,
+        "musim": "2025",
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception("Failed to create ranking: ${response.body}");
+    }
+  }
+
+  // UPDATE ranking: /clubs/api/rankings/<pk>/
+  static Future<void> updateRanking(int rankingId, int ranking) async {
+    final response = await http.put(
+      Uri.parse("${baseUrl}rankings/$rankingId/"),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "peringkat": ranking,
+        "musim": "2025",
+      }),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception("Gagal menghapus club");
+      throw Exception("Failed to update ranking: ${response.body}");
     }
   }
 }
