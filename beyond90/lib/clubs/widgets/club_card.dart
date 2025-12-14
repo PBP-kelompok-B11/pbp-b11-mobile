@@ -1,82 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
 import '../models/club.dart';
-import '../screens/club_detail_user.dart';
 
 class ClubCard extends StatelessWidget {
   final Club club;
+  final VoidCallback onTap;
 
-  const ClubCard({super.key, required this.club});
+  const ClubCard({
+    super.key,
+    required this.club,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ClubDetailUser(clubId: club.id),
-          ),
-        );
-      },
-      child: Card(
-        elevation: 4,
-        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(35),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar klub
+            // IMAGE
             ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(35),
               ),
-              child: club.urlGambar != null
+              child: club.urlGambar != null && club.urlGambar!.isNotEmpty
                   ? Image.network(
                       club.urlGambar!,
-                      width: 100,
-                      height: 100,
+                      height: 150,
+                      width: double.infinity,
                       fit: BoxFit.cover,
                     )
                   : Container(
-                      width: 100,
-                      height: 100,
-                      color: Colors.blue.shade200,
+                      height: 150,
+                      color: Colors.grey.shade300,
                       child: const Icon(
                         Icons.sports_soccer,
-                        size: 40,
+                        size: 50,
                         color: Colors.white,
                       ),
                     ),
             ),
 
-            // Text bagian kanan
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      club.nama,
+            const SizedBox(height: 12),
+
+            // CLUB NAME
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Text(
+                club.nama,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: "Geologica",
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.indigo,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            // LOCATION
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  const Text("📍", style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      club.negara,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
+                        fontFamily: "Geologica",
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        color: AppColors.indigo,
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        const Icon(Icons.flag, size: 16, color: Colors.grey),
-                        const SizedBox(width: 6),
-                        Text(
-                          club.negara,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(),
+
+            // DETAILS BUTTON
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Container(
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.lime,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  "Details",
+                  style: TextStyle(
+                    fontFamily: "Geologica",
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.indigo,
+                  ),
                 ),
               ),
             ),

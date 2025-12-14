@@ -7,8 +7,6 @@ import 'landing_page/screeen/landing_page.dart';
 import 'search/screen/search_default_page.dart';
 import 'category/category_page.dart';
 
-void main() { 
-  runApp(const MyApp());
 void main() {
   runApp(
     Provider<CookieRequest>(
@@ -37,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/category': (context) => const CategoryPage(),
       },
       home: const ClubListAdmin(),
-      home: const LoginPage(),
     );
   }
 }
+

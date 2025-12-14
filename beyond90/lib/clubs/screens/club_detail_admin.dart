@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
+
 import '../models/club.dart';
 import '../models/club_ranking.dart';
 import '../service/club_service.dart';
 import '../service/club_ranking_service.dart';
-import 'club_form.dart'; 
+import 'club_form.dart';
 
 class ClubDetailAdmin extends StatefulWidget {
   final int clubId;
@@ -20,8 +23,8 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
   late Future<Club> futureClub;
   late Future<List<ClubRanking>> futureRankings;
 
-  Color get indigo => const Color(0xFF1E1B4B);
-  Color get lime => const Color(0xFFBEF264);
+  int? _currentRanking;
+  int? _currentRankingId;
 
   @override
   void initState() {
@@ -33,20 +36,22 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: indigo,
+      backgroundColor: AppColors.background,
+
       appBar: AppBar(
-        backgroundColor: indigo,
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),
+          icon: const Icon(Icons.arrow_back,
+              color: AppColors.white, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           "Club details",
           style: TextStyle(
             fontFamily: "Geologica",
             fontSize: 32,
-            color: lime,
+            color: AppColors.lime,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -57,14 +62,15 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(color: AppColors.white),
             );
           }
 
           if (snapshot.hasError) {
             return Center(
-              child: Text("Error: ${snapshot.error}",
-                style: const TextStyle(color: Colors.white),
+              child: Text(
+                "Error: ${snapshot.error}",
+                style: const TextStyle(color: AppColors.white),
               ),
             );
           }
@@ -76,75 +82,62 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
               children: [
                 const SizedBox(height: 16),
 
-                // SEARCH BAR (dummy)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Container(
-                    height: 46,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(54),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.search, color: Colors.black54),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Search",
-                          style: TextStyle(
-                            fontFamily: "Geologica",
-                            fontSize: 18,
-                            color: indigo,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
                 // MAIN CARD
                 Container(
                   width: MediaQuery.of(context).size.width * 0.9,
                   margin: const EdgeInsets.symmetric(vertical: 12),
                   padding: const EdgeInsets.only(bottom: 32),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(55),
                   ),
                   child: Column(
                     children: [
+                      // IMAGE
                       Container(
                         height: 260,
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(55)),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(55),
+                          ),
                           color: Colors.grey.shade300,
-                          image: club.urlGambar != null
+                          image: club.urlGambar != null &&
+                                  club.urlGambar!.isNotEmpty
                               ? DecorationImage(
                                   image: NetworkImage(club.urlGambar!),
                                   fit: BoxFit.cover,
                                 )
                               : null,
                         ),
+                        child: (club.urlGambar == null ||
+                                club.urlGambar!.isEmpty)
+                            ? const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 60,
+                                  color: Colors.black45,
+                                ),
+                              )
+                            : null,
                       ),
 
                       const SizedBox(height: 24),
 
+                      // NAME
                       Text(
                         club.nama.toUpperCase(),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: "Geologica",
                           fontSize: 46,
-                          color: indigo,
+                          color: AppColors.indigo,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
 
                       const SizedBox(height: 8),
 
+                      // LOCATION
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -152,10 +145,10 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                           const SizedBox(width: 6),
                           Text(
                             club.negara,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: "Geologica",
                               fontSize: 24,
-                              color: indigo,
+                              color: AppColors.indigo,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -167,10 +160,13 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                       _limeBar("Stadion: ${club.stadion}"),
                       _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
 
+                      // RANKING 
                       FutureBuilder<List<ClubRanking>>(
                         future: futureRankings,
                         builder: (context, rankSnapshot) {
                           if (!rankSnapshot.hasData) {
+                            _currentRanking = null;
+                            _currentRankingId = null;
                             return _limeBar("Ranking Klub: -");
                           }
 
@@ -179,112 +175,92 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                               .toList();
 
                           if (filtered.isEmpty) {
+                            _currentRanking = null;
+                            _currentRankingId = null;
                             return _limeBar("Ranking Klub: -");
                           }
 
-                          return _limeBar("Ranking Klub: ${filtered.first.peringkat}");
+                          final ranking = filtered.first;
+                          _currentRanking = ranking.peringkat;
+                          _currentRankingId = ranking.id;
+
+                          return _limeBar(
+                              "Ranking Klub: ${ranking.peringkat}");
                         },
                       ),
 
                       const SizedBox(height: 24),
 
-                      // ===================== ADMIN BUTTONS ======================
                       if (isAdmin) ...[
-                        // EDIT BUTTON
                         _adminButton(
                           label: "Edit Club",
                           background: Colors.yellow.shade400,
-                          textColor: indigo,
-                          onTap: () {
-                            Navigator.push(
+                          textColor: AppColors.indigo,
+                          onTap: () async {
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => ClubForm(club: club),
+                                builder: (_) => ClubForm(
+                                  club: club,
+                                  ranking: _currentRanking,
+                                  rankingId: _currentRankingId,
+                                ),
                               ),
                             );
+
+                            if (result == true) {
+                              setState(() {
+                                futureClub =
+                                    ClubService.fetchClubDetail(widget.clubId);
+                                futureRankings =
+                                    ClubRankingService.fetchAllRankings();
+                              });
+                            }
                           },
                         ),
                         const SizedBox(height: 12),
-
-                        // DELETE BUTTON
                         _adminButton(
                           label: "Delete Club",
                           background: Colors.red.shade600,
-                          textColor: Colors.white,
+                          textColor: AppColors.white,
                           onTap: () async {
-                            try {
-                              await ClubService.deleteClub(club.id);
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Club Deleted")),
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Error: $e")),
-                              );
-                            }
+                            await ClubService.deleteClub(club.id);
+                            Navigator.pop(context);
                           },
                         ),
                         const SizedBox(height: 24),
                       ],
-
-                      // CHAT BUTTON
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: lime,
-                          borderRadius: BorderRadius.circular(22),
-                        ),
-                        child: const Icon(Icons.chat_bubble_outline,
-                          size: 36,
-                          color: Colors.black,
-                        ),
-                      ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 80),
               ],
             ),
           );
         },
       ),
 
-      bottomNavigationBar: Container(
-        height: 80,
-        color: lime,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _navItem(Icons.home, "Home"),
-            _navItem(Icons.search, "Explore"),
-            _navItem(Icons.category, "Category", isActive: true),
-            _navItem(Icons.play_circle_fill, "Media"),
-          ],
-        ),
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 2,
+        onTap: (_) {},
       ),
     );
   }
-
-  // ================= Helper Widgets ===================
 
   Widget _limeBar(String text) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
       height: 50,
       decoration: BoxDecoration(
-        color: lime,
+        color: AppColors.lime,
         borderRadius: BorderRadius.circular(30),
       ),
       child: Center(
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: "Geologica",
             fontSize: 20,
-            color: indigo,
+            color: AppColors.indigo,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -320,24 +296,6 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, {bool isActive = false}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 28, color: isActive ? indigo : Colors.black),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: "Geologica",
-            color: isActive ? indigo : Colors.black,
-            fontSize: 14,
-          ),
-        ),
-      ],
     );
   }
 }

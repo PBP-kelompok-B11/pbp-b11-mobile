@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/widgets/club_card.dart';
+
 import '../service/club_service.dart';
 import '../models/club.dart';
 import 'club_detail_user.dart';
@@ -13,9 +17,6 @@ class ClubListUser extends StatefulWidget {
 class _ClubListUserState extends State<ClubListUser> {
   late Future<List<Club>> _futureClubs;
 
-  Color get indigo => const Color(0xFF1E1B4B);
-  Color get lime => const Color(0xFFBEF264);
-
   @override
   void initState() {
     super.initState();
@@ -25,16 +26,17 @@ class _ClubListUserState extends State<ClubListUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: indigo,
+      backgroundColor: AppColors.background,
+
       appBar: AppBar(
-        backgroundColor: indigo,
+        backgroundColor: AppColors.background,
         elevation: 0,
-        title: Text(
+        title: const Text(
           "Club",
           style: TextStyle(
             fontFamily: "Geologica",
             fontSize: 36,
-            color: lime,
+            color: AppColors.lime,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -45,14 +47,16 @@ class _ClubListUserState extends State<ClubListUser> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(color: AppColors.white),
             );
           }
 
           if (snapshot.hasError) {
             return Center(
-              child: Text("Error: ${snapshot.error}",
-                  style: const TextStyle(color: Colors.white)),
+              child: Text(
+                "Error: ${snapshot.error}",
+                style: const TextStyle(color: AppColors.white),
+              ),
             );
           }
 
@@ -60,8 +64,10 @@ class _ClubListUserState extends State<ClubListUser> {
 
           if (clubs.isEmpty) {
             return const Center(
-              child: Text("No clubs available",
-                  style: TextStyle(color: Colors.white)),
+              child: Text(
+                "No clubs available",
+                style: TextStyle(color: AppColors.white),
+              ),
             );
           }
 
@@ -69,8 +75,7 @@ class _ClubListUserState extends State<ClubListUser> {
             padding: const EdgeInsets.all(16),
             child: GridView.builder(
               itemCount: clubs.length,
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 20,
                 crossAxisSpacing: 20,
@@ -78,105 +83,33 @@ class _ClubListUserState extends State<ClubListUser> {
               ),
               itemBuilder: (context, index) {
                 final club = clubs[index];
-                return _buildClubCard(club);
+
+                return ClubCard(
+                  imageUrl: club.urlGambar ?? "",
+                  clubName: club.nama,
+                  location: club.negara,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            ClubDetailUser(clubId: club.id),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           );
         },
       ),
-    );
-  }
 
-  Widget _buildClubCard(Club club) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ClubDetailUser(clubId: club.id),
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(35),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 140,
-              decoration: BoxDecoration(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(35)),
-                color: Colors.grey.shade300,
-                image: club.urlGambar != null
-                    ? DecorationImage(
-                        image: NetworkImage(club.urlGambar!),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text(
-                club.nama,
-                style: TextStyle(
-                  fontFamily: "Geologica",
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: indigo,
-                ),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  const Text("📍", style: TextStyle(fontSize: 20)),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      club.negara,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: "Geologica",
-                        fontSize: 18,
-                        color: indigo,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 12, right: 12, bottom: 12),
-              child: Container(
-                height: 42,
-                decoration: BoxDecoration(
-                  color: lime,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: Text(
-                    "Details",
-                    style: TextStyle(
-                      fontFamily: "Geologica",
-                      fontSize: 20,
-                      color: indigo,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+      // ✅ REUSABLE BOTTOM NAVBAR
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 2, // Category
+        onTap: (index) {
+          // nanti sambung ke routing global
+        },
       ),
     );
   }

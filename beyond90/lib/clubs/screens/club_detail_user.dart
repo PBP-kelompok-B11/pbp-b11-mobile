@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
+
 import '../models/club.dart';
 import '../models/club_ranking.dart';
 import '../service/club_service.dart';
@@ -17,9 +20,6 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
   late Future<Club> futureClub;
   late Future<List<ClubRanking>> futureRankings;
 
-  Color get indigo => const Color(0xFF1E1B4B);
-  Color get lime => const Color(0xFFBEF264);
-
   @override
   void initState() {
     super.initState();
@@ -30,20 +30,21 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: indigo,
+      backgroundColor: AppColors.background,
+
       appBar: AppBar(
-        backgroundColor: indigo,
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),
+          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           "Club details",
           style: TextStyle(
             fontFamily: "Geologica",
             fontSize: 32,
-            color: lime,
+            color: AppColors.lime,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -54,14 +55,15 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: CircularProgressIndicator(color: AppColors.white),
             );
           }
 
           if (snapshot.hasError) {
             return Center(
-              child: Text("Error: ${snapshot.error}",
-                style: const TextStyle(color: Colors.white),
+              child: Text(
+                "Error: ${snapshot.error}",
+                style: const TextStyle(color: AppColors.white),
               ),
             );
           }
@@ -76,15 +78,18 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                   margin: const EdgeInsets.symmetric(vertical: 24),
                   padding: const EdgeInsets.only(bottom: 32),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(55),
                   ),
                   child: Column(
                     children: [
+                      // IMAGE
                       Container(
                         height: 260,
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(55)),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(55),
+                          ),
                           color: Colors.grey.shade300,
                           image: club.urlGambar != null
                               ? DecorationImage(
@@ -97,19 +102,21 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                       const SizedBox(height: 24),
 
+                      // CLUB NAME
                       Text(
                         club.nama.toUpperCase(),
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: "Geologica",
                           fontSize: 46,
-                          color: indigo,
+                          color: AppColors.indigo,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
 
                       const SizedBox(height: 8),
 
+                      // LOCATION
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -117,10 +124,10 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                           const SizedBox(width: 6),
                           Text(
                             club.negara,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: "Geologica",
                               fontSize: 26,
-                              color: indigo,
+                              color: AppColors.indigo,
                             ),
                           ),
                         ],
@@ -144,22 +151,26 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
                           return filtered.isEmpty
                               ? _limeBar("Ranking Klub: -")
-                              : _limeBar("Ranking Klub: ${filtered.first.peringkat}");
+                              : _limeBar(
+                                  "Ranking Klub: ${filtered.first.peringkat}",
+                                );
                         },
                       ),
 
                       const SizedBox(height: 32),
 
+                      // CHAT ICON
                       Container(
                         width: 70,
                         height: 70,
                         decoration: BoxDecoration(
-                          color: lime,
+                          color: AppColors.lime,
                           borderRadius: BorderRadius.circular(22),
                         ),
-                        child: const Icon(Icons.chat_bubble_outline,
+                        child: const Icon(
+                          Icons.chat_bubble_outline,
                           size: 36,
-                          color: Colors.black,
+                          color: AppColors.indigo,
                         ),
                       ),
                     ],
@@ -173,59 +184,35 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
         },
       ),
 
-      bottomNavigationBar: Container(
-        height: 80,
-        color: lime,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _navItem(Icons.home, "Home"),
-            _navItem(Icons.search, "Explore"),
-            _navItem(Icons.category, "Category", isActive: true),
-            _navItem(Icons.play_circle_fill, "Media"),
-          ],
-        ),
+      // BOTTOM NAVBAR 
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 2, // Category
+        onTap: (index) {
+        },
       ),
     );
   }
 
+  // HELPERS
 
   Widget _limeBar(String text) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       height: 50,
       decoration: BoxDecoration(
-        color: lime,
+        color: AppColors.lime,
         borderRadius: BorderRadius.circular(30),
       ),
       child: Center(
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: "Geologica",
             fontSize: 22,
-            color: indigo,
+            color: AppColors.indigo,
           ),
         ),
       ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, {bool isActive = false}) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 28, color: isActive ? indigo : Colors.black),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontFamily: "Geologica",
-            color: isActive ? indigo : Colors.black,
-            fontSize: 14,
-          ),
-        ),
-      ],
     );
   }
 }
