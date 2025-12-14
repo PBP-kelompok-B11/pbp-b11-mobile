@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/event/models/event_entry.dart';
-import 'package:beyond90/event/widgets/left_drawer.dart';
 import 'package:beyond90/event/screens/event_detail.dart';
 import 'package:beyond90/event/widgets/event_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+
 
 // BASE_URL diarahkan ke folder events
 const String BASE_URL = "http://localhost:8000/events"; 
@@ -51,49 +54,114 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.filterByUser ? 'My Event List' : 'All Event List'),
-      ),
-      drawer: const LeftDrawer(),
-      body: FutureBuilder<List<EventEntry>>(
-        future: fetchEvent(request),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}\n\nMake sure you are logged in.',
-                textAlign: TextAlign.center,
+      backgroundColor: AppColors.indigo,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🔙 BACK BUTTON + TITLE
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 7, 0, 0),
+              child: Row(
+                children: [
+                  InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.lime,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    widget.filterByUser ? 'My Event' : 'Event',
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.lime,
+                    ),
+                  ),
+                ],
               ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Text(
-                widget.filterByUser
-                    ? 'You haven\'t added any events yet.'
-                    : 'No events available.',
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-            );
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (_, index) => EventEntryCard(
-                event: snapshot.data![index],
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EventDetailPage(
+            ),
+
+            // 📦 CONTENT
+            Expanded(
+              child: FutureBuilder<List<EventEntry>>(
+                future: fetchEvent(request),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No events available.',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: GridView.builder(
+                      itemCount: snapshot.data!.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        mainAxisExtent: 165, // ✅ tinggi FIXED
+                      ),
+                      itemBuilder: (_, index) => EventEntryCard(
                         event: snapshot.data![index],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  EventDetailPage(event: snapshot.data![index]),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   );
                 },
               ),
-            );
+            ),
+          ],
+        ),
+      ),
+
+      // 🔽 BOTTOM NAVBAR
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 0,
+        onTap: (index) {
+          if (index == 0) return;
+
+          switch (index) {
+            case 1:
+              Navigator.pushNamed(context, 'search');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/category');
+              break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MediaFormPage(),
+                ),
+              );
+              break;
           }
         },
       ),
