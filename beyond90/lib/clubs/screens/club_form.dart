@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
 import '../models/club.dart';
 import '../service/club_service.dart';
 
 class ClubForm extends StatefulWidget {
   final Club? club;
-  final int? ranking;     
-  final int? rankingId;   
+  final int? ranking;
+  final int? rankingId;
 
   const ClubForm({
     super.key,
@@ -30,7 +31,6 @@ class _ClubFormState extends State<ClubForm> {
   @override
   void initState() {
     super.initState();
-
     nameCtrl = TextEditingController(text: widget.club?.nama ?? "");
     countryCtrl = TextEditingController(text: widget.club?.negara ?? "");
     stadiumCtrl = TextEditingController(text: widget.club?.stadion ?? "");
@@ -44,16 +44,6 @@ class _ClubFormState extends State<ClubForm> {
   Future<void> saveClub() async {
     final isEdit = widget.club != null;
 
-    if (nameCtrl.text.isEmpty ||
-        countryCtrl.text.isEmpty ||
-        stadiumCtrl.text.isEmpty ||
-        yearCtrl.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields are required")),
-      );
-      return;
-    }
-
     final clubData = {
       "nama": nameCtrl.text,
       "negara": countryCtrl.text,
@@ -64,7 +54,6 @@ class _ClubFormState extends State<ClubForm> {
 
     try {
       if (!isEdit) {
-        // ADD CLUB
         final clubId = await ClubService.createClub(clubData);
 
         if (rankingCtrl.text.isNotEmpty) {
@@ -74,12 +63,9 @@ class _ClubFormState extends State<ClubForm> {
           );
         }
       } else {
-        // EDIT CLUB
         await ClubService.updateClub(widget.club!.id, clubData);
 
-        // EDIT RANKING
-        if (widget.rankingId != null &&
-            rankingCtrl.text.isNotEmpty) {
+        if (widget.rankingId != null && rankingCtrl.text.isNotEmpty) {
           await ClubService.updateRanking(
             widget.rankingId!,
             int.parse(rankingCtrl.text),
@@ -87,7 +73,7 @@ class _ClubFormState extends State<ClubForm> {
         }
       }
 
-      Navigator.pop(context, true); 
+      Navigator.pop(context, true);
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Error: $e")));
@@ -100,96 +86,118 @@ class _ClubFormState extends State<ClubForm> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+
+      // ================= APP BAR =================
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+              color: AppColors.lime, size: 32),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
         title: Text(
           isEdit ? "EDIT CLUB" : "ADD CLUB",
           style: const TextStyle(
             fontFamily: "Geologica",
-            fontSize: 32,
+            fontSize: 36,
             color: AppColors.lime,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
+
+      // ================= BODY =================
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           children: [
-            _field("Club Name", nameCtrl),
-            _field("Country", countryCtrl),
-            _field("Stadium", stadiumCtrl),
-            _field("Year Founded", yearCtrl,
+            const SizedBox(height: 24),
+
+            _input("Club Name", nameCtrl),
+            _input("Country", countryCtrl),
+            _input("Stadium", stadiumCtrl),
+            _input("Year Founded", yearCtrl,
                 keyboard: TextInputType.number),
-            _field("Image URL", imageCtrl),
-            _field("Ranking", rankingCtrl,
+            _input("Image URL", imageCtrl),
+            _input("Ranking", rankingCtrl,
                 keyboard: TextInputType.number),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
 
+            // ================= BUTTON =================
             GestureDetector(
               onTap: saveClub,
               child: Container(
-                width: 200,
-                height: 50,
+                width: 260,
+                height: 64,
                 decoration: BoxDecoration(
                   color: AppColors.lime,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(54),
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  isEdit ? "Save" : "Add",
+                  isEdit ? "Save Club" : "Add Club",
                   style: const TextStyle(
                     fontFamily: "Geologica",
-                    fontSize: 20,
+                    fontSize: 24,
                     color: AppColors.indigo,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ),
+
+            const SizedBox(height: 120),
           ],
         ),
+      ),
+
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 2,
+        onTap: (_) {},
       ),
     );
   }
 
-  Widget _field(
-    String label,
+  // ================= INPUT FIELD (BOLD & CLEAR) =================
+  Widget _input(
+    String hint,
     TextEditingController ctrl, {
     TextInputType keyboard = TextInputType.text,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 18),
-        Text(
-          label,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Container(
+        height: 68,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(54),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        alignment: Alignment.centerLeft,
+        child: TextField(
+          controller: ctrl,
+          keyboardType: keyboard,
           style: const TextStyle(
-            fontSize: 18,
-            color: AppColors.lime,
+            fontFamily: "Geologica",
+            fontSize: 22,
+            fontWeight: FontWeight.w600, // 🔥 ISI TEKS TEBAL
+            color: AppColors.indigo,
           ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: AppColors.lime),
-          ),
-          child: TextField(
-            controller: ctrl,
-            keyboardType: keyboard,
-            style: const TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              fontFamily: "Geologica",
+              fontSize: 22,
+              fontWeight: FontWeight.bold, // 🔥 HINT TEBAL
+              color: AppColors.indigo.withOpacity(0.7),
             ),
+            border: InputBorder.none,
           ),
         ),
-      ],
+      ),
     );
   }
 }
