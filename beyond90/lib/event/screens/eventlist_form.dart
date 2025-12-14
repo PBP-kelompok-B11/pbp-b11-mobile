@@ -9,43 +9,48 @@ class EventFormPage extends StatefulWidget {
   const EventFormPage({super.key});
 
   @override
-  State<EventFormPage> createState() => EventFormPageState();
+  State<EventFormPage> createState() => _EventFormPageState();
 }
 
-class EventFormPageState extends State<EventFormPage> {
+class _EventFormPageState extends State<EventFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _namaEvent = "";
   String _lokasi = "";
-  DateTime? _tanggal;
   String _timHome = "";
   String _timAway = "";
   int _skorHome = 0;
   int _skorAway = 0;
 
   final TextEditingController _tanggalController = TextEditingController();
-
+  @override
+  void initState() {
+    super.initState();
+    _tanggalController.text =
+        "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
+  }
   @override
   void dispose() {
     _tanggalController.dispose();
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _pickDate() async {
+    final selected = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
 
-    if (picked != null) {
+    if (selected != null) {
       setState(() {
-        _tanggal = picked;
-        _tanggalController.text = "${picked.year}-${picked.month}-${picked.day}";
+        _tanggalController.text =
+            "${selected.year}-${selected.month.toString().padLeft(2, '0')}-${selected.day.toString().padLeft(2, '0')}";
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,121 +58,150 @@ class EventFormPageState extends State<EventFormPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Event Form'),
+        title: const Text("Create Event"),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
       drawer: LeftDrawer(),
+
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // === Nama Event ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    labelText: "Nama Event", border: OutlineInputBorder()),
-                onChanged: (value) => _namaEvent = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Tidak boleh kosong!" : null,
-              ),
-            ),
+          child: Column(
+            children: [
 
-            // === Lokasi ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    labelText: "Lokasi", border: OutlineInputBorder()),
-                onChanged: (value) => _lokasi = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Tidak boleh kosong!" : null,
+              // ==== NAMA EVENT ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Nama Event",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) => setState(() => _namaEvent = v),
+                  validator: (v) => v == null || v.isEmpty
+                      ? "Nama event tidak boleh kosong!"
+                      : null,
+                ),
               ),
-            ),
 
-            // === Tanggal ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: _tanggalController,
-                readOnly: true,
-                decoration: const InputDecoration(
-                    labelText: "Tanggal", border: OutlineInputBorder()),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Pilih tanggal!" : null,
-                onTap: () => _selectDate(context),
+              // ==== LOKASI ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Lokasi Event",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) => setState(() => _lokasi = v),
+                  validator: (v) => v == null || v.isEmpty
+                      ? "Lokasi tidak boleh kosong!"
+                      : null,
+                ),
               ),
-            ),
 
-            // === Tim Home ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    labelText: "Tim Home", border: OutlineInputBorder()),
-                onChanged: (value) => _timHome = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Tidak boleh kosong!" : null,
+              // ==== TANGGAL ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  controller: _tanggalController,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: "Tanggal Event",
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  onTap: _pickDate,
+
+                  // FIX: Validasi cek controller, bukan cek _tanggal (karena _tanggal tdk nullable)
+                  validator: (_) {
+                    if (_tanggalController.text.isEmpty) {
+                      return "Tanggal wajib diisi!";
+                    }
+                    return null;
+                  },
+                ),
               ),
-            ),
 
-            // === Tim Away ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                    labelText: "Tim Away", border: OutlineInputBorder()),
-                onChanged: (value) => _timAway = value,
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Tidak boleh kosong!" : null,
+              // ==== TIM HOME ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Tim Home",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) => setState(() => _timHome = v),
+                  validator: (v) => v == null || v.isEmpty
+                      ? "Nama tim Home tidak boleh kosong!"
+                      : null,
+                ),
               ),
-            ),
 
-            // === Skor Home ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                    labelText: "Skor Home", border: OutlineInputBorder()),
-                onChanged: (value) {
-                  _skorHome = int.tryParse(value) ?? 0;
-                },
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Isi skor!" : null,
+              // ==== TIM AWAY ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Tim Away",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) => setState(() => _timAway = v),
+                  validator: (v) => v == null || v.isEmpty
+                      ? "Nama tim Away tidak boleh kosong!"
+                      : null,
+                ),
               ),
-            ),
 
-            // === Skor Away ===
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                    labelText: "Skor Away", border: OutlineInputBorder()),
-                onChanged: (value) {
-                  _skorAway = int.tryParse(value) ?? 0;
-                },
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Isi skor!" : null,
+              // ==== SKOR HOME ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Skor Home (opsional)",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) {
+                    setState(() {
+                      if (v.isNotEmpty) {
+                        _skorHome = int.tryParse(v) ?? 0;
+                      }
+                    });
+                  },
+                ),
               ),
-            ),
 
-            // === Tombol Simpan ===
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              // ==== SKOR AWAY ====
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Skor Away (opsional)",
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (v) {
+                    setState(() {
+                      if (v.isNotEmpty) {
+                        _skorAway = int.tryParse(v) ?? 0;
+                      }
+                    });
+                  },
+                ),
+              ),
+
+              // ==== BUTTON SIMPAN ====
+              Padding(
+                padding: const EdgeInsets.all(12),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.indigo),
+                    backgroundColor: Colors.indigo,
+                  ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final response = await request.postJson(
-                        "http://localhost:8000/event/add-flutter/",
+                        "http://localhost:8000/create-event-flutter/",
                         jsonEncode({
                           "nama_event": _namaEvent,
                           "lokasi": _lokasi,
@@ -179,35 +213,39 @@ class EventFormPageState extends State<EventFormPage> {
                         }),
                       );
 
-                      if (context.mounted) {
-                        if (response['status'] == 'success') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Event successfully added!")),
-                          );
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MyHomePage()),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Something went wrong.")),
-                          );
-                        }
+                      if (!mounted) return;
+
+                      if (response['status'] == 'success') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Event berhasil dibuat!"),
+                          ),
+                        );
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EventHomePage(),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Gagal membuat event. Coba lagi."),
+                          ),
+                        );
                       }
                     }
                   },
                   child: const Text(
-                    "Save",
+                    "Simpan",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
   }

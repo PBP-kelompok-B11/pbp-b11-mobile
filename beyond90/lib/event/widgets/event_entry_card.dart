@@ -13,13 +13,7 @@ class EventEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tentukan URL untuk Thumbnail. 
-    // Jika event.thumbnail adalah null atau kosong, gunakan URL placeholder yang aman.
-    final String imageUrl = (event.thumbnail?.isNotEmpty == true) 
-        // Jika ada, gunakan URL aslinya dan panggil event.thumbnail! untuk memberi tahu Dart bahwa itu pasti String
-        ? 'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(event.thumbnail!)}'
-        // Jika null/kosong, gunakan URL placeholder yang tidak akan error.
-        : 'https://placehold.co/600x400/CCCCCC/000000?text=No+Image';
+    final fields = event.fields;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -34,60 +28,85 @@ class EventEntryCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Thumbnail
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  // Gunakan imageUrl yang sudah diproses
-                  child: Image.network(
-                    imageUrl,
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.broken_image)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Name
+                // =============================
+                // NAMA EVENT
+                // =============================
                 Text(
-                  event.name,
+                  fields.namaEvent,
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 6),
 
-                // Category
-                Text('Category: ${event.category}'),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
 
-                // Description Preview
-                Text(
-                  event.description.length > 100
-                      ? '${event.description.substring(0, 100)}...'
-                      : event.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black54),
+                // =============================
+                // LOKASI
+                // =============================
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, size: 18),
+                    const SizedBox(width: 6),
+                    Text(fields.lokasi),
+                  ],
                 ),
+
                 const SizedBox(height: 6),
 
-                // Featured indicator
-                if (event.isFeatured)
-                  const Text(
-                    'Featured',
-                    style: TextStyle(
-                      color: Colors.amber,
-                      fontWeight: FontWeight.bold
+                // =============================
+                // TANGGAL
+                // =============================
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      "${fields.tanggal.year}-${fields.tanggal.month.toString().padLeft(2, '0')}-${fields.tanggal.day.toString().padLeft(2, '0')}",
                     ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+                const Divider(thickness: 1),
+                const SizedBox(height: 10),
+
+                // =============================
+                // MATCHUP
+                // =============================
+                Text(
+                  "${fields.timHome} vs ${fields.timAway}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+
+                // =============================
+                // SKOR
+                // =============================
+                Text(
+                  "${fields.skorHome} : ${fields.skorAway}",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.indigo,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // =============================
+                // CREATED BY (optional)
+                // =============================
+                if (fields.createdBy != null)
+                  Text(
+                    "Dibuat oleh: ${fields.createdBy}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
               ],
             ),

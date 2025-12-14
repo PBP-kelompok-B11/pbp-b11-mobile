@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beyond90/event/screens/menu_event.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart';
 import 'package:beyond90/event/screens/event_entry_list.dart';
-import 'package:beyond90/event/screens/login.dart'; // Import halaman login
+import 'package:beyond90/authentication/screens/login.dart'; // Import halaman login
 import 'package:pbp_django_auth/pbp_django_auth.dart'; // Import provider auth
 import 'package:provider/provider.dart'; // Import provider
 
@@ -57,7 +57,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyHomePage(),
+                    builder: (context) => EventHomePage(),
                   ));
             },
           ),
