@@ -1,16 +1,14 @@
-import 'package:beyond90/search/screen/search_default_page.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
-
 import 'package:beyond90/landing_page/widgets/main_title.dart';
 import 'package:beyond90/landing_page/widgets/tagline_section.dart';
 import 'package:beyond90/landing_page/widgets/stat_section.dart';
 import 'package:beyond90/landing_page/widgets/tagline_section_2.dart';
 import 'package:beyond90/landing_page/widgets/gallery_button.dart';
 import 'package:beyond90/landing_page/widgets/login_button.dart';
-
 import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+import 'package:beyond90/search/screen/search_default_page.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key});
@@ -19,7 +17,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      
+
       body: SafeArea(
         child: Stack(
           children: [
@@ -31,19 +29,15 @@ class MyHomePage extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 100),
-
                       const MainTitle(),
                       const SizedBox(height: 32),
-
                       const TaglineSection(),
                       const SizedBox(height: 48),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const StatsSection(),
                           const SizedBox(width: 24),
-
                           Container(
                             width: 4,
                             height: 120,
@@ -53,11 +47,9 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 24),
-
                           const TaglineSection2(),
                         ],
                       ),
-
                       const SizedBox(height: 48),
                       const GalleryButton(),
                       const SizedBox(height: 100),
@@ -65,6 +57,13 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+
+            // ===== LOGIN / LOGOUT BUTTON =====
+            const Positioned(
+              top: 16,
+              right: 16,
+              child: LoginButton(),
             ),
           ],
         ),
@@ -77,23 +76,20 @@ class MyHomePage extends StatelessWidget {
 
           switch (index) {
             case 1:
-              Navigator.pushNamed(context, 'search');
+              Navigator.pushNamed(context, '/search');
               break;
             case 2:
               Navigator.pushNamed(context, '/category');
               break;
             case 3:
-             // Halaman media gallery
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => MediaFormPage())
+                MaterialPageRoute(builder: (_) => MediaFormPage()),
               );
-              break; 
+              break;
           }
         },
       ),
     );
   }
 }
-

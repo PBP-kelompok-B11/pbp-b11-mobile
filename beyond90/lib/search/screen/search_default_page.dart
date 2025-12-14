@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'package:beyond90/category/category_page.dart';
+import 'package:beyond90/landing_page/screeen/landing_page.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
 
-// widgets kamu
+
+// Widgets
 import 'package:beyond90/search/widgets/search_bar.dart';
 import 'package:beyond90/widgets/event_card.dart';
 import 'package:beyond90/widgets/player_card.dart';
@@ -34,12 +38,27 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
   bool showArrowPlayer = false;
   bool showArrowClub = false;
 
+  // =========================
+  // INIT
+  // =========================
   @override
   void initState() {
     super.initState();
     _addScrollListeners();
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollControllerEvent.dispose();
+    _scrollControllerPlayer.dispose();
+    _scrollControllerClub.dispose();
+    super.dispose();
+  }
+
+  // =========================
+  // SCROLL LISTENER
+  // =========================
   void _addScrollListeners() {
     _scrollControllerEvent.addListener(() {
       if (_scrollControllerEvent.offset > 50 && !showArrowEvent) {
@@ -60,50 +79,88 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
     });
   }
 
+  // =========================
+  // API SEARCH
+  // =========================
   Future<void> fetchSearchResults(String query) async {
     if (query.isEmpty) return;
+
     setState(() => isLoading = true);
 
     try {
       final response = await http.get(
-        Uri.parse("http://10.0.2.2:8000/api/search?query=$query"),
+        Uri.parse(
+          "http://10.0.2.2:8000/search/api/search/?q=$query&type=players",
+        ),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
         setState(() {
-          eventList = data["events"] ?? [];
-          playerList = data["players"] ?? [];
-          clubList = data["clubs"] ?? [];
+          eventList = data['events'] ?? [];
+          playerList = data['players'] ?? [];
+          clubList = data['clubs'] ?? [];
         });
       }
     } catch (e) {
-      print("ERROR: $e");
+      debugPrint("Search error: $e");
     }
 
     setState(() => isLoading = false);
   }
 
+  // =========================
+  // NAVBAR HANDLER
+  // =========================
+  void _onNavbarTap(int index) {
+    if (index == 1) return; // already on Search
+
+    Widget page;
+    switch (index) {
+      case 0:
+        page = const MyHomePage();
+        break;
+      case 2:
+        page = const CategoryPage();
+        break;
+      case 3:
+        page = const MediaFormPage();
+        break;
+      default:
+        page = const SearchDefaultPage();
+    }
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => page,
+        transitionDuration: Duration.zero,
+      ),
+    );
+  }
+
+  // =========================
+  // UI
+  // =========================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.indigo,
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 1,
-        onTap: (index) {}, 
+        onTap: _onNavbarTap,
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               const SizedBox(height: 24),
+
               SearchBarWidget(
                 controller: _searchController,
-                onSubmitted: (value) => fetchSearchResults(value),
+                onSubmitted: fetchSearchResults,
               ),
 
               const SizedBox(height: 40),
@@ -111,20 +168,15 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
               _horizontalSection(
                 scrollController: _scrollControllerEvent,
                 items: eventList.isNotEmpty
-                    ? eventList.map((event) {
+                    ? eventList.map<Widget>((event) {
                         return EventCard(
-                          imageUrl: event["image_url"],
-                          title: event["title"],
-                          date: event["date"],
+                          imageUrl: event['image_url'] ?? '',
+                          title: event['nama_event'] ?? 'Unknown',
+                          date: '',
                           onTap: () {},
                         );
                       }).toList()
-                    : _placeholderCards(EventCard(
-                        imageUrl: "",
-                        title: "No Data",
-                        date: "",
-                        onTap: (){},
-                      )),
+                    : _placeholderCards(_emptyEventCard()),
                 showArrow: showArrowEvent,
               ),
 
@@ -133,18 +185,15 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
               _horizontalSection(
                 scrollController: _scrollControllerPlayer,
                 items: playerList.isNotEmpty
-                    ? playerList.map((player) {
+                    ? playerList.map<Widget>((player) {
                         return PlayerCard(
-                          imageUrl: player["image_url"],
-                          name: player["name"],
-                          onTap: () {}, position: '',
+                          imageUrl: player['image_url'] ?? '',
+                          name: player['nama'] ?? 'Unknown',
+                          position: player['posisi'] ?? '',
+                          onTap: () {},
                         );
                       }).toList()
-                    : _placeholderCards(PlayerCard(
-                        imageUrl: "",
-                        name: "No Data",
-                        onTap: (){}, position: '',
-                      )),
+                    : _placeholderCards(_emptyPlayerCard()),
                 showArrow: showArrowPlayer,
               ),
 
@@ -153,23 +202,19 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
               _horizontalSection(
                 scrollController: _scrollControllerClub,
                 items: clubList.isNotEmpty
-                    ? clubList.map((club) {
+                    ? clubList.map<Widget>((club) {
                         return ClubCard(
-                          imageUrl: club["image_url"],
-                          clubName: club["name"],
-                          location: club["location"],
+                          imageUrl: club['image_url'] ?? '',
+                          clubName: club['nama'] ?? 'Unknown',
+                          location: club['negara'] ?? '',
                           onTap: () {},
                         );
                       }).toList()
-                    : _placeholderCards(ClubCard(
-                        imageUrl: "",
-                        clubName: "No Data",
-                        onTap: (){}, location: '',
-                      )),
+                    : _placeholderCards(_emptyClubCard()),
                 showArrow: showArrowClub,
               ),
 
-              const SizedBox(height: 100),
+              const SizedBox(height: 120),
             ],
           ),
         ),
@@ -177,20 +222,20 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
     );
   }
 
-  List<Widget> _placeholderCards(Widget card) =>
-      [card, const SizedBox(), const SizedBox()];
-
+  // =========================
+  // HELPERS
+  // =========================
   Widget _sectionTitle(String title) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24),
-    child: Text(
-      title,
-      style: TextStyle(
-        color: AppColors.lime,
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: AppColors.lime,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
 
   Widget _horizontalSection({
     required ScrollController scrollController,
@@ -213,26 +258,52 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
             Positioned(
               right: 0,
               top: 130,
-              child: Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: AppColors.lime,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  "→",
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.indigo,
-                  ),
-                ),
-              ),
+              child: _scrollHint(),
             ),
         ],
       ),
     );
   }
+
+  Widget _scrollHint() => Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppColors.lime,
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          "→",
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: AppColors.indigo,
+          ),
+        ),
+      );
+
+  List<Widget> _placeholderCards(Widget card) =>
+      [card, const SizedBox(), const SizedBox()];
+
+  Widget _emptyEventCard() => EventCard(
+        imageUrl: '',
+        title: 'No Data',
+        date: '',
+        onTap: () {},
+      );
+
+  Widget _emptyPlayerCard() => PlayerCard(
+        imageUrl: '',
+        name: 'No Data',
+        position: '',
+        onTap: () {},
+      );
+
+  Widget _emptyClubCard() => ClubCard(
+        imageUrl: '',
+        clubName: 'No Data',
+        location: '',
+        onTap: () {},
+      );
 }

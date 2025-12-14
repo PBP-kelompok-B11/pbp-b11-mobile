@@ -34,44 +34,44 @@ class CategoryPage extends StatelessWidget {
         child: Column(
           children: [
             // PLAYER
-            CategoryCard(
-              title: "Player",
-              description: "See various players from all over the world!",
-              buttonText: "See all players",
-              highlightColor: lime,
-              mainColor: bg,
-              onTap: () {},
-            ),
+           // CategoryCard(
+             // title: "Player",
+             // description: "See various players from all over the world!",
+              //buttonText: "See all players",
+            // highlightColor: lime,
+             // mainColor: bg,
+           //   onTap: () {},
+           // ),
 
             // CLUB
-            CategoryCard(
-              title: "Club",
-              description: "Meet the greatest clubs around the world!",
-              buttonText: "See all clubs",
-              highlightColor: lime,
-              mainColor: bg,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ClubListUser()),
-                );
-              },
-            ),
+            //CategoryCard(
+            //  title: "Club",
+            //  description: "Meet the greatest clubs around the world!",
+            //  buttonText: "See all clubs",
+            //  highlightColor: lime,
+            //  mainColor: bg,
+            //  onTap: () {
+            //    Navigator.push(
+            //      context,
+           //       MaterialPageRoute(builder: (_) => const ClubListUser()),
+             //   );
+          //    },
+           // ),
 
             // EVENT
-            CategoryCard(
-              title: "Event",
-              description: "Witness the battle of the world's greatest",
-              buttonText: "See all events",
-              highlightColor: lime,
-              mainColor: bg,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => EventHomePage()),
-                );
-              },
-            ),
+         //   CategoryCard(
+          //    title: "Event",
+         //     description: "Witness the battle of the world's greatest",
+         //     buttonText: "See all events",
+         //     highlightColor: lime,
+         //     mainColor: bg,
+         //     onTap: () {
+         //       Navigator.push(
+         //         context,
+         //         MaterialPageRoute(builder: (_) => EventHomePage()),
+        //        );
+      //        },
+        //    ),
           ],
         ),
       ),

@@ -1,12 +1,14 @@
-import 'package:beyond90/authentication/screens/login.dart';
-import 'package:beyond90/clubs/screens/club_list_admin.dart';
+import 'package:beyond90/authentication/screens/register.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+
+import 'package:beyond90/authentication/screens/login.dart';
 import 'landing_page/screeen/landing_page.dart';
 import 'search/screen/search_default_page.dart';
-import 'category/category_page.dart';
-// import 'package:beyond90/landing_page/screeen/landing_page.dart';
+import 'category/screens/category_page.dart';
+
 
 void main() {
   runApp(
@@ -34,9 +36,12 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const MyHomePage(),
         '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+        '/media_gallery': (context) => const MediaFormPage(),
       },
-      home: const ClubListAdmin(),
+
+      home: const MyHomePage(),
     );
   }
 }
-
