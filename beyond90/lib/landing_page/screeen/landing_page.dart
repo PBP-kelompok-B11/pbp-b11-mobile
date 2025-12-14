@@ -77,13 +77,19 @@ class MyHomePage extends StatelessWidget {
 
           switch (index) {
             case 1:
-              Navigator.pushReplacementNamed(context, 'search');
+              Navigator.pushNamed(context, 'search');
               break;
             case 2:
-              Navigator.pushReplacementNamed(context, '/category');
+              Navigator.pushNamed(context, '/category');
               break;
             case 3:
-              break; // Media belum ada
+             // Halaman media gallery
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MediaFormPage())
+              );
+              break; 
           }
         },
       ),

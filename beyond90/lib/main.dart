@@ -5,6 +5,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'landing_page/screeen/landing_page.dart';
 import 'search/screen/search_default_page.dart';
 import 'category/category_page.dart';
+// import 'package:beyond90/landing_page/screeen/landing_page.dart';
 
 void main() {
   runApp(

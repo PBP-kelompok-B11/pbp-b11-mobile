@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import '../category/widgets/category_card.dart';
 import '../../clubs/screens/club_list_custom.dart';
 import '../../event/screens/menu_event.dart';
+import 'package:beyond90/app_colors.dart';
+
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bg = const Color(0xFF1E1B4B);
-    final lime = const Color(0xFFBEF264);
+    final bg = AppColors.indigo;
+    final lime = AppColors.lime;
 
     return Scaffold(
       backgroundColor: bg,

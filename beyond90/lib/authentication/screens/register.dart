@@ -52,6 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registrasi gagal.")),
       );
+      setState(() => isLoading = false);
     }
   }
 
