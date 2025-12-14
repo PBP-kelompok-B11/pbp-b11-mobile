@@ -76,20 +76,20 @@ class MyHomePage extends StatelessWidget {
                 ));
               break;
             case 1:
-              // Halaman explore
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => //ExplorePage
-                  ));
-              break;
+              // // Halaman explore
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => //ExplorePage()
+              //     ));
+              // break;
             case 2:
-              // Halaman category
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => //CategoryPage() 
-                  ));
+              // // Halaman category
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => //CategoryPage() 
+              //     ));
               break;
             case 3:
               // Halaman media gallery
@@ -99,9 +99,6 @@ class MyHomePage extends StatelessWidget {
                   builder: (context) => MediaFormPage())
               );
               break;
-
-
-
           }
         },
       ),
