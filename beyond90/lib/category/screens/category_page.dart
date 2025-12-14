@@ -76,7 +76,7 @@ class CategoryPage extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/search');
               break;
             case 3:
-              Navigator.pushReplacementNamed(context, '/media');
+              Navigator.pushReplacementNamed(context, '/media_gallery');
               break;
           }
         },

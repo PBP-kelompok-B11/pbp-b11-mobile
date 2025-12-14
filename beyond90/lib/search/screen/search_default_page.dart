@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:beyond90/category/category_page.dart';
+import 'package:beyond90/category/screens/category_page.dart';
 import 'package:beyond90/landing_page/screeen/landing_page.dart';
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:http/http.dart' as http;

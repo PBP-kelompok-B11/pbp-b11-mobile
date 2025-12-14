@@ -82,9 +82,7 @@ class MyHomePage extends StatelessWidget {
               Navigator.pushNamed(context, '/category');
               break;
             case 3:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => MediaFormPage()),
+              Navigator.pushNamed(context, '/media_gallery'
               );
               break;
           }
