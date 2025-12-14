@@ -6,7 +6,7 @@ import 'package:beyond90/authentication/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
-const String BASE_URL = "http://localhost:8000"; 
+const String baseURL = "http://localhost:8000/events"; 
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item; 
@@ -40,7 +40,7 @@ class ItemCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const EventEntryListPage(filterByUser: true)),
             );
           } else if (item.name == "Logout") {
-            final response = await request.logout("$BASE_URL/auth/logout/");
+            final response = await request.logout("$baseURL/auth/logout/");
             String message = response["message"];
             if (context.mounted) {
               if (response['status']) {
