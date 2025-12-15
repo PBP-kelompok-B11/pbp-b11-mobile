@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFF261893),
         ),
       ),
-      routes: {
+      routes: { // Named Route
         '/home': (context) => const MyHomePage(),
         '/search': (context) => const SearchDefaultPage(),
         '/category': (context) => const CategoryPage(),
