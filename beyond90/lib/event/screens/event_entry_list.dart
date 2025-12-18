@@ -9,6 +9,14 @@ import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 
 
+Future<bool> isAdmin(CookieRequest request) async {
+  final response = await request.get(
+    "http://localhost:8000/user/"
+  );
+
+  return response['is_staff'] == true || response['is_superuser'] == true;
+}
+
 // BASE_URL diarahkan ke folder events
 const String BASE_URL = "http://localhost:8000/events"; 
 
@@ -61,31 +69,61 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
           children: [
             // 🔙 BACK BUTTON + TITLE
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 7, 0, 0),
-              child: Row(
-                children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: AppColors.lime,
-                      size: 30,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    widget.filterByUser ? 'My Event' : 'Event',
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.lime,
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
+              child: FutureBuilder<bool>(
+                future: isAdmin(request),
+                builder: (context, snapshot) {
+                  final isAdminUser = snapshot.data ?? false;
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () => Navigator.pop(context),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new,
+                              color: AppColors.lime,
+                              size: 30,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            widget.filterByUser ? 'My Event' : 'Event',
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.lime,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // 🟢 CREATE EVENT (ADMIN ONLY)
+                      if (isAdminUser)
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/event/create');
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.only(top: 6),
+                            child: Text(
+                              'Create Event',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.lime,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
-
             // 📦 CONTENT
             Expanded(
               child: FutureBuilder<List<EventEntry>>(
