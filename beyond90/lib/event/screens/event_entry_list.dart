@@ -125,7 +125,7 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
               ),
             ),
             // 📦 CONTENT
-            Expanded(
+            Expanded( //test
               child: FutureBuilder<List<EventEntry>>(
                 future: fetchEvent(request),
                 builder: (context, snapshot) {
