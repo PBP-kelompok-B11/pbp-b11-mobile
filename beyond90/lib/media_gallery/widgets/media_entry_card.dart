@@ -19,9 +19,10 @@ class MediaEntryCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Card(
+          color: AppColors.background,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.grey.shade300),
+            side: BorderSide(color: AppColors.lime),
           ),
           elevation: 2,
           child: Padding(
@@ -47,14 +48,14 @@ class MediaEntryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
 
-                // Cdeskripsi
+                // deskripsi
                 Text(
                   media.deskripsi.length > 100
                       ? '${media.deskripsi.substring(0, 100)}...'
                       : media.deskripsi,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.black54),
+                  style: const TextStyle(color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 6),
 
