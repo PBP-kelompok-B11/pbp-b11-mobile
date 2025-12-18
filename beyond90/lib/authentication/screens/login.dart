@@ -31,15 +31,14 @@ class _LoginPageState extends State<LoginPage> {
     if (!mounted) return;
 
     if (result["success"] == true) {
+      // Pindah halaman tanpa kirim parameter manual
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MyHomePage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Username atau password salah."),
-        ),
+        SnackBar(content: Text(result["message"] ?? "Username atau password salah.")),
       );
     }
   }

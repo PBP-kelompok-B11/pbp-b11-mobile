@@ -52,9 +52,14 @@ class CategoryPage extends StatelessWidget {
                 subtitle: "Witness the battle of the world's greatest",
                 actionText: 'See all events',
                 onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) => EventEntryListPage(),
-                  ));
+                  Navigator.pushReplacement(
+                    context, PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const EventEntryListPage(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
                 },
               ),
 

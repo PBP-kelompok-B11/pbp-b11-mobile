@@ -11,7 +11,11 @@ import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:beyond90/search/screen/search_default_page.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  // 1. Tambahkan variabel penampung
+  final bool isAdmin; 
+
+  // 2. Tambahkan ke constructor (default false agar tidak error saat dipanggil biasa)
+  const MyHomePage({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
