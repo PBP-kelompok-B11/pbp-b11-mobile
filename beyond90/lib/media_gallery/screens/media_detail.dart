@@ -1,3 +1,4 @@
+import 'package:beyond90/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/media_gallery/models/media_entry.dart';
 
@@ -18,8 +19,8 @@ class MediaDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('News Detail'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.lime,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -54,7 +55,7 @@ class MediaDetailPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade100,
+                          color: AppColors.indigo,
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
@@ -62,7 +63,7 @@ class MediaDetailPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.indigo.shade700,
+                            color: AppColors.lime,
                           ),
                         ),
                       ),
@@ -84,7 +85,7 @@ class MediaDetailPage extends StatelessWidget {
                       Icon(Icons.visibility, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        '${media.viewers} views',
+                        'Total Views\n${media.viewers} views',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[600],

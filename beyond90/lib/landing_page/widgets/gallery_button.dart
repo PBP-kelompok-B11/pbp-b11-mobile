@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
-import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 
 class GalleryButton extends StatelessWidget {
   const GalleryButton({super.key});
@@ -15,7 +15,7 @@ class GalleryButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MediaFormPage(),
+            builder: (context) => MediaEntryListPage(),
           ));
       },
       child: Container(

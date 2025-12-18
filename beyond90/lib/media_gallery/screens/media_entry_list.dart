@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/media_gallery/models/media_entry.dart';
-// import 'package:beyond90/media_gallery/screens/media_detail.dart';
+import 'package:beyond90/media_gallery/screens/media_detail.dart';
 import 'package:beyond90/media_gallery/widgets/media_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 
 class MediaEntryListPage extends StatefulWidget {
   const MediaEntryListPage({super.key});
@@ -37,8 +40,42 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
+      backgroundColor: AppColors.indigo,
       appBar: AppBar(
-        title: const Text('Media Entry List'),
+        title: const Text('Gallery'),
+        backgroundColor: AppColors.indigo,
+        foregroundColor: AppColors.lime,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: ElevatedButton(
+              onPressed: (){
+                Navigator.push(context, 
+                  MaterialPageRoute(
+                    builder: (context) => const MediaFormPage()
+                  )
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.lime,
+                foregroundColor: AppColors.indigo,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+              ),
+              child: const Text(
+                '+ Add Media',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: fetchMedia(request),
@@ -62,18 +99,37 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
                 itemBuilder: (_, index) => MediaEntryCard(
                   media: snapshot.data![index],
                   onTap: () {
-                    // Show a snackbar when news card is clicked
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        SnackBar(
-                          content: Text("You clicked on ${snapshot.data![index].title}"),
+                    Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (context) => MediaDetailPage(
+                          media: snapshot.data![index],
                         ),
-                      );
+                      ),
+                    );
                   },
                 ),
               );
             }
+          }
+        },
+      ),
+
+       // ===== BOTTOM NAVBAR =====
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 3, // media
+        onTap: (index) {
+          if (index == 3) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
           }
         },
       ),
