@@ -14,21 +14,42 @@ class LoginButton extends StatelessWidget {
 
         return GestureDetector(
           onTap: () async {
-            // BELUM LOGIN → LOGIN PAGE
+            // 1. JIKA BELUM LOGIN -> PINDAH KE HALAMAN LOGIN
             if (!isLoggedIn) {
               Navigator.pushNamed(context, '/login');
               return;
             }
 
-            // SUDAH LOGIN → LOGOUT
-            await request.logout(
-              'http://localhost:8000/authentication/logout/',
+            // 2. JIKA SUDAH LOGIN -> PROSES LOGOUT
+            // Gunakan IP 10.0.2.2 jika pakai emulator Android, atau 127.0.0.1 jika Chrome
+            final response = await request.logout(
+              'http://127.0.0.1:8000/logout/',
             );
 
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logout berhasil')),
-              );
+              // Cek apakah logout sukses di sisi Django
+              if (response['status'] == true || response['success'] == true) {
+                
+                // RESET status admin global kita agar bersih
+                // AuthService.isAdmin = false; 
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Logout berhasil!')),
+                );
+
+                // 3. PINDAH KE HALAMAN LOGIN & HAPUS SEMUA HALAMAN SEBELUMNYA
+                // Kita gunakan pushNamedAndRemoveUntil agar user tidak bisa klik 'Back' ke Home
+                Navigator.pushNamedAndRemoveUntil(
+                  context, 
+                  '/login', 
+                  (route) => false,
+                );
+              } else {
+                // Jika gagal (misal koneksi mati)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Logout gagal: ${response['message']}')),
+                );
+              }
             }
           },
           child: Container(
