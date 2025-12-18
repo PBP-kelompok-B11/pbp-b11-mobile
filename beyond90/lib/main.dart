@@ -1,10 +1,6 @@
 import 'package:beyond90/authentication/screens/register.dart';
-<<<<<<< Updated upstream
-import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
-=======
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart';
->>>>>>> Stashed changes
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -43,12 +39,8 @@ class MyApp extends StatelessWidget {
         '/category': (context) => const CategoryPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-<<<<<<< Updated upstream
-        '/media_gallery': (context) => const MediaEntryListPage(),
-=======
         '/media_gallery': (context) => const MediaFormPage(),
         '/event/create': (context) => const EventFormPage(),
->>>>>>> Stashed changes
       },
 
       home: const MyHomePage(),
