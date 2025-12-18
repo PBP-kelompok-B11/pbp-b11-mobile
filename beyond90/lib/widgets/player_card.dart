@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 
 class PlayerCard extends StatelessWidget {
-  final String imageUrl;
-  final String name;
-  final String position;
+  final String thumbnail;
+  final String nama;
+  final String negara;
+  final int usia;
+  final double tinggi;
+  final double berat;
+  final String posisi;
   final VoidCallback onTap;
 
   const PlayerCard({
     super.key,
-    required this.imageUrl,
-    required this.name,
-    required this.position,
+    required this.thumbnail,
+    required this.nama,
+    required this.negara,
+    required this.usia,
+    required this.tinggi,
+    required this.berat,
+    required this.posisi,
     required this.onTap,
   });
 
@@ -21,88 +29,109 @@ class PlayerCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 220,
+        height: 200,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: const Color(0xFFD9D9D9), // sesuai Figma grey
+          color: const Color.fromARGB(255, 255, 255, 255), // sesuai Figma grey
           borderRadius: BorderRadius.circular(35),
         ),
+
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Player Image
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
-              child: Image.network(
-                imageUrl,
-                height: 180,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+            Image.network(
+              thumbnail,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 200,
+                  color: Colors.grey,
+                );
+              },
             ),
-
             const SizedBox(height: 10),
 
             // Player Name
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 32, // 6xl approx sesuai desain
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Geologica',
-                color: AppColors.indigo,
-                height: 1.2,
+            // White section with details
+            Expanded( // Wrap dengan Expanded
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Player Name
+                    Text(
+                      nama,
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'Geologica',
+                        color: AppColors.indigo,
+                        height: 1.1,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Position with Badge Icon
+                    Row(
+                      children: [
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: const BoxDecoration(
+                            color: AppColors.indigo,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.shield,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          posisi,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Geologica',
+                            color: AppColors.indigo,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Spacer(), 
+
+                    // Details Button
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: AppColors.lime,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Details',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Geologica',
+                            color: AppColors.indigo,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            const SizedBox(height: 6),
-
-            // Position with Badge Icon
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: const BoxDecoration(
-                    color: AppColors.indigo,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  position,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontFamily: 'Geologica',
-                    color: AppColors.indigo,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 14),
-
-            // Details Button
-            Container(
-              width: 150,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.lime,
-                borderRadius: BorderRadius.circular(34),
-              ),
-              child: const Center(
-                child: Text(
-                  'Details',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Geologica',
-                    color: AppColors.indigo,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 14),
           ],
         ),
       ),

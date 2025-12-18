@@ -6,6 +6,8 @@ import 'package:beyond90/category/widgets/category_card.dart';
 
 import 'package:beyond90/widgets/bottom_navbar.dart';
 
+import 'package:beyond90/player/screens/player_entry_list.dart';
+
 class CategoryPage extends StatelessWidget {
   const CategoryPage({super.key});
 
@@ -32,7 +34,14 @@ class CategoryPage extends StatelessWidget {
                 subtitle: 'See various players from all over the world!',
                 actionText: 'See all players',
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/players');
+                  // Navigator.pushReplacementNamed(context, '/players');
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PlayerEntryListPage(filter: "All"),
+                    ),
+                  );
                 },
               ),
 

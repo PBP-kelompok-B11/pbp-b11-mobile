@@ -187,9 +187,13 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 items: playerList.isNotEmpty
                     ? playerList.map<Widget>((player) {
                         return PlayerCard(
-                          imageUrl: player['image_url'] ?? '',
-                          name: player['nama'] ?? 'Unknown',
-                          position: player['posisi'] ?? '',
+                          thumbnail: player['thumbnail'] ?? '',
+                          nama: player['nama'] ?? 'Unknown',
+                          negara: player['negara'] ?? '',
+                          usia: player['usia'] ?? 0,
+                          tinggi: (player['tinggi'] as num?)?.toDouble() ?? 0.0,
+                          berat: (player['berat'] as num?)?.toDouble() ?? 0.0,
+                          posisi: player['posisi'] ?? '',
                           onTap: () {},
                         );
                       }).toList()
@@ -294,11 +298,16 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
       );
 
   Widget _emptyPlayerCard() => PlayerCard(
-        imageUrl: '',
-        name: 'No Data',
-        position: '',
-        onTap: () {},
-      );
+    thumbnail: '',
+    nama: 'No Data',
+    negara: '',
+    usia: 0,
+    tinggi: 0.0,
+    berat: 0.0,
+    posisi: '',
+    onTap: () {},
+  );
+
 
   Widget _emptyClubCard() => ClubCard(
         imageUrl: '',
