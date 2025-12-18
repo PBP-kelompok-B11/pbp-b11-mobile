@@ -18,7 +18,6 @@ class EventHomePage extends StatelessWidget {
 
   final List<ItemHomepage> items = [
     ItemHomepage("All Events", Icons.emoji_events, Colors.blue),
-    ItemHomepage("My Events", Icons.emoji_events_outlined, Colors.green),
     ItemHomepage("Add Event", Icons.event, Colors.red),
   ];
 

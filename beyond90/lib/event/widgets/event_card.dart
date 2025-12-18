@@ -34,11 +34,6 @@ class ItemCard extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const EventEntryListPage()),
             );
-          } else if (item.name == "My Events") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EventEntryListPage(filterByUser: true)),
-            );
           } else if (item.name == "Logout") {
             final response = await request.logout("$baseURL/auth/logout/");
             String message = response["message"];

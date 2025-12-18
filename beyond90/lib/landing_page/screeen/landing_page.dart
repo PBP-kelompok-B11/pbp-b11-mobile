@@ -7,11 +7,15 @@ import 'package:beyond90/landing_page/widgets/tagline_section_2.dart';
 import 'package:beyond90/landing_page/widgets/gallery_button.dart';
 import 'package:beyond90/landing_page/widgets/login_button.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
-import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 import 'package:beyond90/search/screen/search_default_page.dart';
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+  // 1. Tambahkan variabel penampung
+  final bool isAdmin; 
+
+  // 2. Tambahkan ke constructor (default false agar tidak error saat dipanggil biasa)
+  const MyHomePage({super.key, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +86,7 @@ class MyHomePage extends StatelessWidget {
               Navigator.pushNamed(context, '/category');
               break;
             case 3:
-              Navigator.pushNamed(context, '/media_gallery'
-              );
+              Navigator.pushNamed(context, '/media_gallery');
               break;
           }
         },

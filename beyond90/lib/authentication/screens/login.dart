@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import '../service/auth_service.dart';
 import 'register.dart';
 import '../../landing_page/screeen/landing_page.dart';
@@ -21,7 +23,12 @@ class _LoginPageState extends State<LoginPage> {
   void _doLogin() async {
     setState(() => isLoading = true);
 
+    // AMBIL REQUEST DARI PROVIDER
+    final request = context.read<CookieRequest>();
+
+    // Kirim request ke service
     final result = await AuthService.login(
+      request, // Pastikan AuthService menerima ini
       usernameCtrl.text.trim(),
       passwordCtrl.text.trim(),
     );
@@ -30,16 +37,14 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!mounted) return;
 
-    if (result["success"] == true) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MyHomePage()),
+    if (request.loggedIn) { // Gunakan status dari CookieRequest
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result["message"] ?? "Welcome!")),
       );
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Username atau password salah."),
-        ),
+        SnackBar(content: Text(result["message"] ?? "Login gagal.")),
       );
     }
   }

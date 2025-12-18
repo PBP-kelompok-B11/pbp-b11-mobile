@@ -3,7 +3,7 @@ import 'package:beyond90/app_colors.dart';
 
 import 'package:beyond90/category/widgets/category_title.dart';
 import 'package:beyond90/category/widgets/category_card.dart';
-
+import 'package:beyond90/event/screens/event_entry_list.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
 
 import 'package:beyond90/player/screens/player_entry_list.dart';
@@ -61,7 +61,14 @@ class CategoryPage extends StatelessWidget {
                 subtitle: "Witness the battle of the world's greatest",
                 actionText: 'See all events',
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/events');
+                  Navigator.pushReplacement(
+                    context, PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const EventEntryListPage(),
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                    ),
+                  );
                 },
               ),
 

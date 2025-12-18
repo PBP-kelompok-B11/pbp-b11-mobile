@@ -7,6 +7,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+import 'package:beyond90/authentication/service/auth_service.dart';
 
 
 // BASE_URL diarahkan ke folder events
@@ -60,34 +61,64 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 🔙 BACK BUTTON + TITLE
+            // 🔙 BACK BUTTON + TITLE
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 7, 0, 0),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
+              child: Row( // Tidak perlu FutureBuilder lagi
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: AppColors.lime,
-                      size: 30,
-                    ),
+                  // BACK + TITLE
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new,
+                          color: AppColors.lime,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        widget.filterByUser ? 'My Event' : 'Event',
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.lime,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Text(
-                    widget.filterByUser ? 'My Event' : 'Event',
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.lime,
+
+                  // ➕ ADD EVENT (Cek langsung ke AuthService)
+                  if (AuthService.isAdmin) // GANTI DI SINI
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/event/create');
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.add, color: AppColors.lime, size: 22),
+                            SizedBox(width: 4),
+                            Text(
+                              'Add Event',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.lime,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
-
             // 📦 CONTENT
-            Expanded(
+            Expanded( //test
               child: FutureBuilder<List<EventEntry>>(
                 future: fetchEvent(request),
                 builder: (context, snapshot) {
