@@ -27,17 +27,16 @@ class EventEntry {
         "fields": fields.toJson(),
     };
 }
-
 class Fields {
     String namaEvent;
     String lokasi;
     DateTime tanggal;
     String timHome;
     String timAway;
-    int skorHome;
-    int skorAway;
+    int? skorHome; // 👈 Tambahkan tanda tanya (?) agar bisa null
+    int? skorAway; // 👈 Tambahkan tanda tanya (?) agar bisa null
     int? createdBy;
-    String username; // Tambahkan ini untuk menampilkan 'admin1'
+    String username;
 
     Fields({
         required this.namaEvent,
@@ -45,8 +44,8 @@ class Fields {
         required this.tanggal,
         required this.timHome,
         required this.timAway,
-        required this.skorHome,
-        required this.skorAway,
+        this.skorHome, // 👈 Hapus 'required' jika ingin opsional di constructor
+        this.skorAway, // 👈 Hapus 'required' jika ingin opsional di constructor
         this.createdBy,
         required this.username,
     });
@@ -54,15 +53,13 @@ class Fields {
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
         namaEvent: json["nama_event"] ?? "Event Tanpa Nama",
         lokasi: json["lokasi"] ?? "Lokasi Belum Diatur",
-        // Jaga-jaga kalau tanggal kosong
         tanggal: DateTime.parse(json["tanggal"] ?? DateTime.now().toIso8601String()),
         timHome: json["tim_home"] ?? "-",
         timAway: json["tim_away"] ?? "-",
-        // Jaga-jaga kalau skor kosong (null dari Django)
-        skorHome: json["skor_home"] ?? 0,
-        skorAway: json["skor_away"] ?? 0,
+        // 🔥 JANGAN gunakan ?? 0, biarkan dia null kalau memang dari JSON-nya null
+        skorHome: json["skor_home"], 
+        skorAway: json["skor_away"],
         createdBy: json["created_by"], 
-        // Jaga-jaga kalau username tidak terkirim atau null
         username: json["username"] ?? "Unknown User",
     );
 
