@@ -14,7 +14,7 @@ class EventDetailPage extends StatelessWidget {
   // LOGIC DELETE
   Future<void> _deleteEvent(BuildContext context, CookieRequest request) async {
     final response = await request.post(
-      "http://localhost:8000/events/delete/${event.pk}", 
+      "http://localhost:8000/events/${event.pk}/delete", 
       {},
     );
 
@@ -96,7 +96,7 @@ class EventDetailPage extends StatelessWidget {
 
                         _buildInfoPill(f.lokasi),
                         _buildInfoPill("Skor: ${f.skorHome} - ${f.skorAway}"),
-                        _buildInfoPill("Dibuat oleh: ${f.createdBy ?? 'Admin'}"),
+                        _buildInfoPill("Dibuat oleh: ${f.username}"),
                         
                         const SizedBox(height: 30),
 
