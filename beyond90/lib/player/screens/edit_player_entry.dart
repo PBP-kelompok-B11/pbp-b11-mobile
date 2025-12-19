@@ -1,25 +1,27 @@
-import 'package:beyond90/player/screens/player_entry_list.dart';
+// import 'package:beyond90/player/screens/player_entry_list.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/player/service/player_service.dart';
+import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/authentication/widgets/auth_back.dart';
 
 
-class AddPlayerEntry extends StatefulWidget {
-  const AddPlayerEntry({super.key});
+class EditPlayerEntry extends StatefulWidget {
+  final PlayerEntry player;
+
+  const EditPlayerEntry({super.key, required this.player});
 
   @override
-  State<AddPlayerEntry> createState() => _AddPlayerEntryState();
+  State<EditPlayerEntry> createState() => _EditPlayerEntryState();
 }
 
-class _AddPlayerEntryState extends State<AddPlayerEntry> {
+class _EditPlayerEntryState extends State<EditPlayerEntry> {
 
   final _formKey = GlobalKey<FormState>();
 
   String? selectedPosisi;
 
   final List<String> posisiList = [
-    'All',
     'GK',
     'DF',
     'DFFW',
@@ -37,10 +39,33 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
   final TextEditingController usiaCtrl = TextEditingController();
   final TextEditingController tinggiCtrl = TextEditingController();
   final TextEditingController beratCtrl = TextEditingController();
-  final TextEditingController posisiCtrl = TextEditingController();
   final TextEditingController fotoCtrl = TextEditingController();
 
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    namaCtrl.text = widget.player.nama;
+    negaraCtrl.text = widget.player.negara;
+    usiaCtrl.text = widget.player.usia.toString();
+    tinggiCtrl.text = widget.player.tinggi.toString();
+    beratCtrl.text = widget.player.berat.toString();
+    selectedPosisi = widget.player.posisi;
+    fotoCtrl.text = widget.player.thumbnail ?? "";
+  }
+
+  @override
+  void dispose() {
+    namaCtrl.dispose();
+    negaraCtrl.dispose();
+    usiaCtrl.dispose();
+    tinggiCtrl.dispose();
+    beratCtrl.dispose();
+    fotoCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +87,7 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
 
                       // BEYOND 90
                       Text(
-                        "Add Player",
+                        "Edit Player",
                         style: TextStyle(
                           fontFamily: "Geologica",
                           color: AppColors.lime,
@@ -188,20 +213,31 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
                             : () async {
                                 if (!_formKey.currentState!.validate()) return;
 
+                                if (selectedPosisi == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Posisi harus dipilih")),
+                                  );
+                                  return;
+                                }
+
                                 setState(() => isLoading = true);
 
                                 try {
-                                  await PlayerEntryService.createPlayerEntry({
-                                    "nama": namaCtrl.text.trim(),
-                                    "negara": negaraCtrl.text.trim(),
-                                    "usia": int.parse(usiaCtrl.text.trim()),
-                                    "tinggi": double.parse(tinggiCtrl.text.trim()),
-                                    "berat": double.parse(beratCtrl.text.trim()),
-                                    "posisi": selectedPosisi,
-                                    "thumbnail": fotoCtrl.text.trim().isEmpty
-                                        ? null
-                                        : fotoCtrl.text.trim(),
-                                  });
+                                  await PlayerEntryService.updatePlayer(
+                                    widget.player.id,
+                                    {
+                                      "nama": namaCtrl.text.trim(),
+                                      "negara": negaraCtrl.text.trim(),
+                                      "usia": int.parse(usiaCtrl.text.trim()),
+                                      "tinggi": double.parse(tinggiCtrl.text.trim()),
+                                      "berat": double.parse(beratCtrl.text.trim()),
+                                      "posisi": selectedPosisi,
+                                      "thumbnail": fotoCtrl.text.trim().isEmpty
+                                          ? null
+                                          : fotoCtrl.text.trim(),
+                                    },
+                                  );
+
 
                                   if (!context.mounted) return;
 
@@ -209,10 +245,8 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
                                     const SnackBar(content: Text("Player successfully saved!")),
                                   );
 
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const PlayerEntryListPage(filter: "All")),
-                                  );
+                                  Navigator.pop(context, true);
+
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text("Error: $e")),
@@ -259,7 +293,7 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
               left: 16,
               child: AuthBackButton(onTap: () => Navigator.pop(context)),
             ),
-            
+
           ],
         ),
       ),

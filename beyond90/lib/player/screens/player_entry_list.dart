@@ -1,5 +1,5 @@
 import 'package:beyond90/player/screens/player_entry_details.dart';
-import 'package:flutter/material.dart';import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/widgets/player_card.dart';
@@ -88,7 +88,7 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
 
         actions: [
 
-          if (request.jsonData["status"] == true)
+          // if (request.jsonData["status"] == true)
            Padding(
               padding: const EdgeInsets.only(right: 25.0, top: 25, bottom: 15),
               child: ToggleButtons(
@@ -136,7 +136,7 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
               ),
             ),
 
-          if (request.jsonData["status"] == true )
+          // if (request.jsonData["status"] == true )
           Padding(
             padding: const EdgeInsets.only(right: 25.0, top: 25,bottom: 15), // jarak dari tepi kanan
             child: GestureDetector(

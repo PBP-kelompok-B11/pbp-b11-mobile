@@ -4,6 +4,8 @@ import 'package:beyond90/widgets/bottom_navbar.dart';
 
 import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/player/service/player_service.dart';
+import 'package:beyond90/player/screens/player_entry_list.dart';
+import 'package:beyond90/player/screens/edit_player_entry.dart';
 
 class PlayerDetailEntry extends StatefulWidget {
   final String playerId;
@@ -233,22 +235,62 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                           const SizedBox(height: 32),
 
                           // CHAT ICON
+                          // ACTION BUTTONS (Edit, Delete, Chat)
                           Align(
                             alignment: Alignment.centerRight,
-                            child: Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: AppColors.lime,
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              child: const Icon(
-                                Icons.chat_bubble_outline,
-                                size: 30,
-                                color: AppColors.indigo,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // EDIT BUTTON
+                                _actionButton(
+                                  icon: Icons.edit,
+                                  color: AppColors.indigo,
+                                  iconColor: Colors.white,
+                                  onTap: () async {
+                                    
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EditPlayerEntry(player: player),
+                                      ),
+                                    );
+
+                                    if (result == true) {
+                                      setState(() {
+                                        futurePlayer = PlayerEntryService.fetchPlayerDetail(player.id);
+                                      });
+                                    }
+
+                                  },
+                                ),
+
+                                const SizedBox(width: 10),
+
+                                // DELETE BUTTON
+                                _actionButton(
+                                  icon: Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                  iconColor: Colors.white,
+                                  onTap: () {
+                                    _showDeleteConfirmation(context);
+                                  },
+                                ),
+
+                                const SizedBox(width: 10),
+
+                                // CHAT BUTTON
+                                _actionButton(
+                                  icon: Icons.chat_bubble_outline,
+                                  color: AppColors.lime,
+                                  iconColor: AppColors.indigo,
+                                  onTap: () {
+                                    // TODO: Open chat
+                                  },
+                                ),
+                              ],
                             ),
                           ),
+
                         ],
                       ),
                     ),
@@ -364,4 +406,78 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
       ),
     );
   }
+
+  Widget _actionButton({
+    required IconData icon,
+    required Color color,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Icon(
+          icon,
+          size: 28,
+          color: iconColor,
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Delete Player"),
+      content: const Text("Are you sure you want to delete this player?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () async {
+            try {
+              await PlayerEntryService.deletePlayer(widget.playerId);
+
+              if (!mounted) return;
+
+              Navigator.pop(context); // tutup dialog
+              Navigator.pop(context); // keluar halaman detail
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const PlayerEntryListPage(filter: "All")),
+              );
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Player deleted")),
+              );
+            } catch (e) {
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Delete failed: $e")),
+              );
+            }
+          },
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
 }

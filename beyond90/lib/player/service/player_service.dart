@@ -32,7 +32,7 @@ class PlayerEntryService {
 
   static Future<int> createPlayerEntry(Map<String, dynamic> data) async {
     final response = await http.post(
-      Uri.parse(baseUrl),
+      Uri.parse("https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/create/flutter/"),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
@@ -43,25 +43,26 @@ class PlayerEntryService {
     throw Exception("Failed to create player: ${response.body}");
   }
 
-  static Future<void> updatePlayerEntry(int id, Map<String, dynamic> data) async {
+  static Future<void> deletePlayer(String id) async {
+    final response = await http.delete(
+      Uri.parse("https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/$id/delete/flutter/"),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Delete gagal");
+    }
+  }
+
+  static Future<void> updatePlayer(String id, Map<String, dynamic> data) async {
     final response = await http.put(
-      Uri.parse("$baseUrl$id/"),
-      headers: {'Content-Type': 'application/json'},
+      Uri.parse("https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/$id/edit/flutter/"),
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode(data),
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception("Failed to update player: ${response.body}");
+    if (response.statusCode != 200) {
+      throw Exception("Edit gagal");
     }
   }
-
-  static Future<void> deletePlayerEntry(int id) async {
-    final response = await http.delete(Uri.parse("$baseUrl$id/"));
-
-    if (response.statusCode != 204) {
-      throw Exception("Failed to delete player: ${response.body}");
-    }
-  }
-
   
 }
