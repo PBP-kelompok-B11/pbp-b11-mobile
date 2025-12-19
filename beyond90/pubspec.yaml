@@ -58,6 +58,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/icons/calendar.png
+    - assets/icons/comment.png
   # To add custom fonts to your application, add a fonts section here.
   # Each entry in this list should have a "family" key with the font family name,
   # and a "fonts" key with a list giving the asset and other descriptors.
@@ -70,4 +71,4 @@ flutter:
       fonts:
         - asset: assets/fonts/Geologica-Regular.ttf
         - asset: assets/fonts/Geologica-Bold.ttf
-          weight: 700
+          weight: 900
