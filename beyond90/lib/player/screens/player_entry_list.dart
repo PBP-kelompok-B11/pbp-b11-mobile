@@ -88,8 +88,8 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
 
         actions: [
 
-          // if (request.jsonData["status"] == true)
-           Padding(
+          if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
+            Padding(
               padding: const EdgeInsets.only(right: 25.0, top: 25, bottom: 15),
               child: ToggleButtons(
                 borderRadius: BorderRadius.circular(30),
@@ -136,36 +136,36 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
               ),
             ),
 
-          // if (request.jsonData["status"] == true )
-          Padding(
-            padding: const EdgeInsets.only(right: 25.0, top: 25,bottom: 15), // jarak dari tepi kanan
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddPlayerEntry()),
-                );
-              },
-              child: Container(
-                width: 250,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.lime,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  "Add Player",
-                  style: TextStyle(
-                    fontFamily: "Geologica",
-                    fontSize: 20,
-                    color: AppColors.indigo,
-                    fontWeight: FontWeight.bold,
+          if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0, top: 25,bottom: 15), // jarak dari tepi kanan
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddPlayerEntry()),
+                  );
+                },
+                child: Container(
+                  width: 250,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.lime,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    "Add Player",
+                    style: TextStyle(
+                      fontFamily: "Geologica",
+                      fontSize: 20,
+                      color: AppColors.indigo,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
 
         ],
 

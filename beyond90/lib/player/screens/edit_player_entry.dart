@@ -4,6 +4,10 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/player/service/player_service.dart';
 import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/authentication/widgets/auth_back.dart';
+import 'package:provider/provider.dart';
+
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+
 
 
 class EditPlayerEntry extends StatefulWidget {
@@ -223,14 +227,24 @@ class _EditPlayerEntryState extends State<EditPlayerEntry> {
                                 setState(() => isLoading = true);
 
                                 try {
+
+                                  final request = context.read<CookieRequest>();
+
+                                  if (!request.loggedIn) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Anda harus login terlebih dahulu")),
+                                    );
+                                    return;
+                                  }
+
                                   await PlayerEntryService.updatePlayer(
-                                    widget.player.id,
+                                    request, widget.player.id,
                                     {
                                       "nama": namaCtrl.text.trim(),
                                       "negara": negaraCtrl.text.trim(),
-                                      "usia": int.parse(usiaCtrl.text.trim()),
-                                      "tinggi": double.parse(tinggiCtrl.text.trim()),
-                                      "berat": double.parse(beratCtrl.text.trim()),
+                                      "usia": usiaCtrl.text.trim(),
+                                      "tinggi": tinggiCtrl.text.trim(),
+                                      "berat": beratCtrl.text.trim(),
                                       "posisi": selectedPosisi,
                                       "thumbnail": fotoCtrl.text.trim().isEmpty
                                           ? null

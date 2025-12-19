@@ -4,6 +4,10 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/player/service/player_service.dart';
 import 'package:beyond90/authentication/widgets/auth_back.dart';
 
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+
+
 
 class AddPlayerEntry extends StatefulWidget {
   const AddPlayerEntry({super.key});
@@ -191,17 +195,31 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
                                 setState(() => isLoading = true);
 
                                 try {
+                                  final request = context.read<CookieRequest>();
+
+
+                                  if (!request.loggedIn) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("You must login first")),
+                                    );
+                                    return;
+                                  }
+
                                   await PlayerEntryService.createPlayerEntry({
                                     "nama": namaCtrl.text.trim(),
                                     "negara": negaraCtrl.text.trim(),
-                                    "usia": int.parse(usiaCtrl.text.trim()),
-                                    "tinggi": double.parse(tinggiCtrl.text.trim()),
-                                    "berat": double.parse(beratCtrl.text.trim()),
-                                    "posisi": selectedPosisi,
-                                    "thumbnail": fotoCtrl.text.trim().isEmpty
-                                        ? null
-                                        : fotoCtrl.text.trim(),
-                                  });
+                                    "usia": usiaCtrl.text.trim(),       // string, bukan int
+                                    "tinggi": tinggiCtrl.text.trim(),   // string, bukan double
+                                    "berat": beratCtrl.text.trim(),     // string, bukan double
+                                    "posisi": selectedPosisi ?? "",     // string
+                                    "thumbnail": fotoCtrl.text.trim().isEmpty ? "" : fotoCtrl.text.trim(),
+                                  }, request);
+
+                                  
+                            
+
+                                  // print(response); // <- ini tempatnya untuk debug
+
 
                                   if (!context.mounted) return;
 

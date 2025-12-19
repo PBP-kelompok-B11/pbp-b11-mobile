@@ -7,6 +7,9 @@ import 'package:beyond90/player/service/player_service.dart';
 import 'package:beyond90/player/screens/player_entry_list.dart';
 import 'package:beyond90/player/screens/edit_player_entry.dart';
 
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+
 class PlayerDetailEntry extends StatefulWidget {
   final String playerId;
 
@@ -30,6 +33,9 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
   @override
   Widget build(BuildContext context) {
+
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -236,49 +242,54 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           // CHAT ICON
                           // ACTION BUTTONS (Edit, Delete, Chat)
+                          
                           Align(
                             alignment: Alignment.centerRight,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // EDIT BUTTON
-                                _actionButton(
-                                  icon: Icons.edit,
-                                  color: AppColors.indigo,
-                                  iconColor: Colors.white,
-                                  onTap: () async {
-                                    
-                                    final result = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => EditPlayerEntry(player: player),
-                                      ),
-                                    );
 
-                                    if (result == true) {
-                                      setState(() {
-                                        futurePlayer = PlayerEntryService.fetchPlayerDetail(player.id);
-                                      });
-                                    }
+                                if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
+                                  _actionButton(
+                                    icon: Icons.edit,
+                                    color: AppColors.indigo,
+                                    iconColor: Colors.white,
+                                    onTap: () async {
+                                      
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => EditPlayerEntry(player: player),
+                                        ),
+                                      );
 
-                                  },
-                                ),
+                                      if (result == true) {
+                                        setState(() {
+                                          futurePlayer = PlayerEntryService.fetchPlayerDetail(player.id);
+                                        });
+                                      }
 
-                                const SizedBox(width: 10),
+                                    },
+                                  ),
+
+                                  const SizedBox(width: 10),
 
                                 // DELETE BUTTON
-                                _actionButton(
-                                  icon: Icons.delete_outline,
-                                  color: Colors.redAccent,
-                                  iconColor: Colors.white,
-                                  onTap: () {
-                                    _showDeleteConfirmation(context);
-                                  },
-                                ),
+                                if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
+                                  _actionButton(
+                                    icon: Icons.delete_outline,
+                                    color: Colors.redAccent,
+                                    iconColor: Colors.white,
+                                    onTap: () {
+                                      _showDeleteConfirmation(context);
+                                    },
+                                  ),
 
-                                const SizedBox(width: 10),
+                                  const SizedBox(width: 10),
 
                                 // CHAT BUTTON
+                        
                                 _actionButton(
                                   icon: Icons.chat_bubble_outline,
                                   color: AppColors.lime,
