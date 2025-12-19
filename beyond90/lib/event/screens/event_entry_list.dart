@@ -61,7 +61,6 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 🔙 BACK BUTTON + TITLE
-            // 🔙 BACK BUTTON + TITLE
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
               child: Row( // Tidak perlu FutureBuilder lagi

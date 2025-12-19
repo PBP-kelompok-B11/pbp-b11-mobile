@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final eventEntry = eventEntryFromJson(jsonString);
-
 import 'dart:convert';
 
 List<EventEntry> eventEntryFromJson(String str) => List<EventEntry>.from(json.decode(str).map((x) => EventEntry.fromJson(x)));
@@ -20,8 +16,8 @@ class EventEntry {
     });
 
     factory EventEntry.fromJson(Map<String, dynamic> json) => EventEntry(
-        model: json["model"],
-        pk: json["pk"],
+        model: json["model"] ?? "vidia_event.event",
+        pk: json["pk"] ?? 0,
         fields: Fields.fromJson(json["fields"]),
     );
 
@@ -31,16 +27,16 @@ class EventEntry {
         "fields": fields.toJson(),
     };
 }
-
 class Fields {
     String namaEvent;
     String lokasi;
     DateTime tanggal;
     String timHome;
     String timAway;
-    int skorHome;
-    int skorAway;
-    dynamic createdBy;
+    int? skorHome; // 👈 Tambahkan tanda tanya (?) agar bisa null
+    int? skorAway; // 👈 Tambahkan tanda tanya (?) agar bisa null
+    int? createdBy;
+    String username;
 
     Fields({
         required this.namaEvent,
@@ -48,20 +44,23 @@ class Fields {
         required this.tanggal,
         required this.timHome,
         required this.timAway,
-        required this.skorHome,
-        required this.skorAway,
+        this.skorHome, // 👈 Hapus 'required' jika ingin opsional di constructor
+        this.skorAway, // 👈 Hapus 'required' jika ingin opsional di constructor
         this.createdBy,
+        required this.username,
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        namaEvent: json["nama_event"],
-        lokasi: json["lokasi"],
-        tanggal: DateTime.parse(json["tanggal"]),
-        timHome: json["tim_home"],
-        timAway: json["tim_away"],
-        skorHome: json["skor_home"],
+        namaEvent: json["nama_event"] ?? "Event Tanpa Nama",
+        lokasi: json["lokasi"] ?? "Lokasi Belum Diatur",
+        tanggal: DateTime.parse(json["tanggal"] ?? DateTime.now().toIso8601String()),
+        timHome: json["tim_home"] ?? "-",
+        timAway: json["tim_away"] ?? "-",
+        // 🔥 JANGAN gunakan ?? 0, biarkan dia null kalau memang dari JSON-nya null
+        skorHome: json["skor_home"], 
         skorAway: json["skor_away"],
-        createdBy: json["created_by"],
+        createdBy: json["created_by"], 
+        username: json["username"] ?? "Unknown User",
     );
 
     Map<String, dynamic> toJson() => {
@@ -73,5 +72,6 @@ class Fields {
         "skor_home": skorHome,
         "skor_away": skorAway,
         "created_by": createdBy,
+        "username": username,
     };
 }

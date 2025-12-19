@@ -4,27 +4,25 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:beyond90/event/screens/eventlist_form.dart'; // Ganti dengan path form kamu
+import 'package:beyond90/event/screens/eventlist_form.dart';
 
 class EventDetailPage extends StatelessWidget {
   final EventEntry event;
 
   const EventDetailPage({super.key, required this.event});
 
-  // LOGIC DELETE
   Future<void> _deleteEvent(BuildContext context, CookieRequest request) async {
     final response = await request.post(
-      "http://localhost:8000/events/delete/${event.pk}", 
+      "http://localhost:8000/events/${event.pk}/delete/", 
       {},
     );
 
     if (context.mounted) {
       if (response['status'] == 'success' || response.isEmpty) { 
-        // Note: Django redirect sering menghasilkan response kosong di Flutter
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Event berhasil dihapus!")),
         );
-        Navigator.pop(context, true); // Kembali ke list dan beri sinyal untuk refresh
+        Navigator.pop(context, true); 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Gagal menghapus event.")),
@@ -38,6 +36,32 @@ class EventDetailPage extends StatelessWidget {
     final f = event.fields;
     final isAdmin = AuthService.isAdmin;
     final request = context.watch<CookieRequest>();
+
+    // 🕒 LOGIC 3 STATUS (LIVE, UPCOMING, FINISHED)
+    final now = DateTime.now();
+    final bool isToday = f.tanggal.year == now.year &&
+                         f.tanggal.month == now.month &&
+                         f.tanggal.day == now.day;
+    final bool isUpcoming = f.tanggal.isAfter(now) && !isToday;
+
+    String statusText;
+    Color statusColor;
+
+    if (isToday) {
+      statusText = "LIVE / TODAY";
+      statusColor = const Color(0xFFEF4444); // Merah
+    } else if (isUpcoming) {
+      statusText = "UPCOMING";
+      statusColor = const Color(0xFF22C55E); // Hijau
+    } else {
+      statusText = "FINISHED";
+      statusColor = const Color(0xFF64748B); // Abu-abu
+    }
+
+    // ⚽ HANDLING SKOR NULL / KOSONG
+    // Menggunakan operator ?? untuk memberikan nilai default "-" jika null
+    final String homeScore = (f.skorHome == null) ? "_" : f.skorHome.toString();
+    final String awayScore = (f.skorAway == null) ? "_" : f.skorAway.toString();
 
     return Scaffold(
       backgroundColor: AppColors.indigo,
@@ -68,55 +92,76 @@ class EventDetailPage extends StatelessWidget {
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(40)),
               child: Column(
                 children: [
-                  // Placeholder Image
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-                    child: Container(height: 250, color: Colors.grey[300], child: const Icon(Icons.image, size: 80, color: Colors.white)),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Column(
                       children: [
+                        // 🔥 STATUS PILL
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: statusColor, width: 1.5),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isToday) ...[
+                                Container(
+                                  width: 10, height: 10,
+                                  decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
+                                ),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                statusText,
+                                style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
                         Text("${f.timHome} vs ${f.timAway}".toUpperCase(),
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppColors.indigo, fontSize: 36, fontWeight: FontWeight.bold)),
+                            style: const TextStyle(color: AppColors.indigo, fontSize: 32, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 16),
                         
                         // Calendar Row
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/icons/calendar.png', width: 24, height: 24, color: AppColors.indigo),
+                            const Icon(Icons.calendar_month, color: AppColors.indigo, size: 24),
                             const SizedBox(width: 10),
-                            Text("${f.tanggal.day} February ${f.tanggal.year}",
+                            Text(isToday ? "Today" : "${f.tanggal.day}/${f.tanggal.month}/${f.tanggal.year}",
                                 style: const TextStyle(fontSize: 20, color: AppColors.indigo)),
                           ],
                         ),
                         const SizedBox(height: 30),
 
-                        _buildInfoPill(f.lokasi),
-                        _buildInfoPill("Skor: ${f.skorHome} - ${f.skorAway}"),
-                        _buildInfoPill("Dibuat oleh: ${f.createdBy ?? 'Admin'}"),
+                        _buildInfoPill("📍 ${f.lokasi}"),
+                        // Menampilkan skor yang sudah diproses (biar "-" kalau null)
+                        _buildInfoPill("⚽ Score: $homeScore - $awayScore"),
+                        _buildInfoPill("👤 Created by: ${f.username}"),
                         
                         const SizedBox(height: 30),
 
-                        // ACTION BUTTONS & COMMENT (REVISED POSITION)
+                        // ACTION BUTTONS
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // 1. COMMENT BUTTON SEKARANG DI KIRI
                             Container(
-                              width: 80, height: 80,
-                              decoration: BoxDecoration(color: AppColors.lime, borderRadius: BorderRadius.circular(24)),
+                              width: 70, height: 70,
+                              decoration: BoxDecoration(color: AppColors.lime, borderRadius: BorderRadius.circular(20)),
                               child: IconButton(
-                                icon: const Icon(Icons.chat_bubble_outline, color: AppColors.indigo, size: 36),
+                                icon: const Icon(Icons.chat_bubble_outline, color: AppColors.indigo, size: 30),
                                 onPressed: () { /* TODO: Comment page */ },
                               ),
                             ),
                             
                             const SizedBox(width: 12),
 
-                            // 2. ADMIN BUTTONS (EDIT & DELETE) DI KANAN
                             if (isAdmin)
                               Expanded(
                                 child: Column(
@@ -126,7 +171,6 @@ class EventDetailPage extends StatelessWidget {
                                       color: const Color(0xFFFACC15),
                                       textColor: AppColors.indigo,
                                       onTap: () {
-                                        // LOGIC EDIT: Kirim data event ke form
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -140,9 +184,7 @@ class EventDetailPage extends StatelessWidget {
                                       text: "Delete Event",
                                       color: const Color(0xFFEA580C),
                                       textColor: Colors.white,
-                                      onTap: () {
-                                        _showDeleteConfirmation(context, request);
-                                      },
+                                      onTap: () => _showDeleteConfirmation(context, request),
                                     ),
                                   ],
                                 ),
@@ -162,12 +204,14 @@ class EventDetailPage extends StatelessWidget {
     );
   }
 
+  // --- UI Helpers tetap sama ---
   void _showDeleteConfirmation(BuildContext context, CookieRequest request) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Text("Hapus Event"),
-        content: const Text("Apakah Anda yakin ingin menghapus event ini?"),
+        content: const Text("Tindakan ini tidak bisa dibatalkan. Yakin?"),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Batal")),
           TextButton(
@@ -186,8 +230,8 @@ class EventDetailPage extends StatelessWidget {
     return Container(
       width: double.infinity, margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(color: AppColors.lime, borderRadius: BorderRadius.circular(20)),
-      child: Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.indigo, fontSize: 18)),
+      decoration: BoxDecoration(color: AppColors.lime.withOpacity(0.7), borderRadius: BorderRadius.circular(20)),
+      child: Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.indigo, fontSize: 17, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -195,9 +239,9 @@ class EventDetailPage extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(30)),
-        child: Text(text, textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.bold)),
+        width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(20)),
+        child: Text(text, textAlign: TextAlign.center, style: TextStyle(color: textColor, fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
   }
