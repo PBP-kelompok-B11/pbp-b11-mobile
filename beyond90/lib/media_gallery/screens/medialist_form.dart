@@ -31,197 +31,145 @@ class _MediaFormPageState extends State<MediaFormPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text('Upload Media'),
+        title: const Text(
+          'Upload Media',
+          style: TextStyle(
+            fontFamily: 'Geologica',
+            fontWeight: FontWeight.bold,
+            fontSize: 30,
+            letterSpacing: 1.2,
+          ),
         ),
+        centerTitle: true,
         backgroundColor: AppColors.indigo,
-        foregroundColor: AppColors.white,
+        foregroundColor: AppColors.lime,
       ),
       body: Container(
-        color: AppColors.background,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: IntrinsicHeight(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+        width: double.infinity,
+        color: AppColors.indigo,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
 
-                        // Deskripsi
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                               const Text("Deskripsi",
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              
-                              const SizedBox(height: 6),
+                  const SizedBox(height: 24),
 
-                              TextFormField(
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  hintText: "Masukkan deskripsi media",
-                                  hintStyle: const TextStyle(
-                                    color: AppColors.white,
-                                  ),
-                                  fillColor: AppColors.textPrimary,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ),
-                                ),
-                                onChanged: (String? value){
-                                  setState(() {
-                                    _deskripsi = value!;
-                                  });
-                                },
-                                validator: (String? value){
-                                  if (value == null || value.isEmpty){
-                                    return "Please fill in this field";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Kategori
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Kategori",
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              DropdownButtonFormField<String>(
-                                hint: const Text("Pilih Kategori"),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ),
-                                ),
-                                initialValue: _kategori,
-                                items: _categoryMap.entries.map((entry) {
-                                  return DropdownMenuItem<String>(
-                                    value: entry.key, // DATA → foto / video
-                                    child: Text(entry.value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue){
-                                  setState(() {
-                                    _kategori = newValue!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Thumbnail URL
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text("Thumbnail URL",
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "https://example.com/image.jpg",
-                                  hintStyle: const TextStyle(
-                                    color: AppColors.textPrimary
-                                  ),
-                                  fillColor: AppColors.textPrimary,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ),
-                                ),
-                                onChanged: (String? value){
-                                  setState(() {
-                                    _thumbnail = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // === Tombol Simpan ===
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                  WidgetStateProperty.all(AppColors.lime),
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final response = await request.postJson(
-                                    "http://localhost:8000/media-gallery/create-flutter/", jsonEncode({
-                                      "deskripsi":  _deskripsi,
-                                      "thumbnail": _thumbnail,
-                                      "category": _kategori,
-                                    }),
-                                  );
-                                  if(context.mounted){
-                                    if (response['status'] == 'success') {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text("News successfully saved!"),
-                                      ));
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => MediaEntryListPage()),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text("Something went wrong, please try again."),
-                                      ));
-                                    }
-                                  }
-                                }
-                              },
-                              child: Text(
-                                "Submit",
-                                style: TextStyle(color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                  // ===== DESKRIPSI =====
+                  _roundedInput(
+                    child: TextFormField(
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        hintText: "Deskripsi",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) => _deskripsi = value,
+                      validator: (value) =>
+                          value == null || value.isEmpty ? "Deskripsi wajib diisi" : null,
                     ),
                   ),
-                ),
+
+                  const SizedBox(height: 16),
+
+                  // ===== THUMBNAIL =====
+                  _roundedInput(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Thumbnail URL",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) => _thumbnail = value,
+                      validator: (value) =>
+                          value == null || value.isEmpty ? "Thumbnail wajib diisi" : null,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // ===== KATEGORI =====
+                  _roundedInput(
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _kategori,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
+                      items: _categoryMap.entries.map((e) {
+                        return DropdownMenuItem(
+                          value: e.key,
+                          child: Text(e.value),
+                        );
+                      }).toList(),
+                      onChanged: (value) => setState(() {
+                        _kategori = value!;
+                      }),
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // ===== BUTTON =====
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.lime,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final response = await request.postJson(
+                            "http://localhost:8000/media-gallery/add-flutter/",
+                            jsonEncode({
+                              "deskripsi": _deskripsi,
+                              "thumbnail": _thumbnail,
+                              "category": _kategori,
+                            }),
+                          );
+
+                          if (context.mounted && response['status'] == 'success') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MediaEntryListPage(),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      child: const Text(
+                        "Add Media",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
   }
+}
+
+Widget _roundedInput({required Widget child}) {
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: child,
+  );
 }
