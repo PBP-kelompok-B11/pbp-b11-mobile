@@ -16,6 +16,15 @@ class MediaEntryListPage extends StatefulWidget {
 }
 
 class _MediaEntryListPageState extends State<MediaEntryListPage> {
+  late Future<List<MediaEntry>> _mediaFuture;
+
+  @override
+  void initState(){
+    super.initState();
+    final request = context.read<CookieRequest>();
+    _mediaFuture = fetchMedia(request);
+  }
+
   Future<List<MediaEntry>> fetchMedia(CookieRequest request) async {
     // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
@@ -78,7 +87,7 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
         ],
       ),
       body: FutureBuilder(
-        future: fetchMedia(request),
+        future: _mediaFuture,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());
@@ -99,14 +108,19 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
                 itemBuilder: (_, index) => MediaEntryCard(
                   media: snapshot.data![index],
                   onTap: () {
-                    Navigator.push(context,
+                    Navigator.push(
+                      context,
                       MaterialPageRoute(
                         builder: (context) => MediaDetailPage(
                           media: snapshot.data![index],
                         ),
                       ),
-                    );
-                  },
+                    ).then((_) {
+                      setState(() {
+                        _mediaFuture =fetchMedia(request);
+                      });
+                    });
+                  }
                 ),
               );
             }
