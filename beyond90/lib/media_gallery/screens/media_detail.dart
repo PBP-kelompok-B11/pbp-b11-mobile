@@ -1,4 +1,5 @@
 import 'package:beyond90/app_colors.dart';
+import 'package:beyond90/media_gallery/screens/media_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/media_gallery/models/media_entry.dart';
 import 'package:beyond90/media_gallery/service/media_service.dart';
@@ -79,6 +80,60 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () async{
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text("Delete"),
+                    content: const Text('Are you sure you want to delete this media?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  )
+                );
+
+                if(confirm == true){
+                  final success = await MediaService.deleteMedia(widget.media.id);
+
+                  if(success && mounted){
+                    Navigator.pop(context, true);
+                  }
+                }
+              },
+            ),
+            ElevatedButton(
+              onPressed: () async{
+                final updated = await Navigator.push(
+                  context, MaterialPageRoute(
+                    builder: (_) => MediaEditPage(
+                      media: widget.media
+                    ),
+                  ),
+                );
+
+                if(updated != null && mounted){
+                  setState(() {
+                    widget.media.deskripsi = updated.deskripsi;
+                    widget.media.category = updated.category;
+                    widget.media.thumbnail = updated.thumbnail;
+                  });
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.lime,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text('Edit'),
+            ),
             // Thumbnail image
             if (widget.media.thumbnail.isNotEmpty)
               Image.network(
