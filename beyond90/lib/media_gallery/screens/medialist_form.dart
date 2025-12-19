@@ -56,29 +56,43 @@ class _MediaFormPageState extends State<MediaFormPage> {
                         // Deskripsi
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              hintText: "Masukkan deskripsi media",
-                              hintStyle: const TextStyle(
-                                color: AppColors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                               const Text("Deskripsi",
+                                style: TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                              fillColor: AppColors.textPrimary,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
+                              
+                              const SizedBox(height: 6),
+
+                              TextFormField(
+                                maxLines: 5,
+                                decoration: InputDecoration(
+                                  hintText: "Masukkan deskripsi media",
+                                  hintStyle: const TextStyle(
+                                    color: AppColors.white,
+                                  ),
+                                  fillColor: AppColors.textPrimary,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                onChanged: (String? value){
+                                  setState(() {
+                                    _deskripsi = value!;
+                                  });
+                                },
+                                validator: (String? value){
+                                  if (value == null || value.isEmpty){
+                                    return "Please fill in this field";
+                                  }
+                                  return null;
+                                },
                               ),
-                            ),
-                            onChanged: (String? value){
-                              setState(() {
-                                _deskripsi = value!;
-                              });
-                            },
-                            validator: (String? value){
-                              if (value == null || value.isEmpty){
-                                return "Please fill in this field";
-                              }
-                              return null;
-                            },
+                            ],
                           ),
                         ),
 

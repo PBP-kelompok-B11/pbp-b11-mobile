@@ -1,5 +1,5 @@
 import 'package:beyond90/authentication/screens/register.dart';
-import 'package:beyond90/media_gallery/screens/medialist_form.dart';
+import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/category': (context) => const CategoryPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-        '/media_gallery': (context) => const MediaFormPage(),
+        '/media_gallery': (context) => const MediaEntryListPage(),
         '/event/create': (context) => const EventFormPage(),
       },
 

@@ -6,6 +6,11 @@ class MediaEntryCard extends StatelessWidget {
   final MediaEntry media;
   final VoidCallback onTap;
 
+  static const Map<String, String> categoryMap = {
+    'foto': 'Photo',
+    'video': 'Video',
+  };
+
   const MediaEntryCard({
     super.key,
     required this.media,
@@ -14,6 +19,7 @@ class MediaEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayCat = categoryMap[media.category.toLowerCase()] ?? media.category;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: InkWell(
@@ -63,10 +69,9 @@ class MediaEntryCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // kategori
                     Chip(
                       label: Text(
-                        media.category.toUpperCase(),
+                        displayCat.toUpperCase(),
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
