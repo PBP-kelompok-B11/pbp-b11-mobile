@@ -8,70 +8,73 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CookieRequest>(
-      builder: (context, request, _) {
-        final bool isLoggedIn = request.loggedIn;
+    final request = context.watch<CookieRequest>(); // Pakai watch biar reaktif
+    final bool isLoggedIn = request.loggedIn;
 
-        return GestureDetector(
-          onTap: () async {
-            // 1. JIKA BELUM LOGIN -> PINDAH KE HALAMAN LOGIN
-            if (!isLoggedIn) {
-              Navigator.pushNamed(context, '/login');
-              return;
-            }
+    return GestureDetector(
+      onTap: () async {
+        // 1. JIKA BELUM LOGIN -> KE HALAMAN LOGIN
+        if (!isLoggedIn) {
+          Navigator.pushNamed(context, '/login');
+          return;
+        }
 
-            // 2. JIKA SUDAH LOGIN -> PROSES LOGOUT
-            // Gunakan IP 10.0.2.2 jika pakai emulator Android, atau 127.0.0.1 jika Chrome
-            final response = await request.logout(
-              'http://127.0.0.1:8000/logout/',
+        // 2. JIKA SUDAH LOGIN -> PROSES LOGOUT
+        try {
+          print("Memulai proses logout...");
+          
+          // GANTI URL: Sesuaikan dengan path di Django kamu
+          // Pakai 10.0.2.2 untuk Android Emulator
+          final response = await request.logout(
+            'http://localhost:8000/logout/', 
+          ).timeout(const Duration(seconds: 5));
+
+          if (!context.mounted) return;
+
+          // Cek response (Django kamu tadi kirim 'success' atau 'status')
+          if (response['status'] == true || response['success'] == true) {
+            
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Logout berhasil! Sesi dibersihkan.')),
             );
 
-            if (context.mounted) {
-              // Cek apakah logout sukses di sisi Django
-              if (response['status'] == true || response['success'] == true) {
-                
-                // RESET status admin global kita agar bersih
-                // AuthService.isAdmin = false; 
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Logout berhasil!')),
-                );
-
-                // 3. PINDAH KE HALAMAN LOGIN & HAPUS SEMUA HALAMAN SEBELUMNYA
-                // Kita gunakan pushNamedAndRemoveUntil agar user tidak bisa klik 'Back' ke Home
-                Navigator.pushNamedAndRemoveUntil(
-                  context, 
-                  '/login', 
-                  (route) => false,
-                );
-              } else {
-                // Jika gagal (misal koneksi mati)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Logout gagal: ${response['message']}')),
-                );
-              }
-            }
-          },
-          child: Container(
-            width: 140,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isLoggedIn ? Colors.redAccent : AppColors.lime,
-              borderRadius: BorderRadius.circular(34),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              isLoggedIn ? "Logout" : "Login",
-              style: TextStyle(
-                fontFamily: 'Geologica',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isLoggedIn ? Colors.white : AppColors.indigo,
-              ),
-            ),
-          ),
-        );
+            // 3. PINDAH KE LOGIN & RESET SEMUA ROUTE
+            Navigator.pushNamedAndRemoveUntil(
+              context, 
+              '/login', 
+              (route) => false,
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Logout gagal: ${response['message'] ?? "Error server"}')),
+            );
+          }
+        } catch (e) {
+          print("Logout Error: $e");
+          // Jika koneksi gagal, kita paksa bersihkan di sisi Flutter saja
+          // agar user tidak terjebak di session yang rusak
+          if (!context.mounted) return;
+          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+        }
       },
+      child: Container(
+        width: 140,
+        height: 48,
+        decoration: BoxDecoration(
+          color: isLoggedIn ? Colors.redAccent : AppColors.lime,
+          borderRadius: BorderRadius.circular(34),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          isLoggedIn ? "Logout" : "Login",
+          style: TextStyle(
+            fontFamily: 'Geologica',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isLoggedIn ? Colors.white : AppColors.indigo,
+          ),
+        ),
+      ),
     );
   }
 }
