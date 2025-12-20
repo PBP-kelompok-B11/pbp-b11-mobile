@@ -92,33 +92,37 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(40),
                       ),
-                      child: Image.network(
-                        player.thumbnail ?? '',
+
+                      child: SizedBox(
                         height: 220,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        // 'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(thumbnail)}',
+                        width: double.infinity, // Pastikan ini ada
+                        child: Image.network(
+                          player.thumbnail ?? '',
+                          height: 220,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          // 'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(thumbnail)}',
 
-                        errorBuilder: (context, error, stackTrace) {
-                          // 🔁 fallback ke proxy
-                          final proxyUrl =
-                              'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(player.thumbnail)}';
+                          errorBuilder: (context, error, stackTrace) {
+                            // 🔁 fallback ke proxy
+                            final proxyUrl =
+                                'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(player.thumbnail)}';
 
-                          return Image.network(
-                            proxyUrl,
-                            fit: BoxFit.cover,
-                            height: 220,
-                            errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  height: 220,
-                                  width: double.infinity,
-                                  color: Colors.grey.shade300,
-                                );
-                            }
-                          );
-                        },
+                            return Image.network(
+                              proxyUrl,
+                              fit: BoxFit.cover,
+                              height: 220,
+                              errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 220,
+                                    width: double.infinity,
+                                    color: Colors.grey.shade300,
+                                  );
+                              }
+                            );
+                          },
+                        ),
                       ),
-
                     ),
 
                     Padding(
