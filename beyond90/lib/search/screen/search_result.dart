@@ -47,7 +47,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
     super.initState();
     _controller = TextEditingController(text: widget.query);
 
-    // Inisialisasi Future saat pertama kali dibuka
     _players = _fetchPlayers(widget.query);
     _clubs = _fetchClubs(widget.query);
     _events = _fetchEvents(widget.query);
@@ -92,6 +91,16 @@ class _SearchResultPageState extends State<SearchResultPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.indigo,
+
+      // ✅ APPBAR DENGAN TOMBOL BACK
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+      ),
+
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 1,
         onTap: (index) {
@@ -110,13 +119,15 @@ class _SearchResultPageState extends State<SearchResultPage> {
           }
         },
       ),
+
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 8),
 
               SearchBarWidget(
                 controller: _controller,
@@ -124,7 +135,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
               ),
 
               const SizedBox(height: 32),
-              ResultTitle(query: _controller.text, keyword: _controller.text),
+              ResultTitle(
+                query: _controller.text,
+                keyword: _controller.text,
+              ),
 
               const SizedBox(height: 32),
 
@@ -156,22 +170,22 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   clubName: c.nama,
                   location: c.stadion,
                   onTap: () {
-                      if (AuthService.isAdmin) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ClubDetailAdmin(clubId: c.id),
-                          ),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ClubDetailUser(clubId: c.id),
-                          ),
-                        );
-                      }
-                  },    
+                    if (AuthService.isAdmin) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ClubDetailAdmin(clubId: c.id),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ClubDetailUser(clubId: c.id),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
 
@@ -200,17 +214,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
     required Future<List<T>> future,
     required Widget Function(T item) itemBuilder,
   }) {
-    double itemWidth = 280; 
-    double itemHeight = 320; 
+    double itemWidth = 280;
+    double itemHeight = 320;
 
     if (title == "Player") {
-      itemHeight = 420; 
+      itemHeight = 420;
     } else if (title == "Club") {
-      itemWidth = 220; 
+      itemWidth = 220;
       itemHeight = 320;
     } else if (title == "Event") {
       itemWidth = 280;
-      itemHeight = 220; 
+      itemHeight = 220;
     }
 
     return Padding(
@@ -248,11 +262,11 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               return Wrap(
                 spacing: 16,
-                runSpacing: 24, 
+                runSpacing: 24,
                 children: items.map((e) {
                   return SizedBox(
                     width: itemWidth,
-                    height: itemHeight, 
+                    height: itemHeight,
                     child: itemBuilder(e),
                   );
                 }).toList(),

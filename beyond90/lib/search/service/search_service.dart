@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class SearchService {
   static const String baseUrl =
-      "http://127.0.0.1:8000/search/api/search";
+      "http://127.0.0.1:8000/search/api";
 
   // =======================
   // 🔍 SEARCH UTAMA
@@ -13,13 +13,13 @@ class SearchService {
     required String type, // players | clubs | events
   }) async {
     final uri = Uri.parse(
-      "$baseUrl/?q=${Uri.encodeQueryComponent(query)}&type=$type",
+      "$baseUrl/search/?q=${Uri.encodeQueryComponent(query)}&type=$type",
     );
 
     final response = await http.get(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("Search failed");
+      throw Exception("Search failed: ${response.body}");
     }
 
     return jsonDecode(response.body);
@@ -42,7 +42,6 @@ class SearchService {
     }
 
     final data = jsonDecode(response.body);
-
     return List<Map<String, dynamic>>.from(data["results"]);
   }
 
@@ -67,7 +66,11 @@ class SearchService {
   // =======================
   static Future<void> deleteHistoryItem(int id) async {
     final uri = Uri.parse("$baseUrl/history/$id/");
-    await http.delete(uri);
+    final response = await http.delete(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception("Delete history item failed");
+    }
   }
 
   // =======================
@@ -75,6 +78,10 @@ class SearchService {
   // =======================
   static Future<void> clearHistory() async {
     final uri = Uri.parse("$baseUrl/history/clear/");
-    await http.delete(uri);
+    final response = await http.delete(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception("Clear history failed");
+    }
   }
 }
