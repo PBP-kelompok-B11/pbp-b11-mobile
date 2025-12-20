@@ -195,13 +195,20 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
         ),
       ),
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 0,
+        selectedIndex: 2, // CATEGORY
         onTap: (index) {
-          if (index == 0) return;
+          if (index == 2) return;
+
           switch (index) {
-            case 1: Navigator.pushNamed(context, 'search'); break;
-            case 2: Navigator.pushReplacementNamed(context, '/category'); break;
-            case 3: Navigator.push(context, MaterialPageRoute(builder: (context) => MediaFormPage())); break;
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
           }
         },
       ),
