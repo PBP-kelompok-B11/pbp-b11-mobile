@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 class PlayerEntryService {
   static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/json/";
+  
 
   // CLUB
   static Future<List<PlayerEntry>> fetchPlayerEntry() async {

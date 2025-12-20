@@ -87,7 +87,7 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
             icon: const Icon(Icons.filter_list_rounded, color: AppColors.lime, size: 30),
             color: AppColors.lime,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            // 🔥 FUNGSI ONSELECTED DENGAN POSISI LENGKAP
+            
             onSelected: (String value) {
               setState(() {
                 if (value == 'all_data') {

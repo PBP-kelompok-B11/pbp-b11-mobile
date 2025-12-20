@@ -2,8 +2,8 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class AuthService {
   // Gunakan 10.0.2.2 jika pakai emulator Android, atau IP asli jika pakai HP fisik
-  static const String baseUrl = "http://localhost:8000";
-  // static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/";
+  // static const String baseUrl = "http://localhost:8000";
+  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/";
   // Variabel Global untuk status Admin
   static bool isAdmin = false;
   static String? currentUsername;

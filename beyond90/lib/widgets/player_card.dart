@@ -39,20 +39,36 @@ class PlayerCard extends StatelessWidget {
             width: 4,
           ),
         ),
-        // 🔥 Gunakan Stack agar teks bisa berada DI ATAS gambar
+  
         child: Stack(
           children: [
-            // 1. BACKGROUND IMAGE (Full memenuhi sisa ruang)
+
             Positioned.fill(
               child: Image.network(
+                // 'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(thumbnail)}',
                 thumbnail,
-                fit: BoxFit.cover, // Gambar akan selalu memenuhi sisa ruang
+                fit: BoxFit.cover,
                 alignment: Alignment.topCenter,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, size: 50),
+                errorBuilder: (context, error, stackTrace) {
+                  // 🔁 fallback ke proxy
+                  final proxyUrl =
+                      'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(thumbnail)}';
+
+                  return Image.network(
+                    proxyUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 220,
+                                  width: double.infinity,
+                                  color: Colors.grey.shade300,
+                                );
+                            }
+                  );
+                },
               ),
             ),
 
-            // 2. GRADIENT OVERLAY (PENTING: Agar teks tetap terbaca jika gambarnya terang)
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -69,7 +85,7 @@ class PlayerCard extends StatelessWidget {
               ),
             ),
 
-            // 3. DETAIL CONTENT (Teks didorong ke paling bawah)
+    
             Positioned(
               left: 0,
               right: 0,
@@ -88,7 +104,7 @@ class PlayerCard extends StatelessWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Geologica',
-                        color: AppColors.white, // Ubah ke putih karena background-nya sekarang gambar/gelap
+                        color: AppColors.white, 
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -102,13 +118,13 @@ class PlayerCard extends StatelessWidget {
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Geologica',
-                            color: AppColors.lime, // Pakai lime agar kontras dengan indigo/gambar
+                            color: AppColors.lime, 
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    // Tombol Details
+                    
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 10),

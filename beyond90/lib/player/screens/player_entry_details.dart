@@ -97,13 +97,28 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                         height: 220,
                         width: double.infinity,
                         fit: BoxFit.cover,
+                        // 'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(thumbnail)}',
+
                         errorBuilder: (context, error, stackTrace) {
-                          return Container(
+                          // 🔁 fallback ke proxy
+                          final proxyUrl =
+                              'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(player.thumbnail)}';
+
+                          return Image.network(
+                            proxyUrl,
+                            fit: BoxFit.cover,
                             height: 220,
-                            color: Colors.grey.shade300,
+                            errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 220,
+                                  width: double.infinity,
+                                  color: Colors.grey.shade300,
+                                );
+                            }
                           );
                         },
                       ),
+
                     ),
 
                     Padding(
