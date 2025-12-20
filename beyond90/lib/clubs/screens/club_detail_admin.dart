@@ -82,158 +82,160 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-
+                
                 // MAIN CARD
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  margin: const EdgeInsets.symmetric(vertical: 12),
-                  padding: const EdgeInsets.only(bottom: 32),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(55),
-                  ),
-                  child: Column(
-                    children: [
-                      // IMAGE
-                      Container(
-                        height: 260,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(55),
+                Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.only(bottom: 32),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(55),
+                    ),
+                    child: Column(
+                      children: [
+                        // IMAGE
+                        Container(
+                          height: 260,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(55),
+                            ),
+                            color: Colors.grey.shade300,
+                            image: club.urlGambar != null &&
+                                    club.urlGambar!.isNotEmpty
+                                ? DecorationImage(
+                                    image: NetworkImage(club.urlGambar!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
-                          color: Colors.grey.shade300,
-                          image: club.urlGambar != null &&
-                                  club.urlGambar!.isNotEmpty
-                              ? DecorationImage(
-                                  image: NetworkImage(club.urlGambar!),
-                                  fit: BoxFit.cover,
+                          child: (club.urlGambar == null ||
+                                  club.urlGambar!.isEmpty)
+                              ? const Center(
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    size: 60,
+                                    color: Colors.black45,
+                                  ),
                                 )
                               : null,
                         ),
-                        child: (club.urlGambar == null ||
-                                club.urlGambar!.isEmpty)
-                            ? const Center(
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  size: 60,
-                                  color: Colors.black45,
-                                ),
-                              )
-                            : null,
-                      ),
 
-                      const SizedBox(height: 24),
-
-                      // NAME
-                      Text(
-                        club.nama.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: "Geologica",
-                          fontSize: 46,
-                          color: AppColors.indigo,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // LOCATION
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("📍", style: TextStyle(fontSize: 28)),
-                          const SizedBox(width: 6),
-                          Text(
-                            club.negara,
-                            style: const TextStyle(
-                              fontFamily: "Geologica",
-                              fontSize: 24,
-                              color: AppColors.indigo,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      _limeBar("Stadion: ${club.stadion}"),
-                      _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
-
-                      // RANKING 
-                      FutureBuilder<List<ClubRanking>>(
-                        future: futureRankings,
-                        builder: (context, rankSnapshot) {
-                          if (!rankSnapshot.hasData) {
-                            _currentRanking = null;
-                            _currentRankingId = null;
-                            return _limeBar("Ranking Klub: -");
-                          }
-
-                          final filtered = rankSnapshot.data!
-                              .where((r) => r.club == club.id)
-                              .toList();
-
-                          if (filtered.isEmpty) {
-                            _currentRanking = null;
-                            _currentRankingId = null;
-                            return _limeBar("Ranking Klub: -");
-                          }
-
-                          final ranking = filtered.first;
-                          _currentRanking = ranking.peringkat;
-                          _currentRankingId = ranking.id;
-
-                          return _limeBar(
-                              "Ranking Klub: ${ranking.peringkat}");
-                        },
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      if (AuthService.isAdmin) ...[
-                        _adminButton(
-                          label: "Edit Club",
-                          background: Colors.yellow.shade400,
-                          textColor: AppColors.indigo,
-                          onTap: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ClubForm(
-                                  club: club,
-                                  ranking: _currentRanking,
-                                  rankingId: _currentRankingId,
-                                ),
-                              ),
-                            );
-
-                            if (result == true) {
-                              setState(() {
-                                futureClub =
-                                    ClubService.fetchClubDetail(widget.clubId);
-                                futureRankings =
-                                    ClubRankingService.fetchAllRankings();
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _adminButton(
-                          label: "Delete Club",
-                          background: Colors.red.shade600,
-                          textColor: AppColors.white,
-                          onTap: () async {
-                            await ClubService.deleteClub(club.id);
-                            Navigator.pop(context);
-                          },
-                        ),
                         const SizedBox(height: 24),
+
+                        // NAME
+                        Text(
+                          club.nama.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: "Geologica",
+                            fontSize: 46,
+                            color: AppColors.indigo,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // LOCATION
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("📍", style: TextStyle(fontSize: 28)),
+                            const SizedBox(width: 6),
+                            Text(
+                              club.negara,
+                              style: const TextStyle(
+                                fontFamily: "Geologica",
+                                fontSize: 24,
+                                color: AppColors.indigo,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        _limeBar("Stadion: ${club.stadion}"),
+                        _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
+
+                        // RANKING 
+                        FutureBuilder<List<ClubRanking>>(
+                          future: futureRankings,
+                          builder: (context, rankSnapshot) {
+                            if (!rankSnapshot.hasData) {
+                              _currentRanking = null;
+                              _currentRankingId = null;
+                              return _limeBar("Ranking Klub: -");
+                            }
+
+                            final filtered = rankSnapshot.data!
+                                .where((r) => r.club == club.id)
+                                .toList();
+
+                            if (filtered.isEmpty) {
+                              _currentRanking = null;
+                              _currentRankingId = null;
+                              return _limeBar("Ranking Klub: -");
+                            }
+
+                            final ranking = filtered.first;
+                            _currentRanking = ranking.peringkat;
+                            _currentRankingId = ranking.id;
+
+                            return _limeBar(
+                                "Ranking Klub: ${ranking.peringkat}");
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        if (AuthService.isAdmin) ...[
+                          _adminButton(
+                            label: "Edit Club",
+                            background: Colors.yellow.shade400,
+                            textColor: AppColors.indigo,
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ClubForm(
+                                    club: club,
+                                    ranking: _currentRanking,
+                                    rankingId: _currentRankingId,
+                                  ),
+                                ),
+                              );
+
+                              if (result == true) {
+                                setState(() {
+                                  futureClub =
+                                      ClubService.fetchClubDetail(widget.clubId);
+                                  futureRankings =
+                                      ClubRankingService.fetchAllRankings();
+                                });
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          _adminButton(
+                            label: "Delete Club",
+                            background: Colors.red.shade600,
+                            textColor: AppColors.white,
+                            onTap: () async {
+                              await ClubService.deleteClub(club.id);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           );

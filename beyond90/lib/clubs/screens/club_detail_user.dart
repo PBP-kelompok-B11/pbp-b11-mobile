@@ -74,107 +74,109 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  margin: const EdgeInsets.symmetric(vertical: 24),
-                  padding: const EdgeInsets.only(bottom: 32),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(55),
-                  ),
-                  child: Column(
-                    children: [
-                      // IMAGE
-                      Container(
-                        height: 260,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(55),
-                          ),
-                          color: Colors.grey.shade300,
-                          image: club.urlGambar != null
-                              ? DecorationImage(
-                                  image: NetworkImage(club.urlGambar!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // CLUB NAME
-                      Text(
-                        club.nama.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontFamily: "Geologica",
-                          fontSize: 46,
-                          color: AppColors.indigo,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // LOCATION
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("📍", style: TextStyle(fontSize: 28)),
-                          const SizedBox(width: 6),
-                          Text(
-                            club.negara,
-                            style: const TextStyle(
-                              fontFamily: "Geologica",
-                              fontSize: 26,
-                              color: AppColors.indigo,
+                Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    margin: const EdgeInsets.symmetric(vertical: 24),
+                    padding: const EdgeInsets.only(bottom: 32),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(55),
+                    ),
+                    child: Column(
+                      children: [
+                        // IMAGE
+                        Container(
+                          height: 260,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(55),
                             ),
+                            color: Colors.grey.shade300,
+                            image: club.urlGambar != null
+                                ? DecorationImage(
+                                    image: NetworkImage(club.urlGambar!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      _limeBar("Stadion: ${club.stadion}"),
-                      _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
-
-                      FutureBuilder<List<ClubRanking>>(
-                        future: futureRankings,
-                        builder: (context, rankSnapshot) {
-                          if (!rankSnapshot.hasData) {
-                            return _limeBar("Ranking Klub: -");
-                          }
-
-                          final filtered = rankSnapshot.data!
-                              .where((r) => r.club == club.id)
-                              .toList();
-
-                          return filtered.isEmpty
-                              ? _limeBar("Ranking Klub: -")
-                              : _limeBar(
-                                  "Ranking Klub: ${filtered.first.peringkat}",
-                                );
-                        },
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // CHAT ICON
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: AppColors.lime,
-                          borderRadius: BorderRadius.circular(22),
                         ),
-                        child: const Icon(
-                          Icons.chat_bubble_outline,
-                          size: 36,
-                          color: AppColors.indigo,
+
+                        const SizedBox(height: 24),
+
+                        // CLUB NAME
+                        Text(
+                          club.nama.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: "Geologica",
+                            fontSize: 46,
+                            color: AppColors.indigo,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(height: 8),
+
+                        // LOCATION
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("📍", style: TextStyle(fontSize: 28)),
+                            const SizedBox(width: 6),
+                            Text(
+                              club.negara,
+                              style: const TextStyle(
+                                fontFamily: "Geologica",
+                                fontSize: 26,
+                                color: AppColors.indigo,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        _limeBar("Stadion: ${club.stadion}"),
+                        _limeBar("Tahun Berdiri: ${club.tahunBerdiri}"),
+
+                        FutureBuilder<List<ClubRanking>>(
+                          future: futureRankings,
+                          builder: (context, rankSnapshot) {
+                            if (!rankSnapshot.hasData) {
+                              return _limeBar("Ranking Klub: -");
+                            }
+
+                            final filtered = rankSnapshot.data!
+                                .where((r) => r.club == club.id)
+                                .toList();
+
+                            return filtered.isEmpty
+                                ? _limeBar("Ranking Klub: -")
+                                : _limeBar(
+                                    "Ranking Klub: ${filtered.first.peringkat}",
+                                  );
+                          },
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // CHAT ICON
+                        Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            color: AppColors.lime,
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          child: const Icon(
+                            Icons.chat_bubble_outline,
+                            size: 36,
+                            color: AppColors.indigo,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 

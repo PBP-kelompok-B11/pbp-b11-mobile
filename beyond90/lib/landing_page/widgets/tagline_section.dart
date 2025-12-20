@@ -13,7 +13,7 @@ class TaglineSection extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Geologica',
-          fontSize: 18,
+          fontSize: 19,
           fontWeight: FontWeight.normal,
           height: 1.3,
           color: AppColors.white,

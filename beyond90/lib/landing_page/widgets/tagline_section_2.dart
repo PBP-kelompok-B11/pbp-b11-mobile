@@ -16,7 +16,7 @@ class TaglineSection2 extends StatelessWidget {
               text: "Explore stories and matches beyond the ",
               style: TextStyle(
                 fontFamily: 'Geologica',
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: FontWeight.normal,
                 height: 1.3,
                 color: AppColors.white,
