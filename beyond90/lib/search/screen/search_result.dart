@@ -48,6 +48,13 @@ class _SearchResultPageState extends State<SearchResultPage> {
   }
 
   void _fetchAll(String query) {
+    if (query.trim().isEmpty) {
+      _players = Future.value([]);
+      _clubs = Future.value([]);
+      _events = Future.value([]);
+      return;
+    }
+
     _players = _fetchPlayers(query);
     _clubs = _fetchClubs(query);
     _events = _fetchEvents(query);
@@ -55,31 +62,32 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   Future<List<PlayerEntry>> _fetchPlayers(String q) async {
     final res = await SearchService.search(query: q, type: "players");
-    print(res);
-    return (res["players"] as List)
-        .map((e) => PlayerEntry.fromJson(e))
-        .toList();
+
+    final list = res["players"] ?? [];
+    return list.map<PlayerEntry>((e) => PlayerEntry.fromJson(e)).toList();
   }
+
 
   Future<List<Club>> _fetchClubs(String q) async {
     final res = await SearchService.search(query: q, type: "clubs");
-    print(res);
-    return (res["clubs"] as List)
-        .map((e) => Club.fromJson(e))
-        .toList();
+
+    final list = res["clubs"] ?? [];
+    return list.map<Club>((e) => Club.fromJson(e)).toList();
   }
+
 
   Future<List<EventEntry>> _fetchEvents(String q) async {
     final res = await SearchService.search(query: q, type: "events");
-    print(res);
-    return (res["events"] as List)
-        .map((e) => EventEntry.fromJson(e))
-        .toList();
+
+    final list = res["events"] ?? [];
+    return list.map<EventEntry>((e) => EventEntry.fromJson(e)).toList();
   }
 
   void _onSearch(String q) {
     if (q.trim().isEmpty) return;
+
     setState(() {
+      _controller.text = q;
       _fetchAll(q);
     });
   }
@@ -121,7 +129,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               const SizedBox(height: 32),
 
-              ResultTitle(query: _controller.text, keyword: '',),
+              ResultTitle(query: _controller.text, keyword: ''),
 
               const SizedBox(height: 32),
 

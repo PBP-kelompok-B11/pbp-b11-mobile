@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'package:beyond90/search/screen/search_result.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/search/service/search_service.dart';
 import 'package:beyond90/search/widgets/search_bar.dart';
+import 'package:beyond90/search/screen/search_result.dart';
 
 class SearchHistoryAndSuggestionPage extends StatefulWidget {
   const SearchHistoryAndSuggestionPage({super.key});
@@ -44,9 +41,6 @@ class _SearchHistoryAndSuggestionPageState
   // 📜 LOAD HISTORY
   // ======================
   Future<void> _loadHistory() async {
-    final request = context.read<CookieRequest>();
-    if (!request.loggedIn) return;
-
     try {
       final data = await SearchService.getHistory();
       setState(() => _history = data);
@@ -54,7 +48,7 @@ class _SearchHistoryAndSuggestionPageState
   }
 
   // ======================
-  // 🔍 SEARCH SUGGESTION
+  // 🔍 SUGGESTION
   // ======================
   void _onQueryChanged() {
     final query = _controller.text.trim();
@@ -70,13 +64,10 @@ class _SearchHistoryAndSuggestionPageState
       setState(() => _loading = true);
 
       try {
-        // pakai method getSuggestions() dari SearchService
-        final suggestionData = await SearchService.getSuggestions(query: query);
+        final data =
+            await SearchService.getSuggestions(query: query);
 
-        setState(() {
-          _suggestions =
-              List<Map<String, dynamic>>.from(suggestionData);
-        });
+        setState(() => _suggestions = data);
       } catch (_) {}
 
       setState(() => _loading = false);
@@ -84,7 +75,7 @@ class _SearchHistoryAndSuggestionPageState
   }
 
   // ======================
-  // 🚀 GO TO RESULT
+  // 🚀 RESULT
   // ======================
   void _goResult(String query) {
     Navigator.pushReplacement(
@@ -118,14 +109,11 @@ class _SearchHistoryAndSuggestionPageState
         child: Column(
           children: [
             const SizedBox(height: 24),
-
             SearchBarWidget(
               controller: _controller,
               onSubmitted: _goResult,
             ),
-
             const SizedBox(height: 24),
-
             if (!showSuggestion) _historyHeader(),
             Expanded(
               child: showSuggestion
@@ -139,7 +127,7 @@ class _SearchHistoryAndSuggestionPageState
   }
 
   // ======================
-  // 🧩 HEADER
+  // UI PARTS
   // ======================
   Widget _historyHeader() => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -156,7 +144,8 @@ class _SearchHistoryAndSuggestionPageState
       );
 
   Widget _pill(String text) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         decoration: BoxDecoration(
           color: AppColors.lime,
           borderRadius: BorderRadius.circular(36),
@@ -166,21 +155,15 @@ class _SearchHistoryAndSuggestionPageState
           style: const TextStyle(
             color: AppColors.indigo,
             fontSize: 20,
-            fontFamily: 'Geologica',
           ),
         ),
       );
 
-  // ======================
-  // 📜 HISTORY LIST
-  // ======================
   Widget _buildHistoryList() {
     if (_history.isEmpty) {
       return const Center(
-        child: Text(
-          "No search history",
-          style: TextStyle(color: Colors.white70),
-        ),
+        child: Text("No search history",
+            style: TextStyle(color: Colors.white70)),
       );
     }
 
@@ -189,7 +172,7 @@ class _SearchHistoryAndSuggestionPageState
       itemCount: _history.length,
       itemBuilder: (_, i) {
         final h = _history[i];
-        return _historyTile(
+        return _tile(
           text: h["kata_kunci"],
           onTap: () => _goResult(h["kata_kunci"]),
           onDelete: () => _deleteHistory(h["id"]),
@@ -198,9 +181,6 @@ class _SearchHistoryAndSuggestionPageState
     );
   }
 
-  // ======================
-  // 🔍 SUGGESTION LIST
-  // ======================
   Widget _buildSuggestionList() {
     if (_loading) {
       return const Center(
@@ -213,7 +193,7 @@ class _SearchHistoryAndSuggestionPageState
       itemCount: _suggestions.length,
       itemBuilder: (_, i) {
         final s = _suggestions[i];
-        return _historyTile(
+        return _tile(
           text: s["title"],
           icon: Icons.search,
           onTap: () => _goResult(s["title"]),
@@ -222,10 +202,7 @@ class _SearchHistoryAndSuggestionPageState
     );
   }
 
-  // ======================
-  // 🧱 TILE
-  // ======================
-  Widget _historyTile({
+  Widget _tile({
     required String text,
     required VoidCallback onTap,
     VoidCallback? onDelete,
@@ -235,7 +212,8 @@ class _SearchHistoryAndSuggestionPageState
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(53),
           border: Border.all(color: AppColors.lime, width: 3),
@@ -245,19 +223,15 @@ class _SearchHistoryAndSuggestionPageState
             Icon(icon, color: AppColors.lime),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontFamily: 'Geologica',
-                ),
-              ),
+              child: Text(text,
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 22)),
             ),
             if (onDelete != null)
               GestureDetector(
                 onTap: onDelete,
-                child: const Icon(Icons.close, color: AppColors.lime),
+                child: const Icon(Icons.close,
+                    color: AppColors.lime),
               ),
           ],
         ),

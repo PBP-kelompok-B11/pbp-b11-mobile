@@ -132,15 +132,18 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                       ),
                     );
                   } else {
+                    // user belum login → tetap ke history / suggestion
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => SearchResultPage(query: ""),
+                        builder: (_) => const SearchHistoryAndSuggestionPage(),
                       ),
                     );
                   }
                 },
                 onSubmitted: (query) {
+                  if (query.trim().isEmpty) return;
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
