@@ -4,7 +4,7 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:beyond90/event/screens/eventlist_form.dart';
+import 'package:beyond90/event/screens/eventlist_form.dart'; // Pastikan import sesuai nama file form kamu
 import 'package:beyond90/event/service/event_service.dart';
 
 class EventDetailPage extends StatelessWidget {
@@ -32,24 +32,18 @@ class EventDetailPage extends StatelessWidget {
     final bool isOwner = f.username == currentUser;
 
     // --- Logic Status ---
-    final now = DateTime.now();
-    final bool isToday = f.tanggal.year == now.year &&
-                         f.tanggal.month == now.month &&
-                         f.tanggal.day == now.day;
-    final bool isUpcoming = f.tanggal.isAfter(now) && !isToday;
-
-    String statusText;
+    final String statusText = EventService.getEventStatus(f.tanggal);
     Color statusColor;
 
-    if (isToday) {
-      statusText = "LIVE / TODAY";
-      statusColor = const Color(0xFFEF4444);
-    } else if (isUpcoming) {
-      statusText = "UPCOMING";
-      statusColor = const Color(0xFF22C55E);
-    } else {
-      statusText = "FINISHED";
-      statusColor = const Color(0xFF64748B);
+    switch (statusText) {
+      case "LIVE":
+        statusColor = const Color(0xFFEF4444);
+        break;
+      case "UPCOMING":
+        statusColor = const Color(0xFF22C55E);
+        break;
+      default:
+        statusColor = const Color(0xFF64748B);
     }
 
     final String homeScore = (f.skorHome == null) ? "_" : f.skorHome.toString();
@@ -57,11 +51,10 @@ class EventDetailPage extends StatelessWidget {
     
     return Scaffold(
       backgroundColor: AppColors.indigo,
-
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 80, // Biar lebih lega di atas
+        toolbarHeight: 80,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
           onPressed: () => Navigator.pop(context),
@@ -71,20 +64,18 @@ class EventDetailPage extends StatelessWidget {
           style: TextStyle(
             fontFamily: "Geologica",
             color: AppColors.lime,
-            fontSize: 32, // Ukuran disesuaikan untuk AppBar
+            fontSize: 32,
             fontWeight: FontWeight.w800,
             letterSpacing: -1.0,
           ),
         ),
-        centerTitle: false, // Judul nempel ke kiri samping tombol back
+        centerTitle: false,
       ),
 
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 40),
-
-            // CARD CONTENT
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
@@ -106,7 +97,7 @@ class EventDetailPage extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (isToday) ...[
+                          if (statusText == "LIVE") ...[
                             Container(
                               width: 10, height: 10,
                               decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
@@ -130,29 +121,25 @@ class EventDetailPage extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        teamLogo(f.timHome, size: 72),
-
+                        teamLogo(f.logoHome, size: 72),
                         const SizedBox(width: 12),
-
                         Expanded(
                           child: Text(
                             "${f.timHome} VS ${f.timAway}",
                             textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis, // 🔑
+                            overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: const TextStyle(
                               fontFamily: "Geologica",
                               color: AppColors.indigo,
-                              fontSize: 28, // 🔽 sedikit diturunin
+                              fontSize: 28,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -1.5,
                             ),
                           ),
                         ),
-
                         const SizedBox(width: 12),
-
-                        teamLogo(f.timAway, size: 72),
+                        teamLogo(f.logoAway, size: 72),
                       ],
                     ),
 
@@ -164,7 +151,7 @@ class EventDetailPage extends StatelessWidget {
                         const Icon(Icons.calendar_month, color: AppColors.indigo, size: 24),
                         const SizedBox(width: 10),
                         Text(
-                          isToday ? "Today" : "${f.tanggal.day}/${f.tanggal.month}/${f.tanggal.year}",
+                          statusText == "LIVE" ? "Today" : "${f.tanggal.day}/${f.tanggal.month}/${f.tanggal.year}",
                           style: const TextStyle(
                             fontFamily: "Geologica",
                             fontSize: 20,
@@ -214,24 +201,20 @@ class EventDetailPage extends StatelessWidget {
                           ),
                         
                         if (!(isAdmin && isOwner)) const Spacer(),
-
                         const SizedBox(width: 12),
 
-                        // Tombol Chat (Sekarang bulat sempurna dan pakai Asset Image)
                         GestureDetector(
                           onTap: () { /* TODO: Comment page */ },
                           child: Container(
-                            width: 70, 
-                            height: 70,
+                            width: 70, height: 70,
                             decoration: const BoxDecoration(
                               color: AppColors.lime, 
-                              shape: BoxShape.circle, // Bulat sempurna seperti desain Player
+                              shape: BoxShape.circle,
                             ),
                             child: Center(
                               child: Image.asset(
                                 'assets/icons/comment.png', 
-                                width: 32, 
-                                height: 32,
+                                width: 32, height: 32,
                                 color: AppColors.indigo,
                                 errorBuilder: (context, error, stackTrace) => 
                                     const Icon(Icons.chat_bubble_outline, color: AppColors.indigo),
@@ -252,7 +235,28 @@ class EventDetailPage extends StatelessWidget {
     );
   }
 
-  // --- UI Helpers dengan Font Geologica Tebal & Rapet ---
+  // --- UI Helpers ---
+
+  Widget teamLogo(String? url, {double size = 40}) {
+    if (url == null || url.isEmpty) {
+      return Icon(Icons.shield, size: size, color: AppColors.indigo);
+    }
+
+    String finalUrl = url;
+    if (!url.startsWith('http')) {
+      // Fallback ke static folder server jika bukan link internet
+      finalUrl = "http://10.0.2.2:8000/static/logos/$url";
+    }
+
+    return Image.network(
+      finalUrl,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      errorBuilder: (_, __, ___) => Icon(Icons.shield, size: size, color: AppColors.indigo),
+    );
+  }
+
   void _showDeleteConfirmation(BuildContext context, CookieRequest request) {
     showDialog(
       context: context,
@@ -294,7 +298,6 @@ class EventDetailPage extends StatelessWidget {
   }
 
   Widget _buildScorePill(String home, String away) {
-
     int s1 = int.tryParse(home) ?? -1;
     int s2 = int.tryParse(away) ?? -1;
     
@@ -312,44 +315,11 @@ class EventDetailPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (homeWins) 
-            const Text("🏆 ", style: TextStyle(fontSize: 20)),
-
-          Text(
-            home, 
-            style: TextStyle(
-              fontFamily: "Geologica", 
-              color: AppColors.indigo, 
-              fontSize: 22, 
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1.0,
-            )
-          ),
-          
-          const Text(
-            " - ", 
-            style: TextStyle(
-              fontFamily: "Geologica", 
-              color: AppColors.indigo, 
-              fontSize: 22, 
-              fontWeight: FontWeight.w900
-            )
-          ),
-          
-          Text(
-            away, 
-            style: TextStyle(
-              fontFamily: "Geologica", 
-              color: AppColors.indigo, 
-              fontSize: 22, 
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1.0,
-            )
-          ),
-
-          // 🏆 Piala untuk Away
-          if (awayWins) 
-            const Text(" 🏆", style: TextStyle(fontSize: 20)),
+          if (homeWins) const Text("🏆 ", style: TextStyle(fontSize: 20)),
+          Text(home, style: const TextStyle(fontFamily: "Geologica", color: AppColors.indigo, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: -1.0)),
+          const Text(" - ", style: TextStyle(fontFamily: "Geologica", color: AppColors.indigo, fontSize: 22, fontWeight: FontWeight.w900)),
+          Text(away, style: const TextStyle(fontFamily: "Geologica", color: AppColors.indigo, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: -1.0)),
+          if (awayWins) const Text(" 🏆", style: TextStyle(fontSize: 20)),
         ],
       ),
     );
@@ -375,28 +345,4 @@ class EventDetailPage extends StatelessWidget {
       ),
     );
   }
-  Widget teamLogo(String teamName, {double size = 40}) {
-    final filename = "${logoFromTeam(teamName)}.png";
-    final url = "http://127.0.0.1:8000/events/logos/$filename/";
-
-    return Image.network(
-      url,
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => Icon(
-        Icons.shield,
-        size: size,
-        color: AppColors.indigo,
-      ),
-    );
-  }
-}
-String logoFromTeam(String name) {
-      return name
-          .toLowerCase()
-          .replaceAll("&", "")
-          .replaceAll(RegExp(r'[^a-z0-9 ]'), "")
-          .trim()
-          .replaceAll(" ", "_");
 }

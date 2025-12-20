@@ -21,6 +21,8 @@ class _EventFormPageState extends State<EventFormPage> {
   final TextEditingController _skorHomeController = TextEditingController();
   final TextEditingController _skorAwayController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _timHomeLogoController = TextEditingController();
+  final TextEditingController _timAwayLogoController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +36,9 @@ class _EventFormPageState extends State<EventFormPage> {
       // 🔥 HANDLE NULL SAAT INIT: Kalau skor null, biarkan textfield kosong
       _skorHomeController.text = f.skorHome?.toString() ?? "";
       _skorAwayController.text = f.skorAway?.toString() ?? "";
-      
+      _timHomeLogoController.text = f.logoHome ?? "";
+      _timAwayLogoController.text = f.logoAway ?? "";
+
       _tanggalController.text = "${f.tanggal.year}-${f.tanggal.month.toString().padLeft(2, '0')}-${f.tanggal.day.toString().padLeft(2, '0')}";
     } else {
       _tanggalController.text = "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
@@ -49,6 +53,8 @@ class _EventFormPageState extends State<EventFormPage> {
     _skorHomeController.dispose();
     _skorAwayController.dispose();
     _tanggalController.dispose();
+    _timHomeLogoController.dispose();
+    _timAwayLogoController.dispose();
     super.dispose();
   }
 
@@ -93,7 +99,8 @@ class _EventFormPageState extends State<EventFormPage> {
                 _buildTextField(hint: "Tanggal", controller: _tanggalController, readOnly: true, onTap: _pickDate, icon: Icons.calendar_today),
                 _buildTextField(hint: "Tim Home", controller: _timHomeController, icon: Icons.home),
                 _buildTextField(hint: "Tim Away", controller: _timAwayController, icon: Icons.airplanemode_active),
-                
+                _buildTextField(hint: "Logo Tim Home (filename, ex: burnley.png)", controller: _timHomeLogoController, icon: Icons.image,),
+                _buildTextField(hint: "Logo Tim Away (filename, ex: arsenal.png)", controller: _timAwayLogoController, icon: Icons.image,),
                 const SizedBox(height: 10),
                 const Padding(
                   padding: EdgeInsets.only(left: 15, bottom: 8),
@@ -121,6 +128,8 @@ class _EventFormPageState extends State<EventFormPage> {
                         "tim_away": _timAwayController.text,
                         "skor_home": _skorHomeController.text, 
                         "skor_away": _skorAwayController.text,
+                        "logo_home": _timHomeLogoController.text,
+                        "logo_away": _timAwayLogoController.text,
                       };
 
                       bool success;

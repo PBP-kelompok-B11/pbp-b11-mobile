@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/event/models/event_entry.dart';
-import 'package:beyond90/event/screens/event_detail.dart';
 import 'package:beyond90/event/service/event_service.dart';
 import 'package:beyond90/app_colors.dart';
 
@@ -17,8 +16,6 @@ class EventEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fields = event.fields;
-    
-    // 🔥 PANGGIL LOGIC DARI SERVICE
     final String status = EventService.getEventStatus(fields.tanggal);
 
     Color statusColor;
@@ -69,7 +66,6 @@ class EventEntryCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Dot merah berkedip (opsional) atau dot biasa jika LIVE
                   if (status == "LIVE") ...[
                     Container(
                       width: 6,
@@ -98,11 +94,12 @@ class EventEntryCard extends StatelessWidget {
 
             // 2. MATCH TITLE
             SizedBox(
-              height: 42, // KUNCI TINGGI
+              height: 42,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  teamLogo(fields.timHome, size: 34),
+                  // Gunakan URL dari Django
+                  teamLogo(fields.logoHome, size: 34),
 
                   const SizedBox(width: 8),
 
@@ -123,7 +120,8 @@ class EventEntryCard extends StatelessWidget {
 
                   const SizedBox(width: 8),
 
-                  teamLogo(fields.timAway, size: 34),
+                  // Gunakan URL dari Django
+                  teamLogo(fields.logoAway, size: 34),
                 ],
               ),
             ),
@@ -158,9 +156,6 @@ class EventEntryCard extends StatelessWidget {
               height: 34,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero, // 🔥 WAJIB
-                  minimumSize: Size.zero,   // 🔥 WAJIB
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap, // 🔥 WAJIB
                   backgroundColor: AppColors.lime,
                   foregroundColor: AppColors.indigo,
                   elevation: 0,
@@ -179,22 +174,31 @@ class EventEntryCard extends StatelessWidget {
                 ),
               ),
             ),
-
           ],
         ),
       ),
     );
   }
-  Widget teamLogo(String teamName, {double size = 40}) {
-    final filename = "${logoFromTeam(teamName)}.png";
-    final url = "http://127.0.0.1:8000/events/logos/$filename/";
+
+  Widget teamLogo(String? url, {double size = 34}) {
+    if (url == null || url.isEmpty) {
+      return Icon(Icons.shield, size: size, color: AppColors.indigo);
+    }
+
+    // Cek apakah url adalah link lengkap atau cuma nama file
+    String finalUrl = url;
+    if (!url.startsWith('http')) {
+      // Jika user cuma input "arsenal.png", arahkan ke static folder server
+      // Sesuaikan IP 10.0.2.2 untuk emulator Android
+      finalUrl = "http://10.0.2.2:8000/static/logos/$url";
+    }
 
     return Image.network(
-      url,
+      finalUrl,
       width: size,
       height: size,
       fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => Icon(
+      errorBuilder: (context, error, stackTrace) => Icon(
         Icons.shield,
         size: size,
         color: AppColors.indigo,
