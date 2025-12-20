@@ -129,7 +129,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               const SizedBox(height: 32),
 
-              ResultTitle(query: _controller.text, keyword: ''),
+              ResultTitle(query: _controller.text, keyword: _controller.text),
 
               const SizedBox(height: 32),
 
