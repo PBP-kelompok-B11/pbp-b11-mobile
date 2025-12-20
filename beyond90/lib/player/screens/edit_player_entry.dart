@@ -78,7 +78,7 @@ class _EditPlayerEntryState extends State<EditPlayerEntry> {
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== MAIN CONTENT =====
+            
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               
@@ -89,7 +89,7 @@ class _EditPlayerEntryState extends State<EditPlayerEntry> {
                     children: [
                       const SizedBox(height: 80),
 
-                      // BEYOND 90
+                  
                       Text(
                         "Edit Player",
                         style: TextStyle(
@@ -301,7 +301,6 @@ class _EditPlayerEntryState extends State<EditPlayerEntry> {
               ),
             ),
 
-            // 🔙 BACK BUTTON di atas semua widget
             Positioned(
               top: 16,
               left: 16,

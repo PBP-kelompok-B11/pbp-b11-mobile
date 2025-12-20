@@ -53,7 +53,7 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== MAIN CONTENT =====
+            
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               
@@ -64,7 +64,7 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
                     children: [
                       const SizedBox(height: 80),
 
-                      // BEYOND 90
+                      
                       Text(
                         "Add Player",
                         style: TextStyle(
@@ -208,17 +208,17 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
                                   await PlayerEntryService.createPlayerEntry({
                                     "nama": namaCtrl.text.trim(),
                                     "negara": negaraCtrl.text.trim(),
-                                    "usia": usiaCtrl.text.trim(),       // string, bukan int
-                                    "tinggi": tinggiCtrl.text.trim(),   // string, bukan double
-                                    "berat": beratCtrl.text.trim(),     // string, bukan double
-                                    "posisi": selectedPosisi ?? "",     // string
+                                    "usia": usiaCtrl.text.trim(),       
+                                    "tinggi": tinggiCtrl.text.trim(),  
+                                    "berat": beratCtrl.text.trim(),    
+                                    "posisi": selectedPosisi ?? "",     
                                     "thumbnail": fotoCtrl.text.trim().isEmpty ? "" : fotoCtrl.text.trim(),
                                   }, request);
 
                                   
                             
 
-                                  // print(response); // <- ini tempatnya untuk debug
+                                  // print(response); // 
 
 
                                   if (!context.mounted) return;
@@ -271,7 +271,6 @@ class _AddPlayerEntryState extends State<AddPlayerEntry> {
               ),
             ),
 
-            // 🔙 BACK BUTTON di atas semua widget
             Positioned(
               top: 16,
               left: 16,

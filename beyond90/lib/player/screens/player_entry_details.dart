@@ -87,7 +87,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                 ),
                 child: Column(
                   children: [
-                    // IMAGE
+                   
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(40),
@@ -110,7 +110,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         children: [
-                          // PLAYER NAME
+                          
                           Text(
                             player.nama,
                             textAlign: TextAlign.center,
@@ -125,7 +125,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 12),
 
-                          // POSITION & COUNTRY
+                          //pos, country
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -173,7 +173,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 20),
 
-                          // STATS PILLS (Height, Weight, Age)
+                          // stat
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -187,7 +187,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 24),
 
-                          // ACHIEVEMENTS DROPDOWN
+                          // achievement
                           _dropdownSection(
                             title: "Achievements",
                             isExpanded: isAchievementExpanded,
@@ -203,7 +203,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 12),
 
-                          // SEASON STATS DROPDOWN
+                          // season stat
                           _dropdownSection(
                             title: "Season Stats",
                             isExpanded: isSeasonStatsExpanded,
@@ -220,7 +220,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 12),
 
-                          // CAREER HISTORY DROPDOWN
+                          // career
                           _dropdownSection(
                             title: "Career History",
                             isExpanded: isCareerHistoryExpanded,
@@ -240,15 +240,14 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                           const SizedBox(height: 32),
 
-                          // CHAT ICON
-                          // ACTION BUTTONS (Edit, Delete, Chat)
+                          // edit, delete, chat
                           
                           Align(
                             alignment: Alignment.centerRight,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // EDIT BUTTON
+                                // edit
 
                                 if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
                                   _actionButton(
@@ -275,7 +274,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                                   const SizedBox(width: 10),
 
-                                // DELETE BUTTON
+                                // delete
                                 if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
                                   _actionButton(
                                     icon: Icons.delete_outline,
@@ -288,7 +287,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                                   const SizedBox(width: 10),
 
-                                // CHAT BUTTON
+                                // chat
                         
                                 _actionButton(
                                   icon: Icons.chat_bubble_outline,
@@ -333,7 +332,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
     );
   }
 
-  // STAT PILL WIDGET
+  
   Widget _statPill(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -353,7 +352,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
     );
   }
 
-  // DROPDOWN SECTION WIDGET
+
   Widget _dropdownSection({
     required String title,
     required bool isExpanded,
@@ -407,7 +406,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
     );
   }
 
-  // DATA ITEM WIDGET (untuk isi dropdown)
+ 
   Widget _dataItem(String text) {
     return Container(
       width: double.infinity,
