@@ -16,7 +16,7 @@ class ClubListAdmin extends StatefulWidget {
 }
 
 class _ClubListAdminState extends State<ClubListAdmin> {
-  final bool isAdmin = true; // admin mode
+  final bool isAdmin = true; 
 
   late Future<List<Club>> _futureClubs;
 

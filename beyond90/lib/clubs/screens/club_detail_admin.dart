@@ -1,3 +1,4 @@
+import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
@@ -18,7 +19,7 @@ class ClubDetailAdmin extends StatefulWidget {
 }
 
 class _ClubDetailAdminState extends State<ClubDetailAdmin> {
-  final bool isAdmin = true;
+  final bool isAdmin = AuthService.isAdmin;
 
   late Future<Club> futureClub;
   late Future<List<ClubRanking>> futureRankings;
@@ -191,7 +192,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
                       const SizedBox(height: 24),
 
-                      if (isAdmin) ...[
+                      if (AuthService.isAdmin) ...[
                         _adminButton(
                           label: "Edit Club",
                           background: Colors.yellow.shade400,

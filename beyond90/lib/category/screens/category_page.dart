@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
-
+import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:beyond90/category/widgets/category_title.dart';
 import 'package:beyond90/category/widgets/category_card.dart';
 import 'package:beyond90/event/screens/event_entry_list.dart';
@@ -51,7 +51,11 @@ class CategoryPage extends StatelessWidget {
                 subtitle: 'Meet the greatest clubs around the world!',
                 actionText: 'See all clubs',
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/clubs');
+                  if (AuthService.isAdmin) {
+                    Navigator.pushReplacementNamed(context, '/clubs/admin');
+                  } else {
+                    Navigator.pushReplacementNamed(context, '/clubs');
+                  }
                 },
               ),
 
