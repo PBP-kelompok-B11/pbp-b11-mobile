@@ -57,7 +57,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     if (q.trim().isEmpty) return [];
 
     final res = await SearchService.search(query: q, type: "players");
-    final list = res["players"] ?? [];
+    final list = res["results"] ?? [];
     return list.map<PlayerEntry>((e) => PlayerEntry.fromJson(e)).toList();
   }
 
@@ -65,7 +65,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     if (q.trim().isEmpty) return [];
 
     final res = await SearchService.search(query: q, type: "clubs");
-    final list = res["clubs"] ?? [];
+    final list = res["results"] ?? [];
     return list.map<Club>((e) => Club.fromJson(e)).toList();
   }
 
@@ -73,7 +73,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     if (q.trim().isEmpty) return [];
 
     final res = await SearchService.search(query: q, type: "events");
-    final list = res["events"] ?? [];
+    final list = res["results"] ?? [];
     return list.map<EventEntry>((e) => EventEntry.fromJson(e)).toList();
   }
 
