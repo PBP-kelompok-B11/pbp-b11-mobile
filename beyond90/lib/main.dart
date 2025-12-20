@@ -3,6 +3,7 @@ import 'package:beyond90/clubs/screens/club_list_admin.dart';
 import 'package:beyond90/clubs/screens/club_list_user.dart';
 import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart';
+import 'package:beyond90/event/screens/event_entry_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => const RegisterPage(),
         '/media_gallery': (context) => const MediaEntryListPage(),
         '/event/create': (context) => const EventFormPage(),
+        '/event/': (context) => const EventEntryListPage(),
         '/clubs': (_) => const ClubListUser(),
         '/clubs/admin': (_) => const ClubListAdmin(),
       },

@@ -65,7 +65,7 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
                   Row(
                     children: [
                       InkWell(
-                        onTap: () => Navigator.pushReplacementNamed(context, '/category'),
+                        onTap: () => Navigator.pop(context),
                         child: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 30),
                       ),
                       const SizedBox(width: 12),
