@@ -21,6 +21,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
   late Future<List<ClubRanking>> futureRankings;
 
   @override
+  
   void initState() {
     super.initState();
     futureClub = ClubService.fetchClubDetail(widget.clubId);
