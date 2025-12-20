@@ -13,7 +13,7 @@ import 'package:beyond90/player/screens/player_entry_details.dart';
 
 // CLUB
 import 'package:beyond90/clubs/models/club.dart';
-import 'package:beyond90/widgets/club_card.dart';
+import 'package:beyond90/clubs/widgets/club_card.dart';
 import 'package:beyond90/clubs/screens/club_detail_user.dart';
 
 // EVENT

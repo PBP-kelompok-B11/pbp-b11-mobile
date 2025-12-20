@@ -29,7 +29,8 @@ import 'package:beyond90/player/screens/player_entry_list.dart';
 
 // ===== CARD =====
 import 'package:beyond90/widgets/player_card.dart';
-import 'package:beyond90/widgets/club_card.dart';
+// "ubah import jadi ambil widget dari folder clubs"
+import 'package:beyond90/clubs/widgets/club_card.dart';
 
 // ================= CLUB =================
 import 'package:beyond90/clubs/service/club_service.dart';
@@ -202,14 +203,13 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 scrollController: _clubCtrl,
                 showArrow: showClubArrow,
                 onArrowTap: () => _go(const ClubListUser()),
-                itemWidth: 280,
-                sectionHeight: 260, // 🔥 FIX OVERFLOW
+                itemWidth: 220,      // Sedikit diperkecil lebarnya agar lebih proporsional
+                sectionHeight: 320,  // 🔥 NAIKKAN TINGGINYA agar tidak overflow
                 itemBuilder: (club) => ClubCard(
                   imageUrl: club.urlGambar ?? "",
                   clubName: club.nama,
-                  location: club.stadion,
-                  onTap: () =>
-                      _go(ClubDetailUser(clubId: club.id)),
+                  location: club.stadion, // Atau gunakan club.negara sesuai kebutuhan
+                  onTap: () => _go(ClubDetailUser(clubId: club.id)),
                 ),
               ),
 
@@ -313,7 +313,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
           ),
           if (!showArrow)
             Positioned(
-              right: 0,
+              right: 30,
               top: height / 2 - 26,
               child: _scrollHint(onArrowTap),
             ),
@@ -323,25 +323,32 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
   }
 
   Widget _scrollHint(VoidCallback onTap) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 52,
-          height: 52,
-          decoration: const BoxDecoration(
-            color: AppColors.lime,
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            "→",
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: AppColors.indigo,
+      onTap: onTap,
+      child: Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppColors.lime,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: const Padding(
+          padding: EdgeInsets.only(left: 8), // 👈 Padding kecil agar icon ios terlihat center secara optik
+          child: Icon(
+            Icons.arrow_forward_ios_rounded, // 
+            color: AppColors.indigo,
+            size: 24,
           ),
         ),
-      );
+      ),
+    );
 
   Widget _emptyEventCard() => SizedBox(
         width: 280,

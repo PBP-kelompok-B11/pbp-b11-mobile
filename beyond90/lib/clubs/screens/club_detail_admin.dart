@@ -43,8 +43,8 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,
-              color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: AppColors.lime, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -98,31 +98,25 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                         // IMAGE
                         Container(
                           height: 260,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10), // Memberi ruang agar logo tidak nempel pinggir
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(55),
                             ),
-                            color: Colors.grey.shade300,
-                            image: club.urlGambar != null &&
-                                    club.urlGambar!.isNotEmpty
-                                ? DecorationImage(
-                                    image: NetworkImage(club.urlGambar!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
+                            color: AppColors.white, 
                           ),
-                          child: (club.urlGambar == null ||
-                                  club.urlGambar!.isEmpty)
-                              ? const Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    size: 60,
-                                    color: Colors.black45,
-                                  ),
+                          child: club.urlGambar != null && club.urlGambar!.isNotEmpty
+                              ? Image.network(
+                                  club.urlGambar!,
+                                  fit: BoxFit.contain, // 👈 Kuncinya agar logo utuh tidak terpotong
                                 )
-                              : null,
+                              : const Icon(
+                                  Icons.sports_soccer,
+                                  size: 80,
+                                  color: Colors.white,
+                                ),
                         ),
-
                         const SizedBox(height: 24),
 
                         // NAME
@@ -193,6 +187,35 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
                         const SizedBox(height: 24),
 
+                        // TOMBOL COMMENT (Pindah ke kanan sebelum tombol Edit/Delete)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: GestureDetector(
+                              onTap: () {
+                                // Navigasi ke halaman chat/comment jika ada
+                              },
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: AppColors.lime,
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                padding: const EdgeInsets.all(18),
+                                child: Image.asset(
+                                  'assets/icons/comment.png',
+                                  color: AppColors.indigo,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16), // Jarak ke tombol Edit
+
                         if (AuthService.isAdmin) ...[
                           _adminButton(
                             label: "Edit Club",
@@ -243,8 +266,22 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
       ),
 
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2,
-        onTap: (_) {},
+        selectedIndex: 2, // CATEGORY
+        onTap: (index) {
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
+        },
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
-import 'package:beyond90/widgets/club_card.dart';
+import 'package:beyond90/clubs/widgets/club_card.dart';
 
 import '../service/club_service.dart';
 import '../models/club.dart';
@@ -84,17 +84,15 @@ class _ClubListUserState extends State<ClubListUser> {
               itemBuilder: (context, index) {
                 final club = clubs[index];
 
+                // Di dalam ClubListUser
                 return ClubCard(
-                  imageUrl: club.urlGambar ?? "",
+                  imageUrl: club.urlGambar ?? "", // Tetap kirim satu per satu
                   clubName: club.nama,
                   location: club.negara,
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            ClubDetailUser(clubId: club.id),
-                      ),
+                      MaterialPageRoute(builder: (_) => ClubDetailUser(clubId: club.id)),
                     );
                   },
                 );
@@ -106,9 +104,21 @@ class _ClubListUserState extends State<ClubListUser> {
 
       // ✅ REUSABLE BOTTOM NAVBAR
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2, // Category
+        selectedIndex: 2, // CATEGORY
         onTap: (index) {
-          // nanti sambung ke routing global
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
         },
       ),
     );

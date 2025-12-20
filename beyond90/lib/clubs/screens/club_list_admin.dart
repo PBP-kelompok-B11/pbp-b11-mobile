@@ -2,7 +2,7 @@ import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
-import 'package:beyond90/widgets/club_card.dart';
+import 'package:beyond90/clubs/widgets/club_card.dart'; // Pastikan path widget benar
 
 import '../service/club_service.dart';
 import '../models/club.dart';
@@ -55,7 +55,6 @@ class _ClubListAdminState extends State<ClubListAdmin> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-
                 // ADD CLUB (ADMIN ONLY)
                 if (AuthService.isAdmin)
                   GestureDetector(
@@ -126,15 +125,17 @@ class _ClubListAdminState extends State<ClubListAdmin> {
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(16),
                   child: GridView.builder(
                     itemCount: clubs.length,
+                    physics: const BouncingScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 20,
                       crossAxisSpacing: 20,
-                      childAspectRatio: 0.72,
+                      // Diubah ke 0.85 agar kartu tidak terlalu melar ke bawah (pendek dikit)
+                      childAspectRatio: 0.85, 
                     ),
                     itemBuilder: (context, index) {
                       final club = clubs[index];
@@ -162,11 +163,22 @@ class _ClubListAdminState extends State<ClubListAdmin> {
         ],
       ),
 
-      // ✅ REUSABLE BOTTOM NAVBAR
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2, // Category
+        selectedIndex: 2, // CATEGORY
         onTap: (index) {
-          // nanti sambung ke routing global
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
         },
       ),
     );

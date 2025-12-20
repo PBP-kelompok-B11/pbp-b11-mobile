@@ -37,7 +37,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.lime, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -88,18 +88,24 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                         // IMAGE
                         Container(
                           height: 260,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10), // Memberi ruang agar logo tidak nempel pinggir
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(55),
                             ),
-                            color: Colors.grey.shade300,
-                            image: club.urlGambar != null
-                                ? DecorationImage(
-                                    image: NetworkImage(club.urlGambar!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : null,
+                            color: AppColors.white, 
                           ),
+                          child: club.urlGambar != null && club.urlGambar!.isNotEmpty
+                              ? Image.network(
+                                  club.urlGambar!,
+                                  fit: BoxFit.contain, // 👈 Kuncinya agar logo utuh tidak terpotong
+                                )
+                              : const Icon(
+                                  Icons.sports_soccer,
+                                  size: 80,
+                                  color: Colors.grey,
+                                ),
                         ),
 
                         const SizedBox(height: 24),
@@ -162,17 +168,24 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                         const SizedBox(height: 32),
 
                         // CHAT ICON
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: AppColors.lime,
-                            borderRadius: BorderRadius.circular(22),
-                          ),
-                          child: const Icon(
-                            Icons.chat_bubble_outline,
-                            size: 36,
-                            color: AppColors.indigo,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40), // Agar sejajar dengan bar lime
+                          child: Align(
+                            alignment: Alignment.centerRight, // 👈 Memindahkan ke kanan
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                color: AppColors.lime,
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              padding: const EdgeInsets.all(18), // Memberi ruang agar logo tidak mentok
+                              child: Image.asset(
+                                'assets/icons/comment.png', // 👈 Menggunakan asset kustom
+                                color: AppColors.indigo,    // Memberikan warna indigo jika png transparan
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -189,8 +202,21 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
 
       // BOTTOM NAVBAR 
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2, // Category
+        selectedIndex: 2, // CATEGORY
         onTap: (index) {
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
         },
       ),
     );
