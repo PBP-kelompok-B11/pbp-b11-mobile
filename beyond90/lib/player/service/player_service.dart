@@ -7,7 +7,9 @@ import 'package:provider/provider.dart';
 
 
 class PlayerEntryService {
-  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/json/";
+  // static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/json/";
+  static const String baseUrl = "http://localhost:8000/players/json/";
+
 
   // CLUB
   static Future<List<PlayerEntry>> fetchPlayerEntry() async {
@@ -22,7 +24,7 @@ class PlayerEntryService {
 
   static Future<PlayerEntry> fetchPlayerDetail(String playerId) async {
 
-      final url = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/$playerId/detailjson/json/";
+      final url = "http://localhost:8000/players/player/$playerId/detailjson/json/";
       // final url = "http://localhost:8000/players/player/$playerId/detailjson/json/";
   
       final response = await http.get(Uri.parse(url));
@@ -37,7 +39,7 @@ class PlayerEntryService {
   static Future<void> createPlayerEntry(Map<String, dynamic> data, CookieRequest request) async {
     final response = await request.postJson(
       // "http://localhost:8000/players/player/create/flutter/"
-      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/create/flutter/"
+      "http://localhost:8000/players/player/create/flutter/"
       ,jsonEncode(data),              // Kirim sebagai JSON
     );
 
@@ -48,7 +50,7 @@ class PlayerEntryService {
 
   static Future<void> deletePlayer(String id) async {
     final response = await http.delete(
-      Uri.parse("https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/$id/delete/flutter/"),
+      Uri.parse("http://localhost:8000/players/player/$id/delete/flutter/"),
     );
 
     if (response.statusCode != 200) {
@@ -62,7 +64,7 @@ class PlayerEntryService {
     Map<String, dynamic> data,
   ) async {
     final response = await request.postJson(
-      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/player/$id/edit/flutter/",
+      "http://localhost:8000/players/player/$id/edit/flutter/",
       jsonEncode(data),
     );
 

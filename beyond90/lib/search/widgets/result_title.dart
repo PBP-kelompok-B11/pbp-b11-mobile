@@ -19,7 +19,7 @@ class ResultTitle extends StatelessWidget {
             text: 'Result for ',
             style: const TextStyle(
               fontFamily: 'Geologica',
-              fontSize: 48, // mendekati 6xl di Figma
+              fontSize: 48, 
               fontWeight: FontWeight.bold,
               height: 1.3,
               color: AppColors.white,

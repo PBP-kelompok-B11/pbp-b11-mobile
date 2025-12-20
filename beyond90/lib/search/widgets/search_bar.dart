@@ -4,7 +4,7 @@ import 'package:beyond90/app_colors.dart';
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onSubmitted;
-  final VoidCallback? onTap; // optional callback untuk onTap
+  final VoidCallback? onTap; 
 
   const SearchBarWidget({
     super.key,
@@ -21,7 +21,7 @@ class SearchBarWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
         child: GestureDetector(
-          onTap: onTap, // handle tap di sini
+          onTap: onTap, 
           child: Container(
             width: 1200,
             decoration: BoxDecoration(

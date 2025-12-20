@@ -3,14 +3,11 @@ import 'package:beyond90/app_colors.dart';
 
 class NextCategoryButton extends StatelessWidget {
   final String category;
-  // contoh: "event", "player", "club"
+
 
   const NextCategoryButton({super.key, required this.category});
 
   void _handleNavigation(BuildContext context) {
-    // TODO: Navigate ke Category screen sesuai kategori
-    // contoh nanti:
-    // Navigator.pushNamed(context, '/category', arguments: category);
   }
 
   @override

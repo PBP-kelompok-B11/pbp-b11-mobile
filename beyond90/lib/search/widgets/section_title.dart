@@ -18,7 +18,7 @@ class SectionTitle extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'Geologica',
           fontWeight: FontWeight.bold,
-          fontSize: 28, // akan auto-scale nanti kalau mau responsive
+          fontSize: 28, 
           color: AppColors.lime,
         ),
       ),
