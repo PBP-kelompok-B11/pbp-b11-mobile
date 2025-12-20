@@ -21,75 +21,86 @@ class ClubCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 220,
-        margin: const EdgeInsets.symmetric(vertical: 12),
+        height: 200, // 🔥 FIXED HEIGHT
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: const Color(0xFFD9D9D9), // Grey card background (Figma)
-          borderRadius: BorderRadius.circular(35),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IMAGE
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(35)),
+            // ================= IMAGE =================
+            SizedBox(
+              height: 110,
+              width: double.infinity,
               child: Image.network(
                 imageUrl,
-                height: 180,
-                width: double.infinity,
                 fit: BoxFit.cover,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            // CLUB NAME
-            Text(
-              clubName,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 32, // 6xl approx (sama Player/Event)
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Geologica',
-                color: AppColors.indigo,
-                height: 1.2,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // LOCATION
-            Text(
-              location,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 22,
-                fontFamily: 'Geologica',
-                color: AppColors.indigo,
-              ),
-            ),
-
-            const SizedBox(height: 14),
-
-            // DETAILS BUTTON
-            Container(
-              width: 150,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.lime,
-                borderRadius: BorderRadius.circular(34),
-              ),
-              child: const Center(
-                child: Text(
-                  'Details',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Geologica',
-                    color: AppColors.indigo,
-                  ),
+                errorBuilder: (_, __, ___) => Container(
+                  color: Colors.grey[300],
                 ),
               ),
             ),
 
-            const SizedBox(height: 14),
+            // ================= CONTENT =================
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Club Name
+                  Text(
+                    clubName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Geologica',
+                      color: AppColors.indigo,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  // Location
+                  Text(
+                    location,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Geologica',
+                      color: AppColors.indigo,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ================= DETAILS BUTTON =================
+                  Container(
+                    width: double.infinity,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.lime,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Details',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Geologica',
+                          color: AppColors.indigo,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

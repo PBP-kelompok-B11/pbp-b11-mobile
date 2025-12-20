@@ -1,3 +1,4 @@
+import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
@@ -16,7 +17,7 @@ class ClubListAdmin extends StatefulWidget {
 }
 
 class _ClubListAdminState extends State<ClubListAdmin> {
-  final bool isAdmin = true; // admin mode
+  final bool isAdmin = AuthService.isAdmin; 
 
   late Future<List<Club>> _futureClubs;
 
@@ -56,7 +57,7 @@ class _ClubListAdminState extends State<ClubListAdmin> {
               children: [
 
                 // ADD CLUB (ADMIN ONLY)
-                if (isAdmin)
+                if (AuthService.isAdmin)
                   GestureDetector(
                     onTap: () {
                       Navigator.push(

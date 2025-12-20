@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:beyond90/event/models/event_entry.dart';
 import 'package:beyond90/event/screens/event_detail.dart';
 import 'package:beyond90/event/widgets/event_entry_card.dart';
+import 'package:beyond90/event/service/event_service.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:beyond90/app_colors.dart';
@@ -9,13 +10,8 @@ import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:beyond90/media_gallery/screens/medialist_form.dart';
 import 'package:beyond90/authentication/service/auth_service.dart';
 
-
-// BASE_URL diarahkan ke folder events
-const String BASE_URL = "http://localhost:8000/events"; 
-
 class EventEntryListPage extends StatefulWidget {
   final bool filterByUser;
-
   const EventEntryListPage({super.key, this.filterByUser = false});
 
   @override
@@ -23,77 +19,120 @@ class EventEntryListPage extends StatefulWidget {
 }
 
 class _EventEntryListPageState extends State<EventEntryListPage> {
+  late Future<List<EventEntry>> _eventFuture;
   
-  Future<List<EventEntry>> fetchEvent(CookieRequest request) async {
-    // Pilih URL berdasarkan filterByUser
-    String url = widget.filterByUser
-        ? '$BASE_URL/my-events-json/'  // Hanya event user login
-        : '$BASE_URL/json/';           // Semua event
+  // 🔥 1. TAMBAHKAN VARIABEL STATE INI
+  late bool _isFilteringMyEvents;
 
-    // Pakai request.get yang sudah punya cookie session
-    final response = await request.get(url);
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi awal berdasarkan parameter dari widget
+    _isFilteringMyEvents = widget.filterByUser;
+  }
 
-    // Debug: cek apakah response benar JSON
-    // print(response);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _refreshEvents();
+  }
 
-    if (response is Map && response.containsKey('detail')) {
-      // Kalau dapat redirect login JSON, berarti belum login
-      throw Exception('Not logged in. Please login first.');
-    }
-
-    // Konversi list JSON menjadi EventEntry
-    List<EventEntry> listEvent = [];
-    for (var d in response) {
-      listEvent.add(EventEntry.fromJson(d));
-    }
-
-    return listEvent;
+  void _refreshEvents() {
+    final request = context.read<CookieRequest>();
+    setState(() {
+      // Sekarang _isFilteringMyEvents sudah dikenali
+      _eventFuture = EventService.fetchEvents(
+        request, 
+        filterByUser: _isFilteringMyEvents
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
-
     return Scaffold(
       backgroundColor: AppColors.indigo,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔙 BACK BUTTON + TITLE
+            // --- HEADER SECTION ---
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
-              child: Row( // Tidak perlu FutureBuilder lagi
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // BACK + TITLE
                   Row(
                     children: [
                       InkWell(
                         onTap: () => Navigator.pop(context),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: AppColors.lime,
-                          size: 30,
-                        ),
+                        child: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 30),
                       ),
                       const SizedBox(width: 12),
+                      // Judul berubah sesuai filter
                       Text(
-                        widget.filterByUser ? 'My Event' : 'Event',
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.lime,
-                        ),
+                        _isFilteringMyEvents ? 'My Events' : 'Events',
+                        style: const TextStyle(fontFamily: 'Geologica', fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.lime),
+                      ),
+
+                      // 🔥 POPUP MENU DENGAN DESAIN LIME & INDIGO
+                      PopupMenuButton<bool>(
+                        icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 28),
+                        // Mengatur warna background kotak popup
+                        color: AppColors.lime, 
+                        // Mengatur bentuk pojok kotak agar rounded/mulus
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), 
+                        onSelected: (bool value) {
+                          if (_isFilteringMyEvents != value) {
+                            setState(() {
+                              _isFilteringMyEvents = value;
+                              _refreshEvents();
+                            });
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: false,
+                            child: Row(
+                              children: [
+                                Icon(Icons.all_inclusive, color: !_isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "All Events",
+                                  style: TextStyle(
+                                    color: AppColors.indigo,
+                                    fontWeight: !_isFilteringMyEvents ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: true,
+                            child: Row(
+                              children: [
+                                Icon(Icons.person, color: _isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "My Events",
+                                  style: TextStyle(
+                                    color: AppColors.indigo,
+                                    fontWeight: _isFilteringMyEvents ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-
-                  // ➕ ADD EVENT (Cek langsung ke AuthService)
-                  if (AuthService.isAdmin) // GANTI DI SINI
+                  
+                  if (AuthService.isAdmin)
                     InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/event/create');
+                      onTap: () async {
+                        final refresh = await Navigator.pushNamed(context, '/event/create');
+                        if (refresh == true) _refreshEvents();
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -101,14 +140,7 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
                           children: const [
                             Icon(Icons.add, color: AppColors.lime, size: 22),
                             SizedBox(width: 4),
-                            Text(
-                              'Add Event',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.lime,
-                              ),
-                            ),
+                            Text('Add Event', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.lime)),
                           ],
                         ),
                       ),
@@ -116,26 +148,19 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
                 ],
               ),
             ),
-            // 📦 CONTENT
-            Expanded( //test
+
+            // --- CONTENT SECTION (GRID) ---
+            Expanded(
               child: FutureBuilder<List<EventEntry>>(
-                future: fetchEvent(request),
+                future: _eventFuture, 
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator(color: AppColors.lime));
                   } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
+                    return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                      child: Text(
-                        'No events available.',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child: Text('No events available.', style: TextStyle(color: Colors.white)),
                     );
                   }
 
@@ -143,23 +168,22 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
                     padding: const EdgeInsets.all(16),
                     child: GridView.builder(
                       itemCount: snapshot.data!.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        mainAxisExtent: 165, // ✅ tinggi FIXED
+                        mainAxisExtent: 190, // Ditinggiin dikit biar gak sesak
                       ),
                       itemBuilder: (_, index) => EventEntryCard(
                         event: snapshot.data![index],
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final refresh = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  EventDetailPage(event: snapshot.data![index]),
+                              builder: (_) => EventDetailPage(event: snapshot.data![index]),
                             ),
                           );
+                          if (refresh == true) _refreshEvents();
                         },
                       ),
                     ),
@@ -170,28 +194,14 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
           ],
         ),
       ),
-
-      // 🔽 BOTTOM NAVBAR
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 0,
         onTap: (index) {
           if (index == 0) return;
-
           switch (index) {
-            case 1:
-              Navigator.pushNamed(context, 'search');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/category');
-              break;
-            case 3:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MediaFormPage(),
-                ),
-              );
-              break;
+            case 1: Navigator.pushNamed(context, 'search'); break;
+            case 2: Navigator.pushReplacementNamed(context, '/category'); break;
+            case 3: Navigator.push(context, MaterialPageRoute(builder: (context) => MediaFormPage())); break;
           }
         },
       ),

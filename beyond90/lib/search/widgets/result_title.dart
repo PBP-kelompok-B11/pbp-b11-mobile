@@ -6,7 +6,7 @@ class ResultTitle extends StatelessWidget {
 
   const ResultTitle({
     super.key,
-    required this.keyword,
+    required this.keyword, required String query,
   });
 
   @override
