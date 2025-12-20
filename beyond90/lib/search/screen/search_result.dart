@@ -1,3 +1,5 @@
+import 'package:beyond90/authentication/service/auth_service.dart';
+import 'package:beyond90/clubs/screens/club_detail_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
@@ -44,41 +46,33 @@ class _SearchResultPageState extends State<SearchResultPage> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.query);
-    _fetchAll(widget.query);
-  }
 
-  void _fetchAll(String query) {
-    if (query.trim().isEmpty) {
-      _players = Future.value([]);
-      _clubs = Future.value([]);
-      _events = Future.value([]);
-      return;
-    }
-
-    _players = _fetchPlayers(query);
-    _clubs = _fetchClubs(query);
-    _events = _fetchEvents(query);
+    // Inisialisasi Future saat pertama kali dibuka
+    _players = _fetchPlayers(widget.query);
+    _clubs = _fetchClubs(widget.query);
+    _events = _fetchEvents(widget.query);
   }
 
   Future<List<PlayerEntry>> _fetchPlayers(String q) async {
-    final res = await SearchService.search(query: q, type: "players");
+    if (q.trim().isEmpty) return [];
 
+    final res = await SearchService.search(query: q, type: "players");
     final list = res["players"] ?? [];
     return list.map<PlayerEntry>((e) => PlayerEntry.fromJson(e)).toList();
   }
 
-
   Future<List<Club>> _fetchClubs(String q) async {
-    final res = await SearchService.search(query: q, type: "clubs");
+    if (q.trim().isEmpty) return [];
 
+    final res = await SearchService.search(query: q, type: "clubs");
     final list = res["clubs"] ?? [];
     return list.map<Club>((e) => Club.fromJson(e)).toList();
   }
 
-
   Future<List<EventEntry>> _fetchEvents(String q) async {
-    final res = await SearchService.search(query: q, type: "events");
+    if (q.trim().isEmpty) return [];
 
+    final res = await SearchService.search(query: q, type: "events");
     final list = res["events"] ?? [];
     return list.map<EventEntry>((e) => EventEntry.fromJson(e)).toList();
   }
@@ -88,7 +82,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
     setState(() {
       _controller.text = q;
-      _fetchAll(q);
+      // Assign ulang Future supaya FutureBuilder rebuild
+      _players = _fetchPlayers(q);
+      _clubs = _fetchClubs(q);
+      _events = _fetchEvents(q);
     });
   }
 
@@ -97,7 +94,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
     return Scaffold(
       backgroundColor: AppColors.indigo,
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 1, 
+        selectedIndex: 1,
         onTap: (index) {
           if (index == 1) return;
 
@@ -129,6 +126,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               const SizedBox(height: 32),
 
+              // ResultTitle sesuai query yang diketik user
               ResultTitle(query: _controller.text, keyword: _controller.text),
 
               const SizedBox(height: 32),
@@ -160,12 +158,23 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   imageUrl: c.urlGambar ?? "",
                   clubName: c.nama,
                   location: c.stadion,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ClubDetailUser(clubId: c.id),
-                    ),
-                  ),
+                  onTap: () {
+                      if (AuthService.isAdmin) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ClubDetailAdmin(clubId: c.id),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ClubDetailUser(clubId: c.id),
+                          ),
+                        );
+                      }
+                  },    
                 ),
               ),
 
