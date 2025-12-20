@@ -1,6 +1,7 @@
-import 'dart:convert';
+import 'package:beyond90/clubs/models/club.dart';
+import 'package:beyond90/clubs/screens/club_detail_user.dart';
+import 'package:beyond90/player/screens/player_entry_details.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
@@ -12,11 +13,25 @@ import 'package:beyond90/landing_page/screeen/landing_page.dart';
 import 'package:beyond90/category/screens/category_page.dart';
 import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 
+// ================= EVENT =================
 import 'package:beyond90/event/models/event_entry.dart';
 import 'package:beyond90/event/service/event_service.dart';
 import 'package:beyond90/event/widgets/event_entry_card.dart';
 import 'package:beyond90/event/screens/event_detail.dart';
 import 'package:beyond90/event/screens/event_entry_list.dart';
+
+// ================= PLAYER =================
+import 'package:beyond90/player/models/player_entry.dart';
+import 'package:beyond90/player/service/player_service.dart';
+import 'package:beyond90/player/screens/player_entry_list.dart';
+
+// ===== CARD =====
+import 'package:beyond90/widgets/player_card.dart';
+import 'package:beyond90/widgets/club_card.dart';
+
+// ================= CLUB =================
+import 'package:beyond90/clubs/service/club_service.dart';
+import 'package:beyond90/clubs/screens/club_list_user.dart';
 
 class SearchDefaultPage extends StatefulWidget {
   const SearchDefaultPage({super.key});
@@ -28,68 +43,66 @@ class SearchDefaultPage extends StatefulWidget {
 class _SearchDefaultPageState extends State<SearchDefaultPage> {
   final TextEditingController _searchController = TextEditingController();
 
-  late Future<List<EventEntry>> _eventFuture;
+  late final Future<List<EventEntry>> _eventFuture;
+  late final Future<List<PlayerEntry>> _playerFuture;
+  late final Future<List<Club>> _clubFuture;
 
-  final ScrollController _scrollControllerEvent = ScrollController();
-  bool showArrowEvent = false;
+  final _eventCtrl = ScrollController();
+  final _playerCtrl = ScrollController();
+  final _clubCtrl = ScrollController();
 
-  // =========================
-  // INIT
-  // =========================
+  bool showEventArrow = false;
+  bool showPlayerArrow = false;
+  bool showClubArrow = false;
+
   @override
   void initState() {
     super.initState();
 
-    _scrollControllerEvent.addListener(() {
-      if (_scrollControllerEvent.offset > 50 && !showArrowEvent) {
-        setState(() => showArrowEvent = true);
-      }
-    });
-
     final request = context.read<CookieRequest>();
     _eventFuture = EventService.fetchEvents(request);
+    _playerFuture = PlayerEntryService.fetchPlayerEntry();
+    _clubFuture = ClubService.fetchClubs();
+
+    _bindArrow(_eventCtrl, () => showEventArrow = true);
+    _bindArrow(_playerCtrl, () => showPlayerArrow = true);
+    _bindArrow(_clubCtrl, () => showClubArrow = true);
+  }
+
+  void _bindArrow(ScrollController c, VoidCallback onShow) {
+    c.addListener(() {
+      if (c.offset > 50) setState(onShow);
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    _scrollControllerEvent.dispose();
+    _eventCtrl.dispose();
+    _playerCtrl.dispose();
+    _clubCtrl.dispose();
     super.dispose();
   }
 
-  // =========================
-  // NAVBAR HANDLER
-  // =========================
   void _onNavbarTap(int index) {
     if (index == 1) return;
 
-    Widget page;
-    switch (index) {
-      case 0:
-        page = const MyHomePage();
-        break;
-      case 2:
-        page = const CategoryPage();
-        break;
-      case 3:
-        page = const MediaEntryListPage();
-        break;
-      default:
-        page = const SearchDefaultPage();
-    }
+    final pages = [
+      const MyHomePage(),
+      const SearchDefaultPage(),
+      const CategoryPage(),
+      const MediaEntryListPage(),
+    ];
 
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        pageBuilder: (_, __, ___) => page,
+        pageBuilder: (_, __, ___) => pages[index],
         transitionDuration: Duration.zero,
       ),
     );
   }
 
-  // =========================
-  // UI
-  // =========================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +114,6 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
 
@@ -110,58 +122,63 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 onSubmitted: (_) {},
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
 
-              // ===== EVENT TITLE (TANPA ARROW) =====
-              _sectionTitle("Event"),
-
-              // ===== EVENT PREVIEW =====
-              FutureBuilder<List<EventEntry>>(
+              // ================= EVENT =================
+              _buildSection<EventEntry>(
+                title: "Event",
                 future: _eventFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.lime,
-                        ),
-                      ),
-                    );
-                  }
+                scrollController: _eventCtrl,
+                showArrow: showEventArrow,
+                onArrowTap: () => _go(const EventEntryListPage()),
+                itemWidth: 280,
+                sectionHeight: 200,
+                emptyWidget: _emptyEventCard(),
+                itemBuilder: (e) => EventEntryCard(
+                  event: e,
+                  onTap: () => _go(EventDetailPage(event: e)),
+                ),
+              ),
 
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return _horizontalSection(
-                      scrollController: _scrollControllerEvent,
-                      items: [_emptyEventCard()],
-                      showArrow: false,
-                    );
-                  }
+              // ================= PLAYER =================
+              _buildSection<PlayerEntry>(
+                title: "Player",
+                future: _playerFuture,
+                scrollController: _playerCtrl,
+                showArrow: showPlayerArrow,
+                onArrowTap: () =>
+                    _go(const PlayerEntryListPage(filter: '')),
+                itemWidth: 280,
+                sectionHeight: 260,
+                itemBuilder: (player) => PlayerCard(
+                  thumbnail: player.thumbnail ?? "",
+                  nama: player.nama,
+                  negara: player.negara,
+                  usia: player.usia,
+                  tinggi: player.tinggi,
+                  berat: player.berat,
+                  posisi: player.posisi,
+                  onTap: () =>
+                      _go(PlayerDetailEntry(playerId: player.id)),
+                ),
+              ),
 
-                  final previewEvents = snapshot.data!.take(3).toList();
-
-                  return _horizontalSection(
-                    scrollController: _scrollControllerEvent,
-                    items: previewEvents.map((event) {
-                      return SizedBox(
-                        width: 280,
-                        child: EventEntryCard(
-                          event: event,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    EventDetailPage(event: event),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    }).toList(),
-                    showArrow: showArrowEvent,
-                  );
-                },
+              // ================= CLUB =================
+              _buildSection<Club>(
+                title: "Club",
+                future: _clubFuture,
+                scrollController: _clubCtrl,
+                showArrow: showClubArrow,
+                onArrowTap: () => _go(const ClubListUser()),
+                itemWidth: 280,
+                sectionHeight: 260, // 🔥 FIX OVERFLOW
+                itemBuilder: (club) => ClubCard(
+                  imageUrl: club.urlGambar ?? "",
+                  clubName: club.nama,
+                  location: club.stadion,
+                  onTap: () =>
+                      _go(ClubDetailUser(clubId: club.id)),
+                ),
               ),
 
               const SizedBox(height: 120),
@@ -172,30 +189,85 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
     );
   }
 
-  // =========================
-  // HELPERS
-  // =========================
-  Widget _sectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: AppColors.lime,
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
+  Widget _buildSection<T>({
+    required String title,
+    required Future<List<T>> future,
+    required ScrollController scrollController,
+    required bool showArrow,
+    required VoidCallback onArrowTap,
+    required Widget Function(T item) itemBuilder,
+    required double sectionHeight,
+    double itemWidth = 200,
+    Widget? emptyWidget,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle(title),
+        const SizedBox(height: 12),
+        FutureBuilder<List<T>>(
+          future: future,
+          builder: (_, snapshot) {
+            if (snapshot.connectionState ==
+                ConnectionState.waiting) {
+              return _loading(sectionHeight);
+            }
+
+            final items = snapshot.data?.take(3).toList() ?? [];
+
+            return _horizontalSection(
+              height: sectionHeight,
+              scrollController: scrollController,
+              showArrow: showArrow,
+              onArrowTap: onArrowTap,
+              items: items.isEmpty && emptyWidget != null
+                  ? [emptyWidget]
+                  : items
+                      .map(
+                        (e) => SizedBox(
+                          width: itemWidth,
+                          child: itemBuilder(e),
+                        ),
+                      )
+                      .toList(),
+            );
+          },
         ),
-      ),
+        const SizedBox(height: 32),
+      ],
     );
   }
 
+  Widget _sectionTitle(String title) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: AppColors.lime,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+
+  Widget _loading(double height) => SizedBox(
+        height: height,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.lime,
+          ),
+        ),
+      );
+
   Widget _horizontalSection({
+    required double height,
     required ScrollController scrollController,
     required List<Widget> items,
     required bool showArrow,
+    required VoidCallback onArrowTap,
   }) {
     return SizedBox(
-      height: 200,
+      height: height,
       child: Stack(
         children: [
           ListView.separated(
@@ -203,40 +275,32 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 24),
+            separatorBuilder: (_, __) =>
+                const SizedBox(width: 24),
             itemBuilder: (_, i) => items[i],
           ),
-
-          // ===== ARROW BULAT (SATU-SATUNYA) =====
           if (!showArrow)
             Positioned(
               right: 0,
-              top: 130,
-              child: _scrollHint(),
+              top: height / 2 - 26,
+              child: _scrollHint(onArrowTap),
             ),
         ],
       ),
     );
   }
 
-  Widget _scrollHint() => GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const EventEntryListPage(),
-            ),
-          );
-        },
+  Widget _scrollHint(VoidCallback onTap) => GestureDetector(
+        onTap: onTap,
         child: Container(
           width: 52,
           height: 52,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: AppColors.lime,
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: Text(
+          child: const Text(
             "→",
             style: TextStyle(
               fontSize: 36,
@@ -254,4 +318,11 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
           onTap: () {},
         ),
       );
+
+  void _go(Widget page) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => page),
+    );
+  }
 }
