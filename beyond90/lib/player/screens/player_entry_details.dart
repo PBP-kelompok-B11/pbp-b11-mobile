@@ -43,11 +43,11 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.lime, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Player details",
+          "Player Details",
           style: TextStyle(
             fontFamily: "Geologica",
             fontSize: 28,
@@ -287,10 +287,9 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
 
                                   const SizedBox(width: 10),
 
-                                // chat
-                        
-                                _actionButton(
-                                  icon: Icons.chat_bubble_outline,
+                                // CHAT BUTTON
+                                _actionButtonCustom(
+                                  imagePath: 'assets/icons/comment.png', 
                                   color: AppColors.lime,
                                   iconColor: AppColors.indigo,
                                   onTap: () {
@@ -456,52 +455,77 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
   }
 
   void _showDeleteConfirmation(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Delete Player"),
-      content: const Text("Are you sure you want to delete this player?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Player"),
+        content: const Text("Are you sure you want to delete this player?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await PlayerEntryService.deletePlayer(widget.playerId);
+
+                if (!mounted) return;
+
+                Navigator.pop(context); // tutup dialog
+                Navigator.pop(context); // keluar halaman detail
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PlayerEntryListPage(filter: "All")),
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Player deleted")),
+                );
+              } catch (e) {
+                Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Delete failed: $e")),
+                );
+              }
+            },
+            child: const Text(
+              "Delete",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _actionButtonCustom({
+    required String imagePath,
+    required Color color,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        padding: const EdgeInsets.all(14), // Memberi ruang agar gambar tidak terlalu mentok
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18),
         ),
-        TextButton(
-          onPressed: () async {
-            try {
-              await PlayerEntryService.deletePlayer(widget.playerId);
-
-              if (!mounted) return;
-
-              Navigator.pop(context); // tutup dialog
-              Navigator.pop(context); // keluar halaman detail
-
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const PlayerEntryListPage(filter: "All")),
-              );
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Player deleted")),
-              );
-            } catch (e) {
-              Navigator.pop(context);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("Delete failed: $e")),
-              );
-            }
-          },
-          child: const Text(
-            "Delete",
-            style: TextStyle(color: Colors.red),
+        child: Image.asset(
+          imagePath,
+          color: iconColor, // Mengubah warna icon/png menjadi indigo
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) => Icon(
+            Icons.chat_bubble_outline, 
+            color: iconColor,
           ),
         ),
-      ],
-    ),
-  );
-}
-
-
-
+      ),
+    );
+  }
 }

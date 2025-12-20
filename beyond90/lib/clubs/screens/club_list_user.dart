@@ -31,6 +31,14 @@ class _ClubListUserState extends State<ClubListUser> {
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded, 
+            color: AppColors.lime, 
+            size: 28,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           "Club",
           style: TextStyle(

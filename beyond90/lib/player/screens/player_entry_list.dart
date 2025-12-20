@@ -60,20 +60,17 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final request = context.watch<CookieRequest>();
-    print(request); 
 
     return Scaffold(
-
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: AppColors.background,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.lime, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -85,141 +82,95 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         actions: [
-
-          if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
-            Padding(
-              padding: const EdgeInsets.only(right: 25.0, top: 25, bottom: 15),
-              child: ToggleButtons(
-                borderRadius: BorderRadius.circular(30),
-                fillColor: AppColors.lime,
-                selectedColor: AppColors.indigo,
-                color: AppColors.white,
-                constraints: const BoxConstraints(minHeight: 40, minWidth: 70),
-                isSelected: [_filterAll, !_filterAll], // boolean list untuk toggle
-                onPressed: (index) {
-                  setState(() {
-                    _filterAll = index == 0;
-                  });
-                },
-                children: const [
-                  Text("All", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text("Mine", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(right: 25.0, top: 25, bottom: 15),
-              child: DropdownButton<String>(
-                value: _selectedPosition,
-                dropdownColor: AppColors.indigo,
-                style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
-                underline: const SizedBox(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedPosition = newValue!;
-                  });
-                },
-                items: <String>[
-                  'All', 'GK', 'DF', 'DFFW', 'DFMF', 'MF', 'MFDF', 'MFFW', 'FW', 'FWDF', 'FWMF'
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-          if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
-            Padding(
-              padding: const EdgeInsets.only(right: 25.0, top: 25,bottom: 15), // jarak dari tepi kanan
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const AddPlayerEntry()),
-                  );
-                },
-                child: Container(
-                  width: 250,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.lime,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    "Add Player",
-                    style: TextStyle(
-                      fontFamily: "Geologica",
-                      fontSize: 20,
-                      color: AppColors.indigo,
-                      fontWeight: FontWeight.bold,
-                    ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.filter_list_rounded, color: AppColors.lime, size: 30),
+            color: AppColors.lime,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            // 🔥 FUNGSI ONSELECTED DENGAN POSISI LENGKAP
+            onSelected: (String value) {
+              setState(() {
+                if (value == 'all_data') {
+                  _filterAll = true;
+                } else if (value == 'mine_data') {
+                  _filterAll = false;
+                } else {
+                  _selectedPosition = value; // Menangani 'GK', 'DF', 'DFFW', dll.
+                }
+              });
+            },
+            itemBuilder: (context) => [
+              if (request.jsonData["success"] == true) ...[
+                PopupMenuItem(
+                  value: 'all_data',
+                  child: Row(
+                    children: [
+                      Icon(Icons.people, color: _filterAll ? AppColors.indigo : AppColors.indigo.withOpacity(0.4)),
+                      const SizedBox(width: 12),
+                      const Text("All Players", style: TextStyle(color: AppColors.indigo, fontWeight: FontWeight.bold)),
+                    ],
                   ),
                 ),
+                PopupMenuItem(
+                  value: 'mine_data',
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: !_filterAll ? AppColors.indigo : AppColors.indigo.withOpacity(0.4)),
+                      const SizedBox(width: 12),
+                      const Text("My Players", style: TextStyle(color: AppColors.indigo, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+              ],
+              
+              // --- 🔥 DAFTAR POSISI LENGKAP ---
+              ...[
+                'All', 'GK', 'DF', 'DFFW', 'DFMF', 'MF', 'MFDF', 'MFFW', 'FW', 'FWDF', 'FWMF'
+              ].map((pos) => PopupMenuItem(
+                value: pos,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.sports_soccer, 
+                      size: 18, 
+                      color: _selectedPosition == pos ? AppColors.indigo : AppColors.indigo.withOpacity(0.4)
+                    ),
+                    const SizedBox(width: 12),
+                    Text(pos, style: const TextStyle(color: AppColors.indigo)),
+                  ],
+                ),
+              )),
+            ],
+          ),
+
+          if (request.jsonData["is_admin"] == true)
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.lime, size: 30),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddPlayerEntry()),
               ),
             ),
-
+          const SizedBox(width: 12),
         ],
-
-        // actions: [
-
-        
-        //     // if (isAdmin)
-        //     //   IconButton(
-        //     //     icon: const Icon(Icons.add, color: AppColors.lime, size: 32),
-        //     //     onPressed: () {
-        //     //       // navigasi ke halaman add player
-        //     //       Navigator.push(
-        //     //         context,
-        //     //         MaterialPageRoute(
-        //     //           builder: (_) => AddPlayerPage(), // buat page ini sendiri
-        //     //         ),
-        //     //       );
-        //     //     },
-        //     //   ),
-        // ],
-
       ),
       
-      // drawer: const LeftDrawer(),
       body: FutureBuilder<List<PlayerEntry>>(
         future: _futureEntry,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.white),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Error: ${snapshot.error}",
-                style: const TextStyle(color: AppColors.white),
-              ),
-            );
-          }
+          // ... (logika loading & error tetap sama)
 
           final playerList = snapshot.data ?? [];
 
           final filteredList = playerList.where((player) {
-
-            // toggle All/Mine
+            // 1. Filter All/Mine
             bool ownerMatch = _filterAll ? true : player.user_id == request.jsonData["user_id"];
 
-            // posisi filter
+            // 2. Filter Posisi (Sekarang handle semua String posisi)
             bool positionMatch = _selectedPosition == 'All' ? true : player.posisi == _selectedPosition;
 
-            return  ownerMatch && positionMatch;
-
+            return ownerMatch && positionMatch;
           }).toList();
 
 

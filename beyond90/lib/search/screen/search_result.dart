@@ -203,6 +203,20 @@ class _SearchResultPageState extends State<SearchResultPage> {
     required Future<List<T>> future,
     required Widget Function(T item) itemBuilder,
   }) {
+    // 1. Tentukan ukuran dinamis berdasarkan Judul Section
+    double itemWidth = 280; // Lebar standar agar mirip SearchDefaultPage
+    double itemHeight = 320; // Default untuk Club / Event
+
+    if (title == "Player") {
+      itemHeight = 420; // Player butuh lebih tinggi agar tidak overflow
+    } else if (title == "Club") {
+      itemWidth = 220; // Club lebih bagus agak ramping
+      itemHeight = 320;
+    } else if (title == "Event") {
+      itemWidth = 280;
+      itemHeight = 220; // Event biasanya lebih pendek
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Column(
@@ -238,15 +252,14 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               return Wrap(
                 spacing: 16,
-                runSpacing: 16,
-                children: items
-                    .map(
-                      (e) => SizedBox(
-                        width: 320,
-                        child: itemBuilder(e),
-                      ),
-                    )
-                    .toList(),
+                runSpacing: 24, // Jarak antar baris diperlebar sedikit
+                children: items.map((e) {
+                  return SizedBox(
+                    width: itemWidth,
+                    height: itemHeight, // 👈 Sekarang tingginya sudah sesuai jenis kartu
+                    child: itemBuilder(e),
+                  );
+                }).toList(),
               );
             },
           ),

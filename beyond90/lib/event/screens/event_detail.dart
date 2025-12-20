@@ -69,7 +69,7 @@ class EventDetailPage extends StatelessWidget {
             letterSpacing: -1.0,
           ),
         ),
-        centerTitle: false,
+        centerTitle: true,
       ),
 
       body: SingleChildScrollView(

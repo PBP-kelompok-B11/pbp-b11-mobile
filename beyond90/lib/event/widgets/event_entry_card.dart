@@ -42,7 +42,7 @@ class EventEntryCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -83,7 +83,7 @@ class EventEntryCard extends StatelessWidget {
                       fontFamily: 'Geologica',
                       color: statusColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 10,
+                      fontSize: 13,
                     ),
                   ),
                 ],
@@ -111,7 +111,7 @@ class EventEntryCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: 'Geologica',
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppColors.indigo,
                       ),

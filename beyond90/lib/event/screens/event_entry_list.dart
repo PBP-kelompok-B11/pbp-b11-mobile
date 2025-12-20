@@ -49,106 +49,101 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: AppColors.indigo,
+    // --- 1. GUNAKAN APPBAR BAWAAN AGAR JUDUL BISA CENTER ---
+    appBar: AppBar(
       backgroundColor: AppColors.indigo,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- HEADER SECTION ---
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
+      elevation: 0,
+      centerTitle: true, // Membuat judul otomatis di tengah
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        _isFilteringMyEvents ? 'My Event' : 'Event',
+        style: const TextStyle(
+          fontFamily: 'Geologica', // Sudah menggunakan Geologica
+          fontSize: 28, 
+          fontWeight: FontWeight.bold, 
+          color: AppColors.lime,
+        ),
+      ),
+      actions: [
+        // 🔥 ICON FILTER PINDAH KE KANAN
+        PopupMenuButton<bool>(
+          icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 28),
+          color: AppColors.lime,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          onSelected: (bool value) {
+            if (_isFilteringMyEvents != value) {
+              setState(() {
+                _isFilteringMyEvents = value;
+                _refreshEvents();
+              });
+            }
+          },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: false,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 30),
-                      ),
-                      const SizedBox(width: 12),
-                      // Judul berubah sesuai filter
-                      Text(
-                        _isFilteringMyEvents ? 'My Events' : 'Events',
-                        style: const TextStyle(fontFamily: 'Geologica', fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.lime),
-                      ),
-
-                      // 🔥 POPUP MENU DENGAN DESAIN LIME & INDIGO
-                      PopupMenuButton<bool>(
-                        icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 28),
-                        // Mengatur warna background kotak popup
-                        color: AppColors.lime, 
-                        // Mengatur bentuk pojok kotak agar rounded/mulus
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), 
-                        onSelected: (bool value) {
-                          if (_isFilteringMyEvents != value) {
-                            setState(() {
-                              _isFilteringMyEvents = value;
-                              _refreshEvents();
-                            });
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: false,
-                            child: Row(
-                              children: [
-                                Icon(Icons.all_inclusive, color: !_isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "All Events",
-                                  style: TextStyle(
-                                    color: AppColors.indigo,
-                                    fontWeight: !_isFilteringMyEvents ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: true,
-                            child: Row(
-                              children: [
-                                Icon(Icons.person, color: _isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "My Events",
-                                  style: TextStyle(
-                                    color: AppColors.indigo,
-                                    fontWeight: _isFilteringMyEvents ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  
-                  if (AuthService.isAdmin)
-                    InkWell(
-                      onTap: () async {
-                        final refresh = await Navigator.pushNamed(context, '/event/create');
-                        if (refresh == true) _refreshEvents();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.add, color: AppColors.lime, size: 22),
-                            SizedBox(width: 4),
-                            Text('Add Event', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.lime)),
-                          ],
-                        ),
-                      ),
-                    ),
+                  Icon(Icons.all_inclusive, color: !_isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                  const SizedBox(width: 10),
+                  const Text("All Events", style: TextStyle(color: AppColors.indigo)),
                 ],
               ),
             ),
+            PopupMenuItem(
+              value: true,
+              child: Row(
+                children: [
+                  Icon(Icons.person, color: _isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                  const SizedBox(width: 10),
+                  const Text("My Events", style: TextStyle(color: AppColors.indigo)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(width: 8),
+      ],
+    ),
 
+    body: SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // --- 2. TOMBOL ADD EVENT DI TARUH DI BAWAH APPBAR (OPTIONAL) ---
+          if (AuthService.isAdmin)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: InkWell(
+                  onTap: () async {
+                    final refresh = await Navigator.pushNamed(context, '/event/create');
+                    if (refresh == true) _refreshEvents();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.lime),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.add, color: AppColors.lime, size: 20),
+                        SizedBox(width: 4),
+                        Text('Add Event', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.lime)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             // --- CONTENT SECTION (GRID) ---
             Expanded(
               child: FutureBuilder<List<EventEntry>>(

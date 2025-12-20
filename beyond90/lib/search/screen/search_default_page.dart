@@ -179,10 +179,9 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 future: _playerFuture,
                 scrollController: _playerCtrl,
                 showArrow: showPlayerArrow,
-                onArrowTap: () =>
-                    _go(const PlayerEntryListPage(filter: '')),
+                onArrowTap: () => _go(const PlayerEntryListPage(filter: "All")),
                 itemWidth: 280,
-                sectionHeight: 260,
+                sectionHeight: 480, // 🔥 NAIKKAN TINGGINYA dari 260 ke 340
                 itemBuilder: (player) => PlayerCard(
                   thumbnail: player.thumbnail ?? "",
                   nama: player.nama,
@@ -191,8 +190,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                   tinggi: player.tinggi,
                   berat: player.berat,
                   posisi: player.posisi,
-                  onTap: () =>
-                      _go(PlayerDetailEntry(playerId: player.id)),
+                  onTap: () => _go(PlayerDetailEntry(playerId: player.id)),
                 ),
               ),
 
@@ -276,6 +274,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
           title,
           style: const TextStyle(
             color: AppColors.lime,
+            fontFamily: 'Geologica',
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),
@@ -313,7 +312,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
           ),
           if (!showArrow)
             Positioned(
-              right: 30,
+              right: 20,
               top: height / 2 - 26,
               child: _scrollHint(onArrowTap),
             ),
