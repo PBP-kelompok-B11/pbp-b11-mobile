@@ -268,12 +268,22 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
           );
         },
       ),
-
-      // ✅ REUSABLE BOTTOM NAVBAR
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2, // Category
+        selectedIndex: 2, // CATEGORY
         onTap: (index) {
-          // nanti sambung ke routing global
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
         },
       ),
         
