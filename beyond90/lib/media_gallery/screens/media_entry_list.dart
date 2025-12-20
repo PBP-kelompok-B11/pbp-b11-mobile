@@ -103,23 +103,47 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
                 ],
               );
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => MediaEntryCard(
-                  media: snapshot.data![index],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MediaDetailPage(
-                          media: snapshot.data![index],
-                        ),
+              return Padding(
+                padding: const EdgeInsets.all(16),
+                child: LayoutBuilder(
+                  builder: (context, constraints){
+                    final width = constraints.maxWidth;
+                    int crossAxisCount;
+                    if (width >= 900) {
+                      crossAxisCount = 4; // tablet besar / desktop
+                    } else if (width >= 600) {
+                      crossAxisCount = 3; // tablet
+                    } else {
+                      crossAxisCount = 2; // HP
+                    }
+
+                    return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1,
                       ),
-                    ).then((_) {
-                      setState(() {
-                        _mediaFuture =fetchMedia(request);
-                      });
-                    });
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (_, index) => MediaEntryCard(
+                        media: snapshot.data![index],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MediaDetailPage(
+                                mediaList: snapshot.data!,
+                                initIndx: index,
+                              ),
+                            ),
+                          ).then((_) {
+                            setState(() {
+                              _mediaFuture =fetchMedia(request);
+                            });
+                          });
+                        },
+                      ),
+                    );
                   }
                 ),
               );
@@ -140,6 +164,9 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
               break;
             case 1:
               Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/category');
               break;
             case 3:
               Navigator.pushReplacementNamed(context, '/media_gallery');

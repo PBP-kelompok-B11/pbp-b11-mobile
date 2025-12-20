@@ -5,9 +5,14 @@ import 'package:beyond90/media_gallery/models/media_entry.dart';
 import 'package:beyond90/media_gallery/service/media_service.dart';
 
 class MediaDetailPage extends StatefulWidget {
-  final MediaEntry media;
+  final List<MediaEntry> mediaList;
+  final int initIndx;
 
-  const MediaDetailPage({super.key, required this.media});
+  const MediaDetailPage({
+    super.key,
+    required this.mediaList,
+    required this.initIndx,
+  });
 
   @override
   State<MediaDetailPage> createState() => _MediaDetailPageState();
@@ -15,7 +20,8 @@ class MediaDetailPage extends StatefulWidget {
 }
 
 class _MediaDetailPageState extends State<MediaDetailPage>{
-  late int _viewers;
+  late PageController _pageController;
+  late int _currIdx;
   bool _isUpdate = false;
 
   final Map<String, String> categoryMap = {
@@ -27,13 +33,15 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
   @override
   void initState(){
     super.initState();
-    _viewers = widget.media.viewers + 1;
+    _currIdx = widget.initIndx;
+    _pageController = PageController(initialPage: _currIdx);
+    widget.mediaList[_currIdx].viewers += 1;
 
     // update viewers ke backend
-    _updateViewersToBackEnd();
+    _updateViewersToBackEnd(widget.mediaList[_currIdx]);
   }
 
-  Future<void> _updateViewersToBackEnd() async{
+  Future<void> _updateViewersToBackEnd(MediaEntry media) async{
     if(_isUpdate){
       return;
     }
@@ -41,8 +49,8 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
     _isUpdate = true;
 
     final success = await MediaService.updateViewers(
-      mediaId: widget.media.id, 
-      viewers: _viewers,
+      mediaId: media.id, 
+      viewers:media.viewers,
     );
 
     if(!success){
@@ -63,162 +71,183 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
 
   @override
   Widget build(BuildContext context) {
-    final displayCat = categoryMap[widget.media.category.toLowerCase()] ?? widget.media.category;
+    final displayCat = categoryMap[widget.mediaList[_currIdx].category.toLowerCase()] ?? widget.mediaList[_currIdx].category;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('News Detail'),
+        title: const Text('Media Detail'),
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.lime,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: (){
-            Navigator.pop(context, _viewers);
+            Navigator.pop(context, widget.mediaList[_currIdx]);
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () async{
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text("Delete"),
-                    content: const Text('Are you sure you want to delete this media?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Delete'),
-                      ),
-                    ],
-                  )
-                );
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.mediaList.length,
+        onPageChanged: (index){
+          setState(() {
+            _currIdx = index;
+            widget.mediaList[index].viewers += 1;
+          });
 
-                if(confirm == true){
-                  final success = await MediaService.deleteMedia(widget.media.id);
+          _updateViewersToBackEnd(widget.mediaList[index]);
+        },
+        itemBuilder: (context, idx){
+          final media = widget.mediaList[idx];
 
-                  if(success && mounted){
-                    Navigator.pop(context, true);
-                  }
-                }
-              },
-            ),
-            ElevatedButton(
-              onPressed: () async{
-                final updated = await Navigator.push(
-                  context, MaterialPageRoute(
-                    builder: (_) => MediaEditPage(
-                      media: widget.media
+          return _buildMediaDetail(media);
+        },
+      ),
+    );
+  }
+
+  Widget _buildMediaDetail(MediaEntry media){
+    final displayCat = categoryMap[widget.mediaList[_currIdx].category.toLowerCase()] ?? widget.mediaList[_currIdx].category;
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.delete, color: Colors.red),
+            onPressed: () async{
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text("Delete"),
+                  content: const Text('Are you sure you want to delete this media?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
                     ),
-                  ),
-                );
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                )
+              );
 
-                if(updated != null && mounted){
-                  setState(() {
-                    widget.media.deskripsi = updated.deskripsi;
-                    widget.media.category = updated.category;
-                    widget.media.thumbnail = updated.thumbnail;
-                  });
+              if(confirm == true){
+                final success = await MediaService.deleteMedia(media.id);
+
+                if(success && mounted){
+                  Navigator.pop(context, true);
                 }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.lime,
-                foregroundColor: Colors.black,
-              ),
-              child: const Text('Edit'),
-            ),
-            // Thumbnail image
-            if (widget.media.thumbnail.isNotEmpty)
-              Image.network(
-                'http://localhost:8000/media-gallery/proxy-image/?url=${Uri.encodeComponent(widget.media.thumbnail)}',
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 250,
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.broken_image, size: 50),
+              }
+            },
+          ),
+          ElevatedButton(
+            onPressed: () async{
+              final updated = await Navigator.push(
+                context, MaterialPageRoute(
+                  builder: (_) => MediaEditPage(
+                    media: media
                   ),
                 ),
-              ),
-            
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              );
 
-                  // Category and Date
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          color: AppColors.indigo,
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Text(
-                          displayCat.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.lime,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        _formatDate(widget.media.createdAt),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Views count
-                  Row(
-                    children: [
-                      Icon(Icons.visibility, size: 16, color: Colors.grey[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Total Views\n$_viewers views',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  const Divider(height: 32),
-
-                  // Full content
-                  Text(
-                    widget.media.deskripsi,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      height: 1.6,
-                    ),
-                    textAlign: TextAlign.justify,
-                  ),
-                  const SizedBox(height: 24),
-                ],
+              if(updated != null && mounted){
+                setState(() {
+                  media.deskripsi = updated.deskripsi;
+                  media.category = updated.category;
+                  media.thumbnail = updated.thumbnail;
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.lime,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('Edit'),
+          ),
+          // Thumbnail image
+          if (media.thumbnail.isNotEmpty)
+            Image.network(
+              'http://localhost:8000/media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}',
+              width: double.infinity,
+              height: 250,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 250,
+                color: Colors.grey[300],
+                child: const Center(
+                  child: Icon(Icons.broken_image, size: 50),
+                ),
               ),
             ),
-          ],
-        ),
+          
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                // Category and Date
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 4.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.indigo,
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Text(
+                        displayCat.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.lime,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      _formatDate(media.createdAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                // Views count
+                Row(
+                  children: [
+                    Icon(Icons.visibility, size: 16, color: Colors.grey[600]),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Total Views\n${media.viewers} views',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const Divider(height: 32),
+
+                // Full content
+                Text(
+                  media.deskripsi,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    height: 1.6,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

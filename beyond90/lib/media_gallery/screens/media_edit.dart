@@ -76,73 +76,92 @@ class _MediaEditPageState extends State<MediaEditPage>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Media'),
+        title: const Text('Edit Media',
+          style: TextStyle(
+            fontFamily: 'Geologica',
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
+        ),
+        centerTitle: true,
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.lime,
       ),
       body: Container(
+        height: double.infinity,
         color: AppColors.background,
         child: 
         SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-          
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 24),
+
               // deskripsi
-              TextField(
-                controller: _descController,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  labelText: 'Deskripsi',
-                  border: OutlineInputBorder(),
+              _roundedInput(
+                child: TextField(
+                  controller: _descController,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    hintText: 'Deskripsi',
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 16),
 
               // category
-              DropdownButtonFormField<String>(
-                initialValue: _selectedCat,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
-                items: categoryMap.entries.map((e) {
-                  return DropdownMenuItem(
-                    value: e.key,
-                    child: Text(e.value),
-                  );
-                }).toList(),
-                onChanged: (value){
-                  if(value != null){
-                    setState(() {
-                      _selectedCat = value;
-                    });
+              _roundedInput(
+                child: DropdownButtonFormField<String>(
+                  initialValue: _selectedCat,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                  items: categoryMap.entries.map((e) {
+                    return DropdownMenuItem(
+                      value: e.key,
+                      child: Text(e.value),
+                    );
+                  }).toList(),
+                  onChanged: (value){
+                    if(value != null){
+                      setState(() {
+                        _selectedCat = value;
+                      });
+                    }
                   }
-                }
+                ),
               ),
 
               const SizedBox(height: 16),
 
               // thumbnail
-              TextField(
-                controller: _thumbController,
-                decoration: const InputDecoration(
-                  labelText: 'Thumbnail URL',
-                  border: OutlineInputBorder(),
+              _roundedInput(
+                child: TextField(
+                  controller: _thumbController,
+                  decoration: const InputDecoration(
+                    hintText: 'Thumbnail URL',
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               // save button
               SizedBox(
                 width: double.infinity,
+                height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.lime,
                     foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: _isSaved ? null : _onSave,
@@ -159,4 +178,17 @@ class _MediaEditPageState extends State<MediaEditPage>{
       )
     );
   }
+
+    Widget _roundedInput({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: child,
+    );
+  }
+
 }
