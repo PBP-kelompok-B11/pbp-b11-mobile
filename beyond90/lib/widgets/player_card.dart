@@ -29,105 +29,109 @@ class PlayerCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 220,
-        height: 220,
+        height: 380, // Tambahkan height yang fixed
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(35),
+          border: Border.all(
+            color: AppColors.indigo,
+            width: 4,
+          ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max, // Ubah dari min ke max
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ================= IMAGE =================
-            SizedBox(
-              height: 110,
+            // Player Image
+            Image.network(
+              thumbnail,
+              height: 200,
               width: double.infinity,
-              child: Image.network(
-                thumbnail,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey[300],
-                ),
-              ),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 200,
+                  width: double.infinity,
+                  color: const Color(0xFFD9D9D9), // Abu-abu sama seperti sebelumnya
+                );
+              },
             ),
 
-            // ================= CONTENT =================
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 8, 14, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Player Name
-                  Text(
-                    nama,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: 'Geologica',
-                      color: AppColors.indigo,
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  // Position
-                  Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: const BoxDecoration(
-                          color: AppColors.indigo,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.shield,
-                          size: 12,
-                          color: Colors.white,
-                        ),
+            // White section with details
+            Expanded( // Wrap dengan Expanded
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Player Name
+                    Text(
+                      nama,
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Geologica',
+                        color: AppColors.indigo,
+                        height: 1.1,
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Position with Badge Icon
+                    Row(
+                      children: [
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: const BoxDecoration(
+                            color: AppColors.indigo,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.shield,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
                           posisi,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 24,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Geologica',
                             color: AppColors.indigo,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // ================= DETAILS BUTTON =================
-                  Container(
-                    width: double.infinity,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: AppColors.lime,
-                      borderRadius: BorderRadius.circular(18),
+                      ],
                     ),
-                    child: const Center(
-                      child: Text(
-                        "Details",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Geologica',
-                          color: AppColors.indigo,
+
+                    const Spacer(), // Ini yang mendorong tombol ke bawah!
+
+                    // Details Button
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: AppColors.lime,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Details',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Geologica',
+                            color: AppColors.indigo,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
