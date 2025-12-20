@@ -1,6 +1,8 @@
 import 'package:beyond90/clubs/models/club.dart';
 import 'package:beyond90/clubs/screens/club_detail_user.dart';
 import 'package:beyond90/player/screens/player_entry_details.dart';
+import 'package:beyond90/search/screen/search_history_and_recommendation_page.dart';
+import 'package:beyond90/search/screen/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -119,8 +121,35 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
 
               SearchBarWidget(
                 controller: _searchController,
-                onSubmitted: (_) {},
+                onTap: () {
+                  final request = context.read<CookieRequest>();
+
+                  if (request.loggedIn) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SearchHistoryAndSuggestionPage(),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SearchResultPage(query: ""),
+                      ),
+                    );
+                  }
+                },
+                onSubmitted: (query) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchResultPage(query: query),
+                    ),
+                  );
+                },
               ),
+
 
               const SizedBox(height: 32),
 
