@@ -179,7 +179,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 future: _playerFuture,
                 scrollController: _playerCtrl,
                 showArrow: showPlayerArrow,
-                onArrowTap: () => _go(const PlayerEntryListPage(filter: '')),
+                onArrowTap: () => _go(const PlayerEntryListPage(filter: "All")),
                 itemWidth: 280,
                 sectionHeight: 480, // 🔥 NAIKKAN TINGGINYA dari 260 ke 340
                 itemBuilder: (player) => PlayerCard(
@@ -274,6 +274,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
           title,
           style: const TextStyle(
             color: AppColors.lime,
+            fontFamily: 'Geologica',
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),

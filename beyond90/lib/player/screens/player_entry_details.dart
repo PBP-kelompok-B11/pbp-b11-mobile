@@ -43,11 +43,11 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.white, size: 32),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.lime, size: 32),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          "Player details",
+          "Player Details",
           style: TextStyle(
             fontFamily: "Geologica",
             fontSize: 28,
