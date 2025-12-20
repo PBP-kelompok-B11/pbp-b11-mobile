@@ -26,6 +26,24 @@ class EventEntry {
         "pk": pk,
         "fields": fields.toJson(),
     };
+    factory EventEntry.empty() {
+      return EventEntry(
+        model: "vidia_event.event",
+        pk: 0,
+        fields: Fields(
+          namaEvent: "No Event",
+          lokasi: "-",
+          tanggal: DateTime.now(),
+          timHome: "No Data",
+          timAway: "",
+          skorHome: null,
+          skorAway: null,
+          createdBy: null,
+          username: "",
+        ),
+      );
+    }
+
 }
 class Fields {
     String namaEvent;
@@ -62,7 +80,7 @@ class Fields {
         createdBy: json["created_by"], 
         username: json["username"] ?? "Unknown User",
     );
-
+  
     Map<String, dynamic> toJson() => {
         "nama_event": namaEvent,
         "lokasi": lokasi,
