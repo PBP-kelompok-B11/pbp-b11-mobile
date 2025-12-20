@@ -46,6 +46,7 @@ class _MediaFormPageState extends State<MediaFormPage> {
       ),
       body: Container(
         width: double.infinity,
+        height: double.infinity,
         color: AppColors.indigo,
         child: SingleChildScrollView(
           child: Padding(
@@ -74,21 +75,6 @@ class _MediaFormPageState extends State<MediaFormPage> {
 
                   const SizedBox(height: 16),
 
-                  // ===== THUMBNAIL =====
-                  _roundedInput(
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        hintText: "Thumbnail URL",
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) => _thumbnail = value,
-                      validator: (value) =>
-                          value == null || value.isEmpty ? "Thumbnail wajib diisi" : null,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
                   // ===== KATEGORI =====
                   _roundedInput(
                     child: DropdownButtonFormField<String>(
@@ -107,6 +93,22 @@ class _MediaFormPageState extends State<MediaFormPage> {
                       }),
                     ),
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // ===== THUMBNAIL =====
+                  _roundedInput(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "Thumbnail URL",
+                        border: InputBorder.none,
+                      ),
+                      onChanged: (value) => _thumbnail = value,
+                      validator: (value) =>
+                          value == null || value.isEmpty ? "Thumbnail wajib diisi" : null,
+                    ),
+                  ),
+
 
                   const SizedBox(height: 32),
 
@@ -160,16 +162,16 @@ class _MediaFormPageState extends State<MediaFormPage> {
       ),
     );
   }
+  Widget _roundedInput({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: child,
+    );
+  }
 }
 
-Widget _roundedInput({required Widget child}) {
-  return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(30),
-    ),
-    child: child,
-  );
-}
