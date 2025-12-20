@@ -82,7 +82,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
     setState(() {
       _controller.text = q;
-      // Assign ulang Future supaya FutureBuilder rebuild
       _players = _fetchPlayers(q);
       _clubs = _fetchClubs(q);
       _events = _fetchEvents(q);
@@ -125,8 +124,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
               ),
 
               const SizedBox(height: 32),
-
-              // ResultTitle sesuai query yang diketik user
               ResultTitle(query: _controller.text, keyword: _controller.text),
 
               const SizedBox(height: 32),
@@ -203,18 +200,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
     required Future<List<T>> future,
     required Widget Function(T item) itemBuilder,
   }) {
-    // 1. Tentukan ukuran dinamis berdasarkan Judul Section
-    double itemWidth = 280; // Lebar standar agar mirip SearchDefaultPage
-    double itemHeight = 320; // Default untuk Club / Event
+    double itemWidth = 280; 
+    double itemHeight = 320; 
 
     if (title == "Player") {
-      itemHeight = 420; // Player butuh lebih tinggi agar tidak overflow
+      itemHeight = 420; 
     } else if (title == "Club") {
-      itemWidth = 220; // Club lebih bagus agak ramping
+      itemWidth = 220; 
       itemHeight = 320;
     } else if (title == "Event") {
       itemWidth = 280;
-      itemHeight = 220; // Event biasanya lebih pendek
+      itemHeight = 220; 
     }
 
     return Padding(
@@ -252,11 +248,11 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
               return Wrap(
                 spacing: 16,
-                runSpacing: 24, // Jarak antar baris diperlebar sedikit
+                runSpacing: 24, 
                 children: items.map((e) {
                   return SizedBox(
                     width: itemWidth,
-                    height: itemHeight, // 👈 Sekarang tingginya sudah sesuai jenis kartu
+                    height: itemHeight, 
                     child: itemBuilder(e),
                   );
                 }).toList(),

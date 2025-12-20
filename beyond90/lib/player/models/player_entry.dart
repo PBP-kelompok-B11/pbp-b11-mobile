@@ -1,4 +1,3 @@
-
 import 'package:beyond90/player/models/achievements.dart';
 import 'package:beyond90/player/models/season_stat.dart';
 import 'package:beyond90/player/models/career.dart';
@@ -12,7 +11,7 @@ class PlayerEntry {
   final double berat;
   final String posisi;
   final String thumbnail;
-  final int? user_id ;
+  final int? user_id;
 
   final List<Achievement> achievement;
   final List<SeasonStat> seasonStats;
@@ -27,36 +26,39 @@ class PlayerEntry {
     required this.berat,
     required this.posisi,
     required this.thumbnail,
+    required this.user_id,
     required this.achievement,
     required this.seasonStats,
     required this.careerHistory,
-    required this.user_id,
   });
 
   factory PlayerEntry.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> fields =
+        (json['fields'] as Map<String, dynamic>?) ?? json;
 
     return PlayerEntry(
-      id: json['id'],
-      nama: json['nama'],
-      negara: json['negara'],
-      usia: json['usia'],
-      tinggi: (json['tinggi'] as num).toDouble(),
-      berat: (json['berat'] as num).toDouble(),
-      posisi: json['posisi'],
-      thumbnail: json['thumbnail'],
-      user_id: json['user_id'],
-      achievement: (json['achievement'] as List<dynamic>? ?? [])
-          .map((a) => Achievement.fromJson(a))
-          .toList(),
+      id: (fields['id'] ?? json['pk'] ?? '').toString(),
+      nama: fields['nama'] ?? '',
+      negara: fields['negara'] ?? '',
+      usia: fields['usia'] is int ? fields['usia'] : int.tryParse('${fields['usia']}') ?? 0,
+      tinggi: (fields['tinggi'] as num?)?.toDouble() ?? 0.0,
+      berat: (fields['berat'] as num?)?.toDouble() ?? 0.0,
+      posisi: fields['posisi'] ?? '',
+      thumbnail: fields['thumbnail'] ?? '',
+      user_id: fields['user'],
 
-      seasonStats: (json['season_stats'] as List<dynamic>? ?? [])
-          .map((s) => SeasonStat.fromJson(s))
-          .toList(),
-
-      careerHistory: (json['career_history'] as List<dynamic>? ?? [])
-          .map((c) => CareerHistory.fromJson(c))
-          .toList(),
-
+      achievement: (fields['achievement'] as List<dynamic>?)
+              ?.map((a) => Achievement.fromJson(a))
+              .toList() ??
+          [],
+      seasonStats: (fields['season_stats'] as List<dynamic>?)
+              ?.map((s) => SeasonStat.fromJson(s))
+              .toList() ??
+          [],
+      careerHistory: (fields['career_history'] as List<dynamic>?)
+              ?.map((c) => CareerHistory.fromJson(c))
+              .toList() ??
+          [],
     );
   }
 }

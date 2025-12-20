@@ -12,7 +12,7 @@ class AuthService {
   static Future<Map<String, dynamic>> login(
       CookieRequest request, String username, String password) async {
     
-    final url = "$baseUrl/login/";
+    final url = "$baseUrl/api/login/";
 
     try {
       // Gunakan request.login (dari pbp_django_auth) BUKAN http.post
@@ -42,13 +42,11 @@ class AuthService {
 
   // LOGOUT - Harus memanggil endpoint Django agar session di server mati
   static Future<Map<String, dynamic>> logout(CookieRequest request) async {
-    final url = "$baseUrl/logout/";
+    final url = "$baseUrl/api/logout/";
     try {
-      final response = await request.logout(url);
-      if (response['status'] == true || response['success'] == true) {
-        isAdmin = false;
-        currentUsername = null;
-      }
+      final response = await request.post(url, {});
+      isAdmin = false;
+      currentUsername = null;
       return response;
     } catch (e) {
       return {"success": false, "message": "Logout gagal: $e"};

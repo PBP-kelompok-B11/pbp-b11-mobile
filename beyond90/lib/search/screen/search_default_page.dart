@@ -29,7 +29,6 @@ import 'package:beyond90/player/screens/player_entry_list.dart';
 
 // ===== CARD =====
 import 'package:beyond90/widgets/player_card.dart';
-// "ubah import jadi ambil widget dari folder clubs"
 import 'package:beyond90/clubs/widgets/club_card.dart';
 
 // ================= CLUB =================
@@ -133,7 +132,6 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                       ),
                     );
                   } else {
-                    // user belum login → tetap ke history / suggestion
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -181,7 +179,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 showArrow: showPlayerArrow,
                 onArrowTap: () => _go(const PlayerEntryListPage(filter: "All")),
                 itemWidth: 280,
-                sectionHeight: 480, // 🔥 NAIKKAN TINGGINYA dari 260 ke 340
+                sectionHeight: 480,
                 itemBuilder: (player) => PlayerCard(
                   thumbnail: player.thumbnail ?? "",
                   nama: player.nama,
@@ -201,12 +199,12 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 scrollController: _clubCtrl,
                 showArrow: showClubArrow,
                 onArrowTap: () => _go(const ClubListUser()),
-                itemWidth: 220,      // Sedikit diperkecil lebarnya agar lebih proporsional
-                sectionHeight: 320,  // 🔥 NAIKKAN TINGGINYA agar tidak overflow
+                itemWidth: 220,    
+                sectionHeight: 320,  
                 itemBuilder: (club) => ClubCard(
                   imageUrl: club.urlGambar ?? "",
                   clubName: club.nama,
-                  location: club.stadion, // Atau gunakan club.negara sesuai kebutuhan
+                  location: club.stadion, 
                   onTap: () => _go(ClubDetailUser(clubId: club.id)),
                 ),
               ),
@@ -339,9 +337,9 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
         ),
         alignment: Alignment.center,
         child: const Padding(
-          padding: EdgeInsets.only(left: 8), // 👈 Padding kecil agar icon ios terlihat center secara optik
+          padding: EdgeInsets.only(left: 8),
           child: Icon(
-            Icons.arrow_forward_ios_rounded, // 
+            Icons.arrow_forward_ios_rounded, 
             color: AppColors.indigo,
             size: 24,
           ),
