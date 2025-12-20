@@ -83,7 +83,7 @@ class EventEntryCard extends StatelessWidget {
                       fontFamily: 'Geologica',
                       color: statusColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 10,
+                      fontSize: 13,
                     ),
                   ),
                 ],
@@ -111,7 +111,7 @@ class EventEntryCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: 'Geologica',
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: AppColors.indigo,
                       ),

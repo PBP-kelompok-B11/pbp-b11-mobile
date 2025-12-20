@@ -50,7 +50,6 @@ class _ClubListAdminState extends State<ClubListAdmin> {
         children: [
           const SizedBox(height: 12),
 
-          // SEARCH + ADD CLUB
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
