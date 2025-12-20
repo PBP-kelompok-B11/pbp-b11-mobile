@@ -243,6 +243,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                     .map(
                       (e) => SizedBox(
                         width: 320,
+                        height: 220,
                         child: itemBuilder(e),
                       ),
                     )
