@@ -128,7 +128,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                                 ? Image.network(club.urlGambar!, fit: BoxFit.contain)
                                 : const Icon(Icons.sports_soccer, size: 80, color: Colors.grey),
                           ),
-                          const SizedBox(height: 24.0),
+                          const SizedBox(height: 24),
 
                           // --- NAME & LOCATION ---
                           Text(
@@ -246,9 +246,8 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                               ),
                             ),
                           ),
-                          ),
-                        ]
-                        ,
+                          const SizedBox(height: 24),
+                        ],
                       ),
                     ),
                   )
