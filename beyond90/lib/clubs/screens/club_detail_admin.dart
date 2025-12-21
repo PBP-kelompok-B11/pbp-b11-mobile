@@ -4,6 +4,7 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:beyond90/comments/screens/comm_list.dart';
 
 import '../models/club.dart';
 import '../models/club_ranking.dart';
@@ -192,82 +193,108 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                           ),
                           const SizedBox(height: 24),
 
-                          // --- ACTION BUTTONS ---
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40),
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (request.loggedIn)
-                                    _actionButtonSquare(
-                                      icon: Icons.edit,
-                                      color: Colors.yellow.shade400,
-                                      iconColor: AppColors.indigo,
-                                      onTap: () async {
-                                        final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => ClubForm(
-                                              club: club,
-                                              ranking: _currentRanking,
-                                              rankingId: _currentRankingId,
-                                            ),
-                                          ),
-                                        );
-                                        
-                                        // JIKA BERHASIL EDIT
-                                        if (result == true) {
-                                          _isEdited = true; // Tandai bahwa list harus di-refresh nanti
-                                          _refreshData(); // Refresh tampilan detail saat ini
-                                        }
-                                      },
-                                    ),
-                                  if (request.loggedIn) const SizedBox(width: 10),
-                                  if (request.loggedIn)
-                                    _actionButtonSquare(
-                                      icon: Icons.delete_outline,
-                                      color: Colors.red.shade600,
-                                      iconColor: Colors.white,
-                                      onTap: () => _showDeleteConfirmation(context, club.id),
-                                    ),
-                                  if (request.loggedIn) const SizedBox(width: 10),
+                        // --- ACTION BUTTONS (Edit, Delete, Comment) ---
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Tombol EDIT (Hanya jika login)
+                                if (request.loggedIn)
                                   _actionButtonSquare(
-                                    imagePath: 'assets/icons/comment.png',
-                                    color: AppColors.lime,
+                                    icon: Icons.edit,
+                                    color: Colors.yellow.shade400,
                                     iconColor: AppColors.indigo,
-                                    onTap: () {
-                                      // TODO: Modal Komentar
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ClubForm(
+                                            club: club,
+                                            ranking: _currentRanking,
+                                            rankingId: _currentRankingId,
+                                          ),
+                                        ),
+                                      );
+                                      if (result == true) {
+                                        setState(() {
+                                          futureClub = ClubService.fetchClubDetail(widget.clubId);
+                                          futureRankings = ClubRankingService.fetchAllRankings();
+                                        });
+                                      }
                                     },
                                   ),
-                                ],
-                              ),
+
+                                if (request.loggedIn) const SizedBox(width: 10),
+
+                                // Tombol DELETE (Hanya jika login)
+                                if (request.loggedIn)
+                                  _actionButtonSquare(
+                                    icon: Icons.delete_outline,
+                                    color: Colors.red.shade600,
+                                    iconColor: Colors.white,
+                                    onTap: () async {
+                                      _showDeleteConfirmation(context, club.id);
+                                    },
+                                  ),
+
+                                if (request.loggedIn) const SizedBox(width: 10),
+
+                                // Tombol COMMENT
+                                _actionButtonSquare(
+                                  imagePath: 'assets/icons/comment.png',
+                                  color: AppColors.lime,
+                                  iconColor: AppColors.indigo,
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.indigo[900],
+                                      isScrollControlled: true,
+                                      builder: (_) => SizedBox(
+                                        height: MediaQuery.of(context).size.height * 0.7,
+                                        child: CommentListWidget(
+                                          type: 'player', targetId: club.id.toString(), // UUID
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                  )
-                ],
-              ),
-            );
-          },
-        ),
-        bottomNavigationBar: BottomNavbar(
-          selectedIndex: 2,
-          onTap: (index) {
-            if (index == 2) return;
-            switch (index) {
-              case 0: Navigator.pushReplacementNamed(context, '/home'); break;
-              case 1: Navigator.pushReplacementNamed(context, '/search'); break;
-              case 3: Navigator.pushReplacementNamed(context, '/media_gallery'); break;
-            }
-          },
-        ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
       ),
-    );
+
+      bottomNavigationBar: BottomNavbar(
+        selectedIndex: 2, // CATEGORY
+        onTap: (index) {
+          if (index == 2) return;
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/search');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/media_gallery');
+              break;
+          }
+        },
+      ),
+    )
   }
 
   Widget _limeBar(String text) {

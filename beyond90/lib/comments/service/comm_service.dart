@@ -3,7 +3,7 @@ import 'package:beyond90/comments/models/comm.dart';
 
 class CommentService {
   static const String baseUrl =
-      "http://localhost:8000/comments/flutter";
+      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/comments/flutter";
 
   static Future<CommentEntry> fetchComments(
       CookieRequest request,
