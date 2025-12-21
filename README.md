@@ -201,5 +201,16 @@ Integrasi data antara aplikasi (ex: aplikasi mobile atau desktop) dengan aplikas
    - Menyimpannya ke dalam local storage
    - Memperbarui tampilan UI
    - Menampilkan pesan error
+
+
+
+
+# Beyond90
+[![Build Status](https://app.bitrise.io/app/c5667437-8f93-4738-9973-0b0fd6e512a9/status.svg?token=LOIej1pKbBaKaUWn8F4yIg&branch=main)](https://app.bitrise.io/app/c5667437-8f93-4738-9973-0b0fd6e512a9)
+
+## Download
+Download aplikasi versi terbaru: https://app.bitrise.io/app/c5667437-8f93-4738-9973-0b0fd6e512a9/installable-artifacts/4fe782645023d2f5/public-install-page/0a7d52c7af8cd7dfbf26fe7071999388
     
 </details>
+
+
