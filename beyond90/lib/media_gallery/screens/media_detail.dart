@@ -351,7 +351,7 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
         ),
         clipBehavior: Clip.antiAlias, // Memastikan gambar tetap berada di dalam radius border
         child: Image.network(
-          'http://localhost:8000/media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}',
+          'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id//media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}',
           // Menggunakan contain agar seluruh gambar masuk ke dalam box tanpa ada yang terpotong
           fit: BoxFit.contain, 
           errorBuilder: (context, error, stackTrace) => Container(

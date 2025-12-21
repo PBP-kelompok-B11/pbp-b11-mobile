@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MediaService {
-  static const String baseURL = 'http://localhost:8000';
+  // static const String baseURL = 'http://localhost:8000';
+  static const String baseURL = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id";
 
   // method untuk increment jumlah viewers
   static Future<bool> updateViewers({

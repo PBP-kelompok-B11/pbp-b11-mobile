@@ -126,7 +126,7 @@ class _MediaFormPageState extends State<MediaFormPage> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final response = await request.postJson(
-                            "http://localhost:8000/media-gallery/add-flutter/",
+                            "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/media-gallery/add-flutter/",
                             jsonEncode({
                               "deskripsi": _deskripsi,
                               "thumbnail": _thumbnail,
