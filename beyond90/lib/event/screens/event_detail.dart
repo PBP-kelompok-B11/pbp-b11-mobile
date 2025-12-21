@@ -237,23 +237,20 @@ class EventDetailPage extends StatelessWidget {
 
   // --- UI Helpers ---
 
-  Widget teamLogo(String? url, {double size = 40}) {
-    if (url == null || url.isEmpty) {
+  Widget teamLogo(String? url, {double size = 34}) {
+    if (url == null || url.trim().isEmpty) {
       return Icon(Icons.shield, size: size, color: AppColors.indigo);
     }
 
-    String finalUrl = url;
-    if (!url.startsWith('http')) {
-      // Fallback ke static folder server jika bukan link internet
-      finalUrl = "http://10.0.2.2:8000/static/logos/$url";
-    }
-
     return Image.network(
-      finalUrl,
+      url,
       width: size,
       height: size,
       fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => Icon(Icons.shield, size: size, color: AppColors.indigo),
+      // Jika link error/mati, tampilkan icon tameng
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(Icons.shield, size: size, color: AppColors.indigo);
+      },
     );
   }
 

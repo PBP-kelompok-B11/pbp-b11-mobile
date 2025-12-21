@@ -181,28 +181,19 @@ class EventEntryCard extends StatelessWidget {
   }
 
   Widget teamLogo(String? url, {double size = 34}) {
-    if (url == null || url.isEmpty) {
+    if (url == null || url.trim().isEmpty) {
       return Icon(Icons.shield, size: size, color: AppColors.indigo);
     }
 
-    // Cek apakah url adalah link lengkap atau cuma nama file
-    String finalUrl = url;
-    if (!url.startsWith('http')) {
-      // Jika user cuma input "arsenal.png", arahkan ke static folder server
-      // Sesuaikan IP 10.0.2.2 untuk emulator Android
-      finalUrl = "http://10.0.2.2:8000/static/logos/$url";
-    }
-
     return Image.network(
-      finalUrl,
+      url,
       width: size,
       height: size,
       fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) => Icon(
-        Icons.shield,
-        size: size,
-        color: AppColors.indigo,
-      ),
+      // Jika link error/mati, tampilkan icon tameng
+      errorBuilder: (context, error, stackTrace) {
+        return Icon(Icons.shield, size: size, color: AppColors.indigo);
+      },
     );
   }
 }

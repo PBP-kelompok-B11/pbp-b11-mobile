@@ -59,7 +59,6 @@ class _EventFormPageState extends State<EventFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
     bool isEdit = widget.event != null;
     return PopScope(
       canPop: false, 
