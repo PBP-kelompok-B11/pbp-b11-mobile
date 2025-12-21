@@ -50,6 +50,7 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
 
   @override
 Widget build(BuildContext context) {
+  final request = context.watch<CookieRequest>();
   return Scaffold(
     backgroundColor: AppColors.indigo,
     // --- 1. GUNAKAN APPBAR BAWAAN AGAR JUDUL BISA CENTER ---
@@ -116,7 +117,7 @@ Widget build(BuildContext context) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // --- 2. TOMBOL ADD EVENT DI TARUH DI BAWAH APPBAR (OPTIONAL) ---
-          if (AuthService.isAdmin)
+          if (request.loggedIn)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Align(
