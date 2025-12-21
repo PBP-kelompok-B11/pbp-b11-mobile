@@ -242,29 +242,8 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                                       // TODO: Modal Komentar
                                     },
                                   ),
-
-                                if (request.loggedIn) const SizedBox(width: 10),
-
-                                // Tombol COMMENT
-                                _actionButtonSquare(
-                                  imagePath: 'assets/icons/comment.png',
-                                  color: AppColors.lime,
-                                  iconColor: AppColors.indigo,
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.indigo[900],
-                                      isScrollControlled: true,
-                                      builder: (_) => SizedBox(
-                                        height: MediaQuery.of(context).size.height * 0.7,
-                                        child: CommentListWidget(
-                                          type: 'player', targetId: club.id.toString(), // UUID
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           ),
