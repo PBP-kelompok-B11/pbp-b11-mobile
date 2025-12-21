@@ -17,7 +17,6 @@ class ClubRankingService {
     throw Exception("Failed to fetch rankings: ${response.body}");
   }
 
-  // ✅ TAMBAHKAN INI
   static Future<void> createRanking({
     required int clubId,
     required int ranking,
