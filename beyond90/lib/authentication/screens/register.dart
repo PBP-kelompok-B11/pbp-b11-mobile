@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
-import 'package:provider/provider.dart'; // Tambahkan ini
-import 'package:pbp_django_auth/pbp_django_auth.dart'; // Tambahkan ini
+import 'package:provider/provider.dart'; 
+import 'package:pbp_django_auth/pbp_django_auth.dart'; 
 import '../widgets/auth_back.dart';
 import '../service/auth_service.dart';
 import 'login.dart';
@@ -15,11 +15,10 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController usernameCtrl = TextEditingController();
-  final TextEditingController emailCtrl = TextEditingController(); // Tambahkan field email
+  final TextEditingController emailCtrl = TextEditingController(); 
   final TextEditingController passwordCtrl = TextEditingController();
   final TextEditingController confirmCtrl = TextEditingController();
   
-  // Field tambahan sesuai model UserProfile Django kamu
   final TextEditingController alamatCtrl = TextEditingController();
   final TextEditingController umurCtrl = TextEditingController();
   final TextEditingController phoneCtrl = TextEditingController();
@@ -31,7 +30,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isLoading = false;
 
   void _doRegister() async {
-    // Validasi dasar
     if (passwordCtrl.text != confirmCtrl.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Password tidak cocok!")),
@@ -154,7 +152,6 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Widget khusus untuk Dropdown Role
   Widget _roleDropdown() {
     return Container(
       width: 330,

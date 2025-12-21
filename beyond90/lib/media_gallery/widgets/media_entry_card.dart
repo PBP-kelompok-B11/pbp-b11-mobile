@@ -23,7 +23,7 @@ class MediaEntryCard extends StatelessWidget {
       final videoId = YoutubePlayer.convertUrlToId(media.thumbnail);
       imageUrl = videoId != null ? 'https://img.youtube.com/vi/$videoId/hqdefault.jpg' : " ";
     } else{
-      imageUrl = 'http://localhost:8000/media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}';
+      imageUrl = 'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}';
     }
 
     return GestureDetector(

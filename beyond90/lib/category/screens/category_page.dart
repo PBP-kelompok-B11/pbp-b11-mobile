@@ -34,7 +34,6 @@ class CategoryPage extends StatelessWidget {
                 subtitle: 'See various players from all over the world!',
                 actionText: 'See all players',
                 onTap: () {
-                  // Navigator.pushReplacementNamed(context, '/players');
 
                   Navigator.push(
                     context,
@@ -52,9 +51,9 @@ class CategoryPage extends StatelessWidget {
                 actionText: 'See all clubs',
                 onTap: () {
                   if (AuthService.isAdmin) {
-                    Navigator.pushReplacementNamed(context, '/clubs/admin');
+                    Navigator.pushNamed(context, '/clubs/admin');
                   } else {
-                    Navigator.pushReplacementNamed(context, '/clubs');
+                    Navigator.pushNamed(context, '/clubs');
                   }
                 },
               ),

@@ -2,6 +2,8 @@ import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 import '../models/club.dart';
 import '../models/club_ranking.dart';
@@ -19,7 +21,6 @@ class ClubDetailAdmin extends StatefulWidget {
 }
 
 class _ClubDetailAdminState extends State<ClubDetailAdmin> {
-  final bool isAdmin = AuthService.isAdmin;
 
   late Future<Club> futureClub;
   late Future<List<ClubRanking>> futureRankings;
@@ -36,10 +37,12 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>(); 
     return Scaffold(
       backgroundColor: AppColors.background,
 
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
@@ -99,7 +102,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                         Container(
                           height: 260,
                           width: double.infinity,
-                          padding: const EdgeInsets.all(10), // Memberi ruang agar logo tidak nempel pinggir
+                          padding: const EdgeInsets.all(10), 
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(55),
@@ -109,7 +112,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                           child: club.urlGambar != null && club.urlGambar!.isNotEmpty
                               ? Image.network(
                                   club.urlGambar!,
-                                  fit: BoxFit.contain, // 👈 Kuncinya agar logo utuh tidak terpotong
+                                  fit: BoxFit.contain, 
                                 )
                               : const Icon(
                                   Icons.sports_soccer,
@@ -187,74 +190,69 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
                         const SizedBox(height: 24),
 
-                        // TOMBOL COMMENT (Pindah ke kanan sebelum tombol Edit/Delete)
+                        // --- ACTION BUTTONS (Edit, Delete, Comment) ---
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 40),
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: () {
-                                // Navigasi ke halaman chat/comment jika ada
-                              },
-                              child: Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Tombol EDIT (Hanya jika login)
+                                if (request.loggedIn)
+                                  _actionButtonSquare(
+                                    icon: Icons.edit,
+                                    color: Colors.yellow.shade400,
+                                    iconColor: AppColors.indigo,
+                                    onTap: () async {
+                                      final result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ClubForm(
+                                            club: club,
+                                            ranking: _currentRanking,
+                                            rankingId: _currentRankingId,
+                                          ),
+                                        ),
+                                      );
+                                      if (result == true) {
+                                        setState(() {
+                                          futureClub = ClubService.fetchClubDetail(widget.clubId);
+                                          futureRankings = ClubRankingService.fetchAllRankings();
+                                        });
+                                      }
+                                    },
+                                  ),
+
+                                if (request.loggedIn) const SizedBox(width: 10),
+
+                                // Tombol DELETE (Hanya jika login)
+                                if (request.loggedIn)
+                                  _actionButtonSquare(
+                                    icon: Icons.delete_outline,
+                                    color: Colors.red.shade600,
+                                    iconColor: Colors.white,
+                                    onTap: () async {
+                                      _showDeleteConfirmation(context, club.id);
+                                    },
+                                  ),
+
+                                if (request.loggedIn) const SizedBox(width: 10),
+
+                                // Tombol COMMENT
+                                _actionButtonSquare(
+                                  imagePath: 'assets/icons/comment.png',
                                   color: AppColors.lime,
-                                  borderRadius: BorderRadius.circular(22),
+                                  iconColor: AppColors.indigo,
+                                  onTap: () {
+                                    // TODO: Integrasikan modal komentar di sini
+                                  },
                                 ),
-                                padding: const EdgeInsets.all(18),
-                                child: Image.asset(
-                                  'assets/icons/comment.png',
-                                  color: AppColors.indigo,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
+                              ],
                             ),
                           ),
                         ),
-
-                        const SizedBox(height: 16), // Jarak ke tombol Edit
-
-                        if (AuthService.isAdmin) ...[
-                          _adminButton(
-                            label: "Edit Club",
-                            background: Colors.yellow.shade400,
-                            textColor: AppColors.indigo,
-                            onTap: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ClubForm(
-                                    club: club,
-                                    ranking: _currentRanking,
-                                    rankingId: _currentRankingId,
-                                  ),
-                                ),
-                              );
-
-                              if (result == true) {
-                                setState(() {
-                                  futureClub =
-                                      ClubService.fetchClubDetail(widget.clubId);
-                                  futureRankings =
-                                      ClubRankingService.fetchAllRankings();
-                                });
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 12),
-                          _adminButton(
-                            label: "Delete Club",
-                            background: Colors.red.shade600,
-                            textColor: AppColors.white,
-                            onTap: () async {
-                              await ClubService.deleteClub(club.id);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                        ],
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
@@ -308,33 +306,67 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
     );
   }
 
-  Widget _adminButton({
-    required String label,
-    required Color background,
-    required Color textColor,
+  // Helper untuk membuat tombol icon kotak tumpul
+  Widget _actionButtonSquare({
+    IconData? icon,
+    String? imagePath,
+    required Color color,
+    required Color iconColor,
     required VoidCallback onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 52,
-          decoration: BoxDecoration(
-            color: background,
-            borderRadius: BorderRadius.circular(34),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: "Geologica",
-              fontSize: 20,
-              color: textColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18),
         ),
+        child: Center(
+          child: imagePath != null
+              ? Image.asset(
+                  imagePath,
+                  width: 28,
+                  height: 28,
+                  color: iconColor,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.chat_bubble_outline, color: iconColor, size: 28),
+                )
+              : Icon(
+                  icon,
+                  size: 28,
+                  color: iconColor,
+                ),
+        ),
+      ),
+    );
+  }
+
+  // Dialog konfirmasi hapus
+  void _showDeleteConfirmation(BuildContext context, int clubId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Hapus Klub"),
+        content: const Text("Apakah kamu yakin ingin menghapus klub ini?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ClubService.deleteClub(clubId);
+              if (context.mounted) {
+                Navigator.pop(context); // Tutup dialog
+                Navigator.pop(context); // Kembali ke list
+              }
+            },
+            child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }

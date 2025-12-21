@@ -29,13 +29,13 @@ class ClubCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 6, // Kita sesuaikan flex-nya agar pas
+              flex: 6, 
               child: Container(
-                padding: const EdgeInsets.all(20), // Memberi ruang agar logo tidak nempel pinggir
+                padding: const EdgeInsets.all(20), 
                 width: double.infinity,
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.contain, // 👈 Kuncinya di sini: Logo akan terlihat full
+                  fit: BoxFit.contain, 
                   errorBuilder: (_, __, ___) => Container(
                     color: Colors.grey[100],
                     child: const Icon(Icons.sports_soccer, size: 50, color: Colors.grey),
@@ -44,7 +44,6 @@ class ClubCard extends StatelessWidget {
               ),
             ),
 
-            // ================= CONTENT (Flex dikurangi jadi 3) =================
             Expanded(
               flex: 3, 
               child: Padding(

@@ -23,12 +23,10 @@ class _LoginPageState extends State<LoginPage> {
   void _doLogin() async {
     setState(() => isLoading = true);
 
-    // AMBIL REQUEST DARI PROVIDER
     final request = context.read<CookieRequest>();
 
-    // Kirim request ke service
     final result = await AuthService.login(
-      request, // Pastikan AuthService menerima ini
+      request, 
       usernameCtrl.text.trim(),
       passwordCtrl.text.trim(),
     );
@@ -37,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (!mounted) return;
 
-    if (request.loggedIn) { // Gunakan status dari CookieRequest
+    if (request.loggedIn) { 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result["message"] ?? "Welcome!")),
       );
@@ -56,7 +54,6 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== MAIN CONTENT =====
             SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Center(

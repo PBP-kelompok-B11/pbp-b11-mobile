@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:beyond90/event/screens/menu_event.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart';
 import 'package:beyond90/event/screens/event_entry_list.dart';
 import 'package:beyond90/authentication/screens/login.dart'; // Import halaman login
@@ -49,18 +48,6 @@ class LeftDrawer extends StatelessWidget {
             ),
           ),
           
-          // --- HOME ---
-          ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventHomePage(),
-                  ));
-            },
-          ),
           
           // --- ADD EVENT ---
           ListTile(

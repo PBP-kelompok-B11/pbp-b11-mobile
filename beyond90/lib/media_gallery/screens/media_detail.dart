@@ -56,6 +56,11 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
         flags: const YoutubePlayerFlags(
           autoPlay: true,
           mute: false,
+          disableDragSeek: true, 
+          loop: false,
+          isLive: false,
+          forceHD: false,
+          enableCaption: true
         ),
       )..addListener(() {
           if (_ytController!.value.hasError && !_hasError) {
@@ -153,72 +158,81 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
 
   Widget _buildMediaDetail(MediaEntry media, int idx) {
     final displayCat = categoryMap[widget.mediaList[_currIdx].category.toLowerCase()] ??
-     widget.mediaList[_currIdx].category;
+        widget.mediaList[_currIdx].category;
+
     return SingleChildScrollView(
-      child: Column(
+      child: Column( // Hapus Center dan ConstrainedBox dari sini
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tambahkan Padding di sini agar MediaContent punya jarak dari atas/samping
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), // (Kiri, Atas, Kanan, Bawah)
-            child: _buildMediaContent(media),
+          // Bagian Video/Gambar tetap dibatasi agar tidak terlalu raksasa
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 900), 
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: _buildMediaContent(media),
+              ),
+            ),
           ),
-          _buildActionButtons(media),
+          
+          // Bagian Info Section sekarang bisa melebar penuh
           _buildInfoSection(media, displayCat),
+          
+          const SizedBox(height: 50), 
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons(MediaEntry media) {
-    final request = context.watch<CookieRequest>();
+  // Widget _buildActionButtons(MediaEntry media) {
+  //   final request = context.watch<CookieRequest>();
 
-    if (!request.loggedIn) {
-      return const SizedBox(height: 16);
-    }
+  //   if (!request.loggedIn) {
+  //     return const SizedBox(height: 16);
+  //   }
     
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("Delete"),
-                  content: const Text('Are you sure you want to delete this media?'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-                    TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
-                  ],
-                ),
-              );
-              if (confirm == true) {
-                final success = await MediaService.deleteMedia(media.id);
-                if (success && mounted) Navigator.pop(context, true);
-              }
-            },
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final updated = await Navigator.push(context, MaterialPageRoute(builder: (_) => MediaEditPage(media: media)));
-              if (updated != null && mounted) {
-                setState(() {
-                  media.deskripsi = updated.deskripsi;
-                  media.category = updated.category;
-                  media.thumbnail = updated.thumbnail;
-                });
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.lime, foregroundColor: Colors.black),
-            child: const Text('Edit'),
-          ),
-        ],
-      ),
-    );
-  }
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  //     child: Row(
+  //       children: [
+  //         IconButton(
+  //           icon: const Icon(Icons.delete, color: Colors.red),
+  //           onPressed: () async {
+  //             final confirm = await showDialog<bool>(
+  //               context: context,
+  //               builder: (_) => AlertDialog(
+  //                 title: const Text("Delete"),
+  //                 content: const Text('Are you sure you want to delete this media?'),
+  //                 actions: [
+  //                   TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+  //                   TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+  //                 ],
+  //               ),
+  //             );
+  //             if (confirm == true) {
+  //               final success = await MediaService.deleteMedia(media.id);
+  //               if (success && mounted) Navigator.pop(context, true);
+  //             }
+  //           },
+  //         ),
+  //         ElevatedButton(
+  //           onPressed: () async {
+  //             final updated = await Navigator.push(context, MaterialPageRoute(builder: (_) => MediaEditPage(media: media)));
+  //             if (updated != null && mounted) {
+  //               setState(() {
+  //                 media.deskripsi = updated.deskripsi;
+  //                 media.category = updated.category;
+  //                 media.thumbnail = updated.thumbnail;
+  //               });
+  //             }
+  //           },
+  //           style: ElevatedButton.styleFrom(backgroundColor: AppColors.lime, foregroundColor: Colors.black),
+  //           child: const Text('Edit'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildInfoSection(MediaEntry media, String displayCat) {
     // Mengambil lebar layar saat ini
@@ -226,30 +240,96 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
     
     // Tentukan apakah ini mode "Wide" (Lebar) seperti tampilan Django di Web
     bool isWideScreen = screenWidth > 600;
-
+    final request = context.watch<CookieRequest>();
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'DESKRIPSI',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-              letterSpacing: 1.2,
-            ),
+          Row(
+            children: [
+              const Text(
+                'DESKRIPSI',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              
+              const Spacer(),
+              if(request.loggedIn)
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Delete"),
+                        content: const Text('Are you sure you want to delete this media?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      final success = await MediaService.deleteMedia(media.id);
+                      if (success && mounted) Navigator.pop(context, true);
+                    }
+                  },
+                  icon: const Icon(Icons.delete, size: 18),
+                  label: const Text('Delete'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    minimumSize: const Size(80, 40),
+                  ),
+                
+                ),
+            ],
           ),
+
           const SizedBox(height: 8),
-          Text(
-            media.deskripsi,
-            style: const TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-            ),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  media.deskripsi,
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 8),
+              if(request.loggedIn)
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final updated = await Navigator.push(context, MaterialPageRoute(builder: (_) => MediaEditPage(media: media)));
+                    if (updated != null && mounted) {
+                      setState(() {
+                        media.deskripsi = updated.deskripsi;
+                        media.category = updated.category;
+                        media.thumbnail = updated.thumbnail;
+                      });
+                    }
+                  },
+                  icon: const Icon(Icons.edit, size: 18),
+                    label: const Text('Edit'),
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.yellow.shade400,
+                    foregroundColor: AppColors.indigo,
+                  ),
+                ),
+            ],
           ),
+
           const SizedBox(height: 16),
           Divider(color: AppColors.lime, thickness: 3),
           const SizedBox(height: 16),
@@ -351,7 +431,7 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
         ),
         clipBehavior: Clip.antiAlias, // Memastikan gambar tetap berada di dalam radius border
         child: Image.network(
-          'http://localhost:8000/media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}',
+          'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id//media-gallery/proxy-image/?url=${Uri.encodeComponent(media.thumbnail)}',
           // Menggunakan contain agar seluruh gambar masuk ke dalam box tanpa ada yang terpotong
           fit: BoxFit.contain, 
           errorBuilder: (context, error, stackTrace) => Container(
@@ -376,41 +456,73 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
     }
     // Jika sedang error, tampilkan tombol YouTube
     if (_hasError) {
-      return Container(
-        height: 250,
-        color: Colors.grey[200],
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Video tidak bisa diputar di sini", style: TextStyle(color: Colors.white)),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () => _launchYoutube(videoId),
-              icon: const Icon(Icons.open_in_new),
-              label: const Text("Tonton di YouTube"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            ),
-          ],
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Video tidak bisa diputar di sini"),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                onPressed: () => _launchYoutube(videoId),
+                icon: const Icon(Icons.open_in_new),
+                label: const Text("Tonton di YouTube"),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              ),
+            ],
+          ),
         ),
       );
     }
     // Jika player aktif, tampilkan player. Jika tidak, tampilkan thumbnail.
     if (_ytController != null) {
-      return YoutubePlayer(
-        controller: _ytController!,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: AppColors.lime,
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ClipRRect( 
+          borderRadius: BorderRadius.circular(12),
+          child: YoutubePlayerBuilder(
+            player: YoutubePlayer(
+              controller: _ytController!,
+              showVideoProgressIndicator: true,
+              progressIndicatorColor: AppColors.lime,
+              width: MediaQuery.of(context).size.width
+            ),
+            builder: (context, player) {
+              return player;
+            },
+          ),
+        ),
       );
-    } else {
+
+      // tampilan thumbnail sebelum diplay
+    }else {
       final thumbUrl = 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
-      return GestureDetector(
-        onTap: () => _initializeYoutubePlayer(videoId),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Image.network(thumbUrl, height: 250, width: double.infinity, fit: BoxFit.cover),
-            const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
-          ],
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: GestureDetector(
+          onTap: () => _initializeYoutubePlayer(videoId),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.expand, 
+              children: [
+                Image.network(
+                  thumbUrl, 
+                  fit: BoxFit.cover,
+                ),
+                Container(color: Colors.black26),
+                const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
+              ],
+            ),
+          ),
         ),
       );
     }

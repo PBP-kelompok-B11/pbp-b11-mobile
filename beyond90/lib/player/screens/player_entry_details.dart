@@ -272,8 +272,8 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                                 if (request.jsonData["success"] == true && request.jsonData["is_admin"] == true)
                                   _actionButton(
                                     icon: Icons.edit,
-                                    color: AppColors.indigo,
-                                    iconColor: Colors.white,
+                                    color: const Color(0xFFFACC15),
+                                    iconColor: AppColors.indigo,
                                     onTap: () async {
                                       
                                       final result = await Navigator.push(

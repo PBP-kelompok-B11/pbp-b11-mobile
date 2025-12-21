@@ -3,7 +3,7 @@ import 'package:beyond90/event/models/event_entry.dart';
 
 class EventService {
   // Ganti ke URL deploy jika sudah naik, atau 10.0.2.2 untuk emulator android
-  static const String baseUrl = "http://localhost:8000/events";
+  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/events";
   
   static Future<List<EventEntry>> fetchEvents(CookieRequest request, {bool filterByUser = false}) async {
     // Service yang menentukan URL-nya

@@ -31,7 +31,7 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
     
-    final response = await request.get('http://localhost:8000/media-gallery/json/');
+    final response = await request.get('https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/media-gallery/json/');
     
     // Decode response to json format
     var data = response;

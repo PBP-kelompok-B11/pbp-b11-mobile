@@ -26,7 +26,7 @@ class LoginButton extends StatelessWidget {
           // GANTI URL: Sesuaikan dengan path di Django kamu
           // Pakai 10.0.2.2 untuk Android Emulator
           final response = await request.logout(
-            'http://localhost:8000/api/logout/', 
+            'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/api/logout/', 
           ).timeout(const Duration(seconds: 5));
 
           if (!context.mounted) return;
