@@ -19,91 +19,124 @@ class ClubCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 6, 
-              child: Container(
-                padding: const EdgeInsets.all(20), 
-                width: double.infinity,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain, 
-                  errorBuilder: (_, __, ___) => Container(
-                    color: Colors.grey[100],
-                    child: const Icon(Icons.sports_soccer, size: 50, color: Colors.grey),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Menghitung ukuran berdasarkan ketersediaan ruang card
+          // maxWidth biasanya lebih stabil untuk dijadikan patokan font
+          final double cardWidth = constraints.maxWidth;
+          final double cardHeight = constraints.maxHeight;
+
+          // Rasio Dinamis
+          final double titleFontSize = cardWidth * 0.11; // 11% dari lebar card
+          final double subTitleFontSize = cardWidth * 0.08; // 8% dari lebar card
+          final double paddingEdge = cardWidth * 0.08; // Padding tepi 8%
+          final double imagePadding = cardHeight * 0.05; // Padding gambar 5% dari tinggi
+
+          return Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(cardWidth * 0.15), // Border radius mengikuti lebar
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // 1. AREA GAMBAR (Adaptif terhadap Tinggi Card)
+                Expanded(
+                  flex: 5, // Mengambil 5 bagian dari total 9
+                  child: Container(
+                    padding: EdgeInsets.all(imagePadding),
+                    width: double.infinity,
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.sports_soccer,
+                        size: cardWidth * 0.4,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            Expanded(
-              flex: 3, 
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Membagi ruang teks & tombol secara rata
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                // 2. AREA INFORMASI (Adaptif terhadap sisa ruang)
+                Expanded(
+                  flex: 4, // Mengambil 4 bagian dari total 9
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(paddingEdge, 0, paddingEdge, paddingEdge),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          clubName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: 'Geologica',
-                            color: AppColors.indigo,
+                        // Teks Nama & Lokasi
+                        Flexible(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                clubName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: titleFontSize.clamp(14, 24), // Batas aman mata
+                                  fontWeight: FontWeight.w800,
+                                  fontFamily: 'Geologica',
+                                  color: AppColors.indigo,
+                                  height: 1.1,
+                                ),
+                              ),
+                              SizedBox(height: cardHeight * 0.01),
+                              Text(
+                                location,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: subTitleFontSize.clamp(10, 16),
+                                  fontFamily: 'Geologica',
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          location,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontFamily: 'Geologica',
-                            color: AppColors.indigo,
+
+                        // 3. TOMBOL DETAILS (Proporsional terhadap tinggi card)
+                        Container(
+                          width: double.infinity,
+                          // Tinggi tombol otomatis 15% dari total tinggi card
+                          height: (cardHeight * 0.15).clamp(28, 45), 
+                          decoration: BoxDecoration(
+                            color: AppColors.lime,
+                            borderRadius: BorderRadius.circular(100), // Selalu bulat sempurna
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Details',
+                              style: TextStyle(
+                                // Font tombol 70% dari font judul
+                                fontSize: (titleFontSize * 0.7).clamp(10, 15),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Geologica',
+                                color: AppColors.indigo,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    // ================= DETAILS BUTTON =================
-                    Container(
-                      width: double.infinity,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.lime,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Details',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Geologica',
-                            color: AppColors.indigo,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
