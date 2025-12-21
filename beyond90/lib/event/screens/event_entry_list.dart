@@ -21,7 +21,6 @@ class EventEntryListPage extends StatefulWidget {
 class _EventEntryListPageState extends State<EventEntryListPage> {
   late Future<List<EventEntry>> _eventFuture;
   
-  // 🔥 1. TAMBAHKAN VARIABEL STATE INI
   late bool _isFilteringMyEvents;
 
   @override
@@ -40,7 +39,6 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
   void _refreshEvents() {
     final request = context.read<CookieRequest>();
     setState(() {
-      // Sekarang _isFilteringMyEvents sudah dikenali
       _eventFuture = EventService.fetchEvents(
         request, 
         filterByUser: _isFilteringMyEvents
@@ -53,11 +51,10 @@ Widget build(BuildContext context) {
   final request = context.watch<CookieRequest>();
   return Scaffold(
     backgroundColor: AppColors.indigo,
-    // --- 1. GUNAKAN APPBAR BAWAAN AGAR JUDUL BISA CENTER ---
     appBar: AppBar(
       backgroundColor: AppColors.indigo,
       elevation: 0,
-      centerTitle: true, // Membuat judul otomatis di tengah
+      centerTitle: true, 
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
         onPressed: () => Navigator.pop(context),
@@ -65,14 +62,13 @@ Widget build(BuildContext context) {
       title: Text(
         _isFilteringMyEvents ? 'My Event' : 'Event',
         style: const TextStyle(
-          fontFamily: 'Geologica', // Sudah menggunakan Geologica
+          fontFamily: 'Geologica',  
           fontSize: 28, 
           fontWeight: FontWeight.bold, 
           color: AppColors.lime,
         ),
       ),
       actions: [
-        // 🔥 ICON FILTER PINDAH KE KANAN
         PopupMenuButton<bool>(
           icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 28),
           color: AppColors.lime,
@@ -116,7 +112,6 @@ Widget build(BuildContext context) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- 2. TOMBOL ADD EVENT DI TARUH DI BAWAH APPBAR (OPTIONAL) ---
           if (request.loggedIn)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -168,7 +163,7 @@ Widget build(BuildContext context) {
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        mainAxisExtent: 190, // Ditinggiin dikit biar gak sesak
+                        mainAxisExtent: 190, // Ditinggiin dikit 
                       ),
                       itemBuilder: (_, index) => EventEntryCard(
                         event: snapshot.data![index],

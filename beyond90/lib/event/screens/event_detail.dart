@@ -4,7 +4,7 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:beyond90/event/screens/eventlist_form.dart'; // Pastikan import sesuai nama file form kamu
+import 'package:beyond90/event/screens/eventlist_form.dart';
 import 'package:beyond90/event/service/event_service.dart';
 
 class EventDetailPage extends StatelessWidget {

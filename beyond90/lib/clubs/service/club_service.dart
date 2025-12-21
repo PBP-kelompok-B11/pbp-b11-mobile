@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../models/club.dart';
 
 class ClubService {
-  // ✅ BASE URL SESUAI DEPLOY
   static const String baseUrl =
       "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/clubs/api/";
 
@@ -67,8 +66,6 @@ class ClubService {
   // RANKING (API YANG ADA)
   // =====================
 
-  /// UPDATE ranking
-  /// endpoint: /clubs/ranking/api/<ranking_id>/
   static Future<void> updateRanking(int rankingId, int ranking) async {
     final response = await http.put(
       Uri.parse(

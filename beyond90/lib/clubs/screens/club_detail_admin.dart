@@ -99,7 +99,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                         Container(
                           height: 260,
                           width: double.infinity,
-                          padding: const EdgeInsets.all(10), // Memberi ruang agar logo tidak nempel pinggir
+                          padding: const EdgeInsets.all(10), 
                           decoration: BoxDecoration(
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(55),
@@ -109,7 +109,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                           child: club.urlGambar != null && club.urlGambar!.isNotEmpty
                               ? Image.network(
                                   club.urlGambar!,
-                                  fit: BoxFit.contain, // 👈 Kuncinya agar logo utuh tidak terpotong
+                                  fit: BoxFit.contain, 
                                 )
                               : const Icon(
                                   Icons.sports_soccer,
@@ -187,14 +187,13 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
                         const SizedBox(height: 24),
 
-                        // TOMBOL COMMENT (Pindah ke kanan sebelum tombol Edit/Delete)
+                        // TOMBOL COMMENT 
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 40),
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
-                              onTap: () {
-                                // Navigasi ke halaman chat/comment jika ada
+                              onTap: () { // TODO: Tambahkan fungsi komentar di sini
                               },
                               child: Container(
                                 width: 70,

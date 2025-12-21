@@ -34,7 +34,6 @@ class CategoryPage extends StatelessWidget {
                 subtitle: 'See various players from all over the world!',
                 actionText: 'See all players',
                 onTap: () {
-                  // Navigator.pushReplacementNamed(context, '/players');
 
                   Navigator.push(
                     context,

@@ -99,7 +99,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                           child: club.urlGambar != null && club.urlGambar!.isNotEmpty
                               ? Image.network(
                                   club.urlGambar!,
-                                  fit: BoxFit.contain, // 👈 Kuncinya agar logo utuh tidak terpotong
+                                  fit: BoxFit.contain,
                                 )
                               : const Icon(
                                   Icons.sports_soccer,
@@ -171,7 +171,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 40), // Agar sejajar dengan bar lime
                           child: Align(
-                            alignment: Alignment.centerRight, // 👈 Memindahkan ke kanan
+                            alignment: Alignment.centerRight,
                             child: Container(
                               width: 70,
                               height: 70,

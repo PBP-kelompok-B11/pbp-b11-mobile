@@ -110,9 +110,8 @@ class _ClubListUserState extends State<ClubListUser> {
         },
       ),
 
-      // ✅ REUSABLE BOTTOM NAVBAR
       bottomNavigationBar: BottomNavbar(
-        selectedIndex: 2, // CATEGORY
+        selectedIndex: 2,
         onTap: (index) {
           if (index == 2) return;
 

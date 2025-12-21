@@ -2,7 +2,7 @@ import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
-import 'package:beyond90/clubs/widgets/club_card.dart'; // Pastikan path widget benar
+import 'package:beyond90/clubs/widgets/club_card.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +19,6 @@ class ClubListAdmin extends StatefulWidget {
 }
 
 class _ClubListAdminState extends State<ClubListAdmin> {
-  // final bool isAdmin = AuthService.isAdmin; jangan pake ini, soalnya klo pencet tombol logout masih muncul tombol add clubnya
 
   late Future<List<Club>> _futureClubs;
 

@@ -33,7 +33,6 @@ class _EventFormPageState extends State<EventFormPage> {
       _timHomeController.text = f.timHome;
       _timAwayController.text = f.timAway;
       
-      // 🔥 HANDLE NULL SAAT INIT: Kalau skor null, biarkan textfield kosong
       _skorHomeController.text = f.skorHome?.toString() ?? "";
       _skorAwayController.text = f.skorAway?.toString() ?? "";
       _timHomeLogoController.text = f.logoHome ?? "";
@@ -66,7 +65,7 @@ class _EventFormPageState extends State<EventFormPage> {
       canPop: false, 
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        Navigator.pop(context, false); // Kalau cuma pencet back HP, jangan refresh (false)
+        Navigator.pop(context, false);
       },
       child: Scaffold(
         backgroundColor: AppColors.indigo,
@@ -79,7 +78,6 @@ class _EventFormPageState extends State<EventFormPage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              // Kita kirim 'false' karena tidak ada data yang berubah
               Navigator.pop(context, false);
             },
           ),
