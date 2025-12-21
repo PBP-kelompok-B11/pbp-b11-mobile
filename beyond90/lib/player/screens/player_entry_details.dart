@@ -6,6 +6,7 @@ import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/player/service/player_service.dart';
 import 'package:beyond90/player/screens/player_entry_list.dart';
 import 'package:beyond90/player/screens/edit_player_entry.dart';
+import 'package:beyond90/comments/screens/comm_list.dart';
 
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -312,7 +313,17 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                                   color: AppColors.lime,
                                   iconColor: AppColors.indigo,
                                   onTap: () {
-                                    // TODO: Open chat
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.indigo[900],
+                                      isScrollControlled: true,
+                                      builder: (_) => SizedBox(
+                                        height: MediaQuery.of(context).size.height * 0.7,
+                                        child: CommentListWidget(
+                                          type: 'player', targetId: player.id, // UUID
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
