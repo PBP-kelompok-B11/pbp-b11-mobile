@@ -1,3 +1,4 @@
+import 'package:beyond90/clubs/service/club_ranking_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
@@ -57,9 +58,9 @@ class _ClubFormState extends State<ClubForm> {
         final clubId = await ClubService.createClub(clubData);
 
         if (rankingCtrl.text.isNotEmpty) {
-          await ClubService.createRanking(
-            clubId,
-            int.parse(rankingCtrl.text),
+          await ClubRankingService.createRanking(
+            clubId: clubId,
+            ranking: int.parse(rankingCtrl.text),
           );
         }
       } else {

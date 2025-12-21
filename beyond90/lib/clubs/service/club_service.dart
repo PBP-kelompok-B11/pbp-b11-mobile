@@ -3,9 +3,14 @@ import 'package:http/http.dart' as http;
 import '../models/club.dart';
 
 class ClubService {
-  static const String baseUrl = "http://localhost:8000/clubs/api/";
+  // ✅ BASE URL SESUAI DEPLOY
+  static const String baseUrl =
+      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/clubs/api/";
 
+  // =====================
   // CLUB
+  // =====================
+
   static Future<List<Club>> fetchClubs() async {
     final response = await http.get(Uri.parse(baseUrl));
 
@@ -58,28 +63,17 @@ class ClubService {
     }
   }
 
-  // RANKING
+  // =====================
+  // RANKING (API YANG ADA)
+  // =====================
 
- // CREATE ranking: /clubs/api/<club_pk>/ranking/
-  static Future<void> createRanking(int clubId, int ranking) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl$clubId/ranking/"),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        "peringkat": ranking,
-        "musim": "2025",
-      }),
-    );
-
-    if (response.statusCode != 201) {
-      throw Exception("Failed to create ranking: ${response.body}");
-    }
-  }
-
-  // UPDATE ranking: /clubs/api/rankings/<pk>/
+  /// UPDATE ranking
+  /// endpoint: /clubs/ranking/api/<ranking_id>/
   static Future<void> updateRanking(int rankingId, int ranking) async {
     final response = await http.put(
-      Uri.parse("${baseUrl}rankings/$rankingId/"),
+      Uri.parse(
+        "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/clubs/ranking/api/$rankingId/",
+      ),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         "peringkat": ranking,
