@@ -31,8 +31,6 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
   late int _currIdx;
   bool _isUpdate = false;
   bool _hasError = false;
-  bool _isAdmin = false;
-
   final Map<String, String> categoryMap = {
     'foto': 'Photo',
     'video': 'Video',
@@ -43,9 +41,6 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
     super.initState();
     _currIdx = widget.initIndx;
     _pageController = PageController(initialPage: _currIdx);
-
-    _isAdmin = AuthService.isAdmin; // ✅ SUMBER KEBENARAN
-
     widget.mediaList[_currIdx].viewers += 1;
     _updateViewersToBackEnd(widget.mediaList[_currIdx]);
   }
@@ -176,7 +171,9 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
   }
 
   Widget _buildActionButtons(MediaEntry media) {
-    if(!_isAdmin){
+    final request = context.watch<CookieRequest>();
+
+    if (!request.loggedIn) {
       return const SizedBox(height: 16);
     }
     

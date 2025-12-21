@@ -26,7 +26,7 @@ class LoginButton extends StatelessWidget {
           // GANTI URL: Sesuaikan dengan path di Django kamu
           // Pakai 10.0.2.2 untuk Android Emulator
           final response = await request.logout(
-            'http://localhost:8000/logout/', 
+            'http://localhost:8000/api/logout/', 
           ).timeout(const Duration(seconds: 5));
 
           if (!context.mounted) return;
@@ -41,7 +41,7 @@ class LoginButton extends StatelessWidget {
             // 3. PINDAH KE LOGIN & RESET SEMUA ROUTE
             Navigator.pushNamedAndRemoveUntil(
               context, 
-              '/login', 
+              '/home', 
               (route) => false,
             );
           } else {

@@ -1,3 +1,4 @@
+import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/media_gallery/models/media_entry.dart';
 import 'package:beyond90/media_gallery/screens/media_detail.dart';
@@ -55,35 +56,8 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
         backgroundColor: AppColors.indigo,
         foregroundColor: AppColors.lime,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: ElevatedButton(
-              onPressed: (){
-                Navigator.push(context, 
-                  MaterialPageRoute(
-                    builder: (context) => const MediaFormPage()
-                  )
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.lime,
-                foregroundColor: AppColors.indigo,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-              ),
-              child: const Text(
-                '+ Add Media',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
+          
+          _buildActionBtn(),
         ],
       ),
       body: FutureBuilder(
@@ -173,6 +147,44 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
               break;
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildActionBtn(){
+    final request = context.watch<CookieRequest>();
+
+    if (!request.loggedIn) {
+      return const SizedBox(height: 16);
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: ElevatedButton(
+        onPressed: (){
+          Navigator.push(context, 
+            MaterialPageRoute(
+              builder: (context) => const MediaFormPage()
+            )
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.lime,
+          foregroundColor: AppColors.indigo,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+        ),
+        child: const Text(
+          '+ Add Media',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
