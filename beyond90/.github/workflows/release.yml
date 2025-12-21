@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  releases:
+    name: Build and Release APK
+    runs-on: ubuntu-latest
+
+    env:
+      KEY_JKS: ${{ secrets.KEY_JKS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          # flutter-version: "3.35.7"
+
+      - name: Get version from pubspec.yaml
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep -m1 '^version:' beyond90/pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Get packages
+        working-directory: beyond90
+        run: flutter pub get
+
+      - name: Build APK (split per ABI)
+        working-directory: beyond90
+        run: flutter build apk --release --split-per-abi
+
+      # OPTIONAL signing (jalan hanya kalau KEY_JKS ada)
+      - name: Decode Keystore
+        if: ${{ env.KEY_JKS != '' }}
+        shell: bash
+        run: |
+          echo "$KEY_JKS" | base64 -d > release-keystore.jks
+
+      - name: Sign APKs
+        if: ${{ env.KEY_JKS != '' }}
+        shell: bash
+        run: |
+          for apk in beyond90/build/app/outputs/flutter-apk/*.apk; do
+            echo "Signing $apk..."
+            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+              -keystore release-keystore.jks \
+              -storepass "$KEY_PASSWORD" \
+              -keypass "$KEY_PASSWORD" \
+              "$apk" release
+          done
+
+      - name: Cleanup Keystore
+        if: always()
+        run: rm -f release-keystore.jks
+
+      - name: Get current date
+        id: date
+        shell: bash
+        run: |
+          DATE=$(TZ='Asia/Jakarta' date +'%A %d-%m-%Y %T WIB')
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+
+      - name: Generate unique tag
+        id: tag
+        shell: bash
+        run: |
+          TAG="v${{ steps.version.outputs.version }}-$(date +'%Y%m%d%H%M%S')"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Release APK
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: false
+          artifacts: "beyond90/build/app/outputs/flutter-apk/*.apk"
+          body: "Published at ${{ steps.date.outputs.date }}"
+          name: "v${{ steps.version.outputs.version }} - ${{ steps.date.outputs.date }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.tag.outputs.tag }}
