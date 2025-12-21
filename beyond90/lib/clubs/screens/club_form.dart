@@ -88,7 +88,6 @@ class _ClubFormState extends State<ClubForm> {
     return Scaffold(
       backgroundColor: AppColors.background,
 
-      // ================= APP BAR =================
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
