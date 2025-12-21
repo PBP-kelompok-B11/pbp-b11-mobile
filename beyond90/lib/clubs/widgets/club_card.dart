@@ -31,7 +31,7 @@ class ClubCard extends StatelessWidget {
             Expanded(
               flex: 6, 
               child: Container(
-                padding: const EdgeInsets.all(20), // Memberi ruang agar logo tidak nempel pinggir
+                padding: const EdgeInsets.all(20), 
                 width: double.infinity,
                 child: Image.network(
                   imageUrl,
@@ -44,7 +44,6 @@ class ClubCard extends StatelessWidget {
               ),
             ),
 
-            // ================= CONTENT (Flex dikurangi jadi 3) =================
             Expanded(
               flex: 3, 
               child: Padding(

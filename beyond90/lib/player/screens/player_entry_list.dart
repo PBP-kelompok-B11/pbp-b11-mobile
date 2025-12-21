@@ -237,7 +237,6 @@ class _PlayerEntryListPageState extends State<PlayerEntryListPage> {
           }
         },
       ),
-        
     );
   }
 }

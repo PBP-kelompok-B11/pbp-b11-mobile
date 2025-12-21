@@ -29,8 +29,10 @@ class _ClubListUserState extends State<ClubListUser> {
       backgroundColor: AppColors.background,
 
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: AppColors.background,
         elevation: 0,
+        centerTitle: true, // Pastikan ini true
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded, 
@@ -43,13 +45,16 @@ class _ClubListUserState extends State<ClubListUser> {
           "Club",
           style: TextStyle(
             fontFamily: "Geologica",
-            fontSize: 36,
+            fontSize: 28, // Disamakan dengan Event (28)
             color: AppColors.lime,
             fontWeight: FontWeight.bold,
           ),
         ),
+        // TAMBAHKAN INI: Penyeimbang agar judul tidak terdorong ke kanan
+        actions: [
+          const SizedBox(width: 48), // Ukuran standar IconButton agar judul simetris di tengah
+        ],
       ),
-
       body: FutureBuilder<List<Club>>(
         future: _futureClubs,
         builder: (context, snapshot) {

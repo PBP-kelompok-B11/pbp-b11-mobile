@@ -52,9 +52,9 @@ class EventDetailPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.indigo,
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 80,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
           onPressed: () => Navigator.pop(context),
@@ -127,14 +127,16 @@ class EventDetailPage extends StatelessWidget {
                           child: Text(
                             "${f.timHome} VS ${f.timAway}",
                             textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                            // BAGIAN PENTING:
+                            softWrap: true, 
+                            maxLines: null, // Menghapus batasan baris agar bisa turun ke bawah
                             style: const TextStyle(
                               fontFamily: "Geologica",
                               color: AppColors.indigo,
-                              fontSize: 28,
+                              fontSize: 26,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -1.5,
+                              height: 1.1, // Agar jarak antar baris rapi saat turun ke bawah
                             ),
                           ),
                         ),
@@ -170,59 +172,61 @@ class EventDetailPage extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     // --- ACTION BUTTONS ---
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (isAdmin && isOwner)
-                          Expanded(
-                            child: Column(
-                              children: [
-                                _buildActionButton(
-                                  text: "Edit Event",
-                                  color: const Color(0xFFFACC15),
-                                  textColor: AppColors.indigo,
-                                  onTap: () async {
-                                    final refresh = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => EventFormPage(event: event)),
-                                    );
-                                    if (refresh == true) Navigator.pop(context, true);
-                                  },
-                                ),
-                                const SizedBox(height: 12),
-                                _buildActionButton(
-                                  text: "Delete Event",
-                                  color: const Color(0xFFEA580C),
-                                  textColor: Colors.white,
-                                  onTap: () => _showDeleteConfirmation(context, request),
-                                ),
-                              ],
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Tombol EDIT
+                          if (isAdmin && isOwner)
+                            _actionButtonSquare(
+                              icon: Icons.edit,
+                              color: const Color(0xFFFACC15), // Kuning
+                              iconColor: AppColors.indigo,
+                              onTap: () async {
+                                final refresh = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => EventFormPage(event: event)),
+                                );
+                                if (refresh == true) Navigator.pop(context, true);
+                              },
                             ),
-                          ),
-                        
-                        if (!(isAdmin && isOwner)) const Spacer(),
-                        const SizedBox(width: 12),
 
-                        GestureDetector(
-                          onTap: () { /* TODO: Comment page */ },
-                          child: Container(
-                            width: 70, height: 70,
-                            decoration: const BoxDecoration(
-                              color: AppColors.lime, 
-                              shape: BoxShape.circle,
+                          if (isAdmin && isOwner) const SizedBox(width: 10),
+
+                          // Tombol DELETE
+                          if (isAdmin && isOwner)
+                            _actionButtonSquare(
+                              icon: Icons.delete_outline,
+                              color: const Color(0xFFEA580C), // Orange/Red
+                              iconColor: Colors.white,
+                              onTap: () => _showDeleteConfirmation(context, request),
                             ),
-                            child: Center(
-                              child: Image.asset(
-                                'assets/icons/comment.png', 
-                                width: 32, height: 32,
-                                color: AppColors.indigo,
-                                errorBuilder: (context, error, stackTrace) => 
-                                    const Icon(Icons.chat_bubble_outline, color: AppColors.indigo),
+
+                          if (isAdmin && isOwner) const SizedBox(width: 10),
+
+                          GestureDetector(
+                            onTap: () { /* TODO: Comment page */ },
+                            child: Container(
+                              width: 56, // Ukuran disamakan dengan tombol kotak
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: AppColors.lime, 
+                                borderRadius: BorderRadius.circular(18), 
+                              ),
+                              child: Center(
+                                child: Image.asset(
+                                  'assets/icons/comment.png', 
+                                  width: 28, height: 28,
+                                  color: AppColors.indigo,
+                                  errorBuilder: (context, error, stackTrace) => 
+                                      const Icon(Icons.chat_bubble_outline, color: AppColors.indigo),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -236,7 +240,29 @@ class EventDetailPage extends StatelessWidget {
   }
 
   // --- UI Helpers ---
-
+  Widget _actionButtonSquare({
+    required IconData icon,
+    required Color color,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18), // Membuat kotak dengan sudut tumpul
+        ),
+        child: Icon(
+          icon,
+          size: 28,
+          color: iconColor,
+        ),
+      ),
+    );
+  }
   Widget teamLogo(String? url, {double size = 34}) {
     if (url == null || url.trim().isEmpty) {
       return Icon(Icons.shield, size: size, color: AppColors.indigo);

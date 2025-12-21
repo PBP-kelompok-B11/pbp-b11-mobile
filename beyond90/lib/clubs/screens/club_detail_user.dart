@@ -34,6 +34,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
       backgroundColor: AppColors.background,
 
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
@@ -177,7 +178,7 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                               height: 70,
                               decoration: BoxDecoration(
                                 color: AppColors.lime,
-                                borderRadius: BorderRadius.circular(22),
+                                borderRadius: BorderRadius.circular(18),
                               ),
                               padding: const EdgeInsets.all(18), // Memberi ruang agar logo tidak mentok
                               child: Image.asset(
