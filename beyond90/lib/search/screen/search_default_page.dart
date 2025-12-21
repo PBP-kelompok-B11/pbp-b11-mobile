@@ -1,8 +1,4 @@
-import 'package:beyond90/clubs/models/club.dart';
-import 'package:beyond90/clubs/screens/club_detail_user.dart';
-import 'package:beyond90/player/screens/player_entry_details.dart';
-import 'package:beyond90/search/screen/search_history_and_recommendation_page.dart';
-import 'package:beyond90/search/screen/search_result.dart';
+import 'package:beyond90/clubs/screens/club_list_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -15,6 +11,9 @@ import 'package:beyond90/landing_page/screeen/landing_page.dart';
 import 'package:beyond90/category/screens/category_page.dart';
 import 'package:beyond90/media_gallery/screens/media_entry_list.dart';
 
+import 'package:beyond90/search/screen/search_history_and_recommendation_page.dart';
+import 'package:beyond90/search/screen/search_result.dart';
+
 // ================= EVENT =================
 import 'package:beyond90/event/models/event_entry.dart';
 import 'package:beyond90/event/service/event_service.dart';
@@ -26,13 +25,15 @@ import 'package:beyond90/event/screens/event_entry_list.dart';
 import 'package:beyond90/player/models/player_entry.dart';
 import 'package:beyond90/player/service/player_service.dart';
 import 'package:beyond90/player/screens/player_entry_list.dart';
-
-// ===== CARD =====
+import 'package:beyond90/player/screens/player_entry_details.dart';
 import 'package:beyond90/widgets/player_card.dart';
-import 'package:beyond90/clubs/widgets/club_card.dart';
 
 // ================= CLUB =================
+import 'package:beyond90/clubs/models/club.dart';
 import 'package:beyond90/clubs/service/club_service.dart';
+import 'package:beyond90/clubs/widgets/club_card.dart';
+import 'package:beyond90/clubs/screens/club_detail_user.dart';
+import 'package:beyond90/clubs/screens/club_detail_admin.dart';
 import 'package:beyond90/clubs/screens/club_list_user.dart';
 
 class SearchDefaultPage extends StatefulWidget {
@@ -62,6 +63,7 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
     super.initState();
 
     final request = context.read<CookieRequest>();
+
     _eventFuture = EventService.fetchEvents(request);
     _playerFuture = PlayerEntryService.fetchPlayerEntry();
     _clubFuture = ClubService.fetchClubs();
@@ -73,7 +75,9 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
 
   void _bindArrow(ScrollController c, VoidCallback onShow) {
     c.addListener(() {
-      if (c.offset > 50) setState(onShow);
+      if (c.offset > 50) {
+        setState(onShow);
+      }
     });
   }
 
@@ -107,6 +111,8 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Scaffold(
       backgroundColor: AppColors.indigo,
       bottomNavigationBar: BottomNavbar(
@@ -121,37 +127,14 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
 
               SearchBarWidget(
                 controller: _searchController,
-                onTap: () {
-                  final request = context.read<CookieRequest>();
-
-                  if (request.loggedIn) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const SearchHistoryAndSuggestionPage(),
-                      ),
-                    );
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const SearchHistoryAndSuggestionPage(),
-                      ),
-                    );
-                  }
-                },
+                onTap: () => _go(
+                  const SearchHistoryAndSuggestionPage(),
+                ),
                 onSubmitted: (query) {
                   if (query.trim().isEmpty) return;
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SearchResultPage(query: query),
-                    ),
-                  );
+                  _go(SearchResultPage(query: query));
                 },
               ),
-
 
               const SizedBox(height: 32),
 
@@ -177,7 +160,8 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                 future: _playerFuture,
                 scrollController: _playerCtrl,
                 showArrow: showPlayerArrow,
-                onArrowTap: () => _go(const PlayerEntryListPage(filter: "All")),
+                onArrowTap: () =>
+                    _go(const PlayerEntryListPage(filter: "All")),
                 itemWidth: 280,
                 sectionHeight: 480,
                 itemBuilder: (player) => PlayerCard(
@@ -188,34 +172,47 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
                   tinggi: player.tinggi,
                   berat: player.berat,
                   posisi: player.posisi,
-                  onTap: () => _go(PlayerDetailEntry(playerId: player.id)),
+                  onTap: () =>
+                      _go(PlayerDetailEntry(playerId: player.id)),
                 ),
               ),
 
-              // ================= CLUB =================
+              // ================= CLUB (LOGGED-IN AWARE) =================
               _buildSection<Club>(
                 title: "Club",
                 future: _clubFuture,
                 scrollController: _clubCtrl,
                 showArrow: showClubArrow,
-                onArrowTap: () => _go(const ClubListUser()),
-                itemWidth: 220,    
-                sectionHeight: 320,  
+                onArrowTap: () {
+                  if (request.loggedIn) {
+                    _go(const ClubListAdmin());
+                  } else {
+                    _go(const ClubListUser());
+                  }
+                },
+                itemWidth: 220,
+                sectionHeight: 320,
                 itemBuilder: (club) => ClubCard(
                   imageUrl: club.urlGambar ?? "",
                   clubName: club.nama,
-                  location: club.stadion, 
-                  onTap: () => _go(ClubDetailUser(clubId: club.id)),
+                  location: club.stadion,
+                  onTap: () {
+                    if (request.loggedIn) {
+                      _go(ClubDetailAdmin(clubId: club.id));
+                    } else {
+                      _go(ClubDetailUser(clubId: club.id));
+                    }
+                  },
                 ),
               ),
-
-              const SizedBox(height: 120),
             ],
           ),
         ),
       ),
     );
   }
+
+  // ================= SHARED =================
 
   Widget _buildSection<T>({
     required String title,
@@ -320,32 +317,25 @@ class _SearchDefaultPageState extends State<SearchDefaultPage> {
   }
 
   Widget _scrollHint(VoidCallback onTap) => GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: AppColors.lime,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+        onTap: onTap,
+        child: Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: AppColors.lime,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: const Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: AppColors.indigo,
+              size: 24,
             ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: const Padding(
-          padding: EdgeInsets.only(left: 8),
-          child: Icon(
-            Icons.arrow_forward_ios_rounded, 
-            color: AppColors.indigo,
-            size: 24,
           ),
         ),
-      ),
-    );
+      );
 
   Widget _emptyEventCard() => SizedBox(
         width: 280,
