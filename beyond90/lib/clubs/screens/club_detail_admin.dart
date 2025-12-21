@@ -4,6 +4,7 @@ import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:beyond90/comments/screens/comm_list.dart';
 
 import '../models/club.dart';
 import '../models/club_ranking.dart';
@@ -245,7 +246,17 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                                   color: AppColors.lime,
                                   iconColor: AppColors.indigo,
                                   onTap: () {
-                                    // TODO: Integrasikan modal komentar di sini
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.indigo[900],
+                                      isScrollControlled: true,
+                                      builder: (_) => SizedBox(
+                                        height: MediaQuery.of(context).size.height * 0.7,
+                                        child: CommentListWidget(
+                                          type: 'player', targetId: club.id.toString(), // UUID
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
