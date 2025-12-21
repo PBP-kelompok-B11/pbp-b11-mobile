@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class SearchService {
   static const String baseUrl =
-      "http://127.0.0.1:8000/search/api";
+      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/search/api/search";
 
   // =======================
   // 🔍 SEARCH UTAMA
@@ -13,7 +13,7 @@ class SearchService {
     required String type, // players | clubs | events
   }) async {
     final uri = Uri.parse(
-      "$baseUrl/search/?q=${Uri.encodeQueryComponent(query)}&type=$type",
+      "$baseUrl/?q=${Uri.encodeQueryComponent(query)}&type=$type",
     );
 
     final response = await http.get(uri);
@@ -38,7 +38,7 @@ class SearchService {
     final response = await http.get(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("Suggestion failed");
+      throw Exception("Suggestion failed: ${response.body}");
     }
 
     final data = jsonDecode(response.body);
@@ -54,7 +54,7 @@ class SearchService {
     final response = await http.get(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("History failed");
+      throw Exception("History failed: ${response.body}");
     }
 
     final data = jsonDecode(response.body);
@@ -62,14 +62,15 @@ class SearchService {
   }
 
   // =======================
-  // ❌ DELETE 1
+  // ❌ DELETE 1 ITEM
   // =======================
   static Future<void> deleteHistoryItem(int id) async {
     final uri = Uri.parse("$baseUrl/history/$id/");
+
     final response = await http.delete(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("Delete history item failed");
+      throw Exception("Delete history item failed: ${response.body}");
     }
   }
 
@@ -78,10 +79,11 @@ class SearchService {
   // =======================
   static Future<void> clearHistory() async {
     final uri = Uri.parse("$baseUrl/history/clear/");
+
     final response = await http.delete(uri);
 
     if (response.statusCode != 200) {
-      throw Exception("Clear history failed");
+      throw Exception("Clear history failed: ${response.body}");
     }
   }
 }

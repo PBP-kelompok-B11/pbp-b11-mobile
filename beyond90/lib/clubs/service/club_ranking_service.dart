@@ -4,7 +4,7 @@ import '../models/club_ranking.dart';
 
 class ClubRankingService {
   static const String baseUrl =
-      "http://localhost:8000/clubs/ranking/api/";
+      "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/clubs/ranking/api/";
 
   static Future<List<ClubRanking>> fetchAllRankings() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -15,5 +15,25 @@ class ClubRankingService {
     }
 
     throw Exception("Failed to fetch rankings: ${response.body}");
+  }
+
+  // ✅ TAMBAHKAN INI
+  static Future<void> createRanking({
+    required int clubId,
+    required int ranking,
+  }) async {
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "club": clubId,
+        "peringkat": ranking,
+        "musim": "2025",
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception("Failed to create ranking: ${response.body}");
+    }
   }
 }
