@@ -19,7 +19,6 @@ class ClubListAdmin extends StatefulWidget {
 }
 
 class _ClubListAdminState extends State<ClubListAdmin> {
-
   late Future<List<Club>> _futureClubs;
 
   @override
@@ -28,71 +27,62 @@ class _ClubListAdminState extends State<ClubListAdmin> {
     _futureClubs = ClubService.fetchClubs();
   }
 
+  void _refreshClubs() {
+    setState(() {
+      _futureClubs = ClubService.fetchClubs();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
+        toolbarHeight: 80,
         backgroundColor: AppColors.background,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.lime, size: 28),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           "Club",
           style: TextStyle(
             fontFamily: "Geologica",
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
+            fontSize: 28, // Disesuaikan ukurannya dengan style Player (28)
             color: AppColors.lime,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          // TOMBOL ADD DI DALAM ACTIONS (Sesuai style Player List)
+          if (request.loggedIn)
+            IconButton(
+              icon: const Icon(
+                Icons.add_circle_outline_rounded,
+                color: AppColors.lime,
+                size: 30, // Ukuran disamakan dengan Player (30)
+              ),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ClubForm(),
+                  ),
+                );
+                if (result == true) _refreshClubs();
+              },
+            ),
+          const SizedBox(width: 12), // Padding kanan disamakan (12)
+        ],
       ),
-
       body: Column(
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                // ADD CLUB (ADMIN ONLY)
-                if (request.loggedIn)
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ClubForm(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 46,
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      decoration: BoxDecoration(
-                        color: AppColors.lime,
-                        borderRadius: BorderRadius.circular(54),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "Add Club",
-                        style: TextStyle(
-                          fontFamily: "Geologica",
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.indigo,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // CLUB GRID
+          // CLUB GRID (Logic Snapshot Tidak Berubah)
           Expanded(
             child: FutureBuilder<List<Club>>(
               future: _futureClubs,
@@ -135,8 +125,8 @@ class _ClubListAdminState extends State<ClubListAdmin> {
                       crossAxisCount: 2,
                       mainAxisSpacing: 20,
                       crossAxisSpacing: 20,
-                      // Diubah ke 0.85 agar kartu tidak terlalu melar ke bawah (pendek dikit)
-                      childAspectRatio: 0.85, 
+                      // Tetap 0.75 agar tidak overflow teksnya
+                      childAspectRatio: 0.75, 
                     ),
                     itemBuilder: (context, index) {
                       final club = clubs[index];
@@ -145,14 +135,15 @@ class _ClubListAdminState extends State<ClubListAdmin> {
                         imageUrl: club.urlGambar ?? "",
                         clubName: club.nama,
                         location: club.negara,
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
                                   ClubDetailAdmin(clubId: club.id),
                             ),
                           );
+                          if (result == true) _refreshClubs();
                         },
                       );
                     },
@@ -163,7 +154,6 @@ class _ClubListAdminState extends State<ClubListAdmin> {
           ),
         ],
       ),
-
       bottomNavigationBar: BottomNavbar(
         selectedIndex: 2, // CATEGORY
         onTap: (index) {

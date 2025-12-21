@@ -45,103 +45,85 @@ class _EventEntryListPageState extends State<EventEntryListPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  final request = context.watch<CookieRequest>();
-  return Scaffold(
-    backgroundColor: AppColors.indigo,
-    appBar: AppBar(
+  Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+    return Scaffold(
       backgroundColor: AppColors.indigo,
-      elevation: 0,
-      centerTitle: true, 
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: Text(
-        _isFilteringMyEvents ? 'My Event' : 'Event',
-        style: const TextStyle(
-          fontFamily: 'Geologica',  
-          fontSize: 28, 
-          fontWeight: FontWeight.bold, 
-          color: AppColors.lime,
+      appBar: AppBar(
+        toolbarHeight: 80,
+        backgroundColor: AppColors.indigo,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.lime, size: 28),
+          onPressed: () => Navigator.pop(context),
         ),
-      ),
-      actions: [
-        PopupMenuButton<bool>(
-          icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 28),
-          color: AppColors.lime,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          onSelected: (bool value) {
-            if (_isFilteringMyEvents != value) {
-              setState(() {
-                _isFilteringMyEvents = value;
-                _refreshEvents();
-              });
-            }
-          },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: false,
-              child: Row(
-                children: [
-                  Icon(Icons.all_inclusive, color: !_isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
-                  const SizedBox(width: 10),
-                  const Text("All Events", style: TextStyle(color: AppColors.indigo)),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: true,
-              child: Row(
-                children: [
-                  Icon(Icons.person, color: _isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
-                  const SizedBox(width: 10),
-                  const Text("My Events", style: TextStyle(color: AppColors.indigo)),
-                ],
-              ),
-            ),
-          ],
+        title: Text(
+          _isFilteringMyEvents ? 'My Event' : 'Event',
+          style: const TextStyle(
+            fontFamily: 'Geologica',
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: AppColors.lime,
+          ),
         ),
-        const SizedBox(width: 8),
-      ],
-    ),
-
-    body: SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (request.loggedIn)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: InkWell(
-                  onTap: () async {
-                    final refresh = await Navigator.pushNamed(context, '/event/create');
-                    if (refresh == true) _refreshEvents();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.lime),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.add, color: AppColors.lime, size: 20),
-                        SizedBox(width: 4),
-                        Text('Add Event', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.lime)),
-                      ],
-                    ),
-                  ),
+        actions: [
+          // 1. Tombol Filter
+          PopupMenuButton<bool>(
+            icon: const Icon(Icons.filter_list, color: AppColors.lime, size: 30),
+            color: AppColors.lime,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            onSelected: (bool value) {
+              if (_isFilteringMyEvents != value) {
+                setState(() {
+                  _isFilteringMyEvents = value;
+                  _refreshEvents();
+                });
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: false,
+                child: Row(
+                  children: [
+                    Icon(Icons.all_inclusive, color: !_isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                    const SizedBox(width: 10),
+                    const Text("All Events", style: TextStyle(color: AppColors.indigo)),
+                  ],
                 ),
               ),
+              PopupMenuItem(
+                value: true,
+                child: Row(
+                  children: [
+                    Icon(Icons.person, color: _isFilteringMyEvents ? AppColors.indigo : AppColors.indigo.withOpacity(0.5)),
+                    const SizedBox(width: 10),
+                    const Text("My Events", style: TextStyle(color: AppColors.indigo)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // 2. Tombol Add (+)
+          if (request.loggedIn)
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.lime, size: 30),
+              onPressed: () async {
+                final refresh = await Navigator.pushNamed(context, '/event/create');
+                if (refresh == true) _refreshEvents();
+              },
             ),
+          const SizedBox(width: 8), // Padding kecil di paling kanan
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             // --- CONTENT SECTION (GRID) ---
             Expanded(
               child: FutureBuilder<List<EventEntry>>(
-                future: _eventFuture, 
+                future: _eventFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator(color: AppColors.lime));
@@ -154,14 +136,14 @@ Widget build(BuildContext context) {
                   }
 
                   return Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: GridView.builder(
                       itemCount: snapshot.data!.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16,
                         mainAxisSpacing: 16,
-                        mainAxisExtent: 190, // Ditinggiin dikit 
+                        mainAxisExtent: 195, 
                       ),
                       itemBuilder: (_, index) => EventEntryCard(
                         event: snapshot.data![index],
