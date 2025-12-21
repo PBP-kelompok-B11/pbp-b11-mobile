@@ -2,6 +2,8 @@ import 'package:beyond90/authentication/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 import '../models/club.dart';
 import '../models/club_ranking.dart';
@@ -19,7 +21,6 @@ class ClubDetailAdmin extends StatefulWidget {
 }
 
 class _ClubDetailAdminState extends State<ClubDetailAdmin> {
-  final bool isAdmin = AuthService.isAdmin;
 
   late Future<Club> futureClub;
   late Future<List<ClubRanking>> futureRankings;
@@ -36,6 +37,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>(); 
     return Scaffold(
       backgroundColor: AppColors.background,
 
@@ -193,7 +195,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
-                              onTap: () { // TODO: Tambahkan fungsi komentar di sini
+                              onTap: () { 
                               },
                               child: Container(
                                 width: 70,
@@ -215,7 +217,7 @@ class _ClubDetailAdminState extends State<ClubDetailAdmin> {
 
                         const SizedBox(height: 16), // Jarak ke tombol Edit
 
-                        if (AuthService.isAdmin) ...[
+                        if (request.loggedIn) ...[
                           _adminButton(
                             label: "Edit Club",
                             background: Colors.yellow.shade400,
