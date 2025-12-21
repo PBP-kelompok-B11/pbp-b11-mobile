@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:beyond90/app_colors.dart';
 import 'package:beyond90/widgets/bottom_navbar.dart';
+import 'package:beyond90/comments/screens/comm_list.dart';
 
 import '../models/club.dart';
 import '../models/club_ranking.dart';
@@ -172,18 +173,37 @@ class _ClubDetailUserState extends State<ClubDetailUser> {
                           padding: const EdgeInsets.symmetric(horizontal: 40), // Agar sejajar dengan bar lime
                           child: Align(
                             alignment: Alignment.centerRight, // 👈 Memindahkan ke kanan
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: AppColors.lime,
-                                borderRadius: BorderRadius.circular(22),
-                              ),
-                              padding: const EdgeInsets.all(18), // Memberi ruang agar logo tidak mentok
-                              child: Image.asset(
-                                'assets/icons/comment.png', // 👈 Menggunakan asset kustom
-                                color: AppColors.indigo,    // Memberikan warna indigo jika png transparan
-                                fit: BoxFit.contain,
+                            child: GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.indigo[900],
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                  ),
+                                  builder: (_) => SizedBox(
+                                    height: MediaQuery.of(context).size.height * 0.7,
+                                    child: CommentListWidget(
+                                      type: 'club',
+                                      targetId: club.id.toString(), // 🔥 club = int → string
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: AppColors.lime,
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                padding: const EdgeInsets.all(18),
+                                child: Image.asset(
+                                  'assets/icons/comment.png',
+                                  color: AppColors.indigo,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                           ),

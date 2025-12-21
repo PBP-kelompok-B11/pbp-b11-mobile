@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:beyond90/event/screens/eventlist_form.dart'; // Pastikan import sesuai nama file form kamu
 import 'package:beyond90/event/service/event_service.dart';
+import 'package:beyond90/comments/screens/comm_list.dart';
 
 class EventDetailPage extends StatelessWidget {
   final EventEntry event;
@@ -204,7 +205,19 @@ class EventDetailPage extends StatelessWidget {
                         const SizedBox(width: 12),
 
                         GestureDetector(
-                          onTap: () { /* TODO: Comment page */ },
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.indigo[900],
+                              isScrollControlled: true,
+                              builder: (_) => SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.7,
+                                child: CommentListWidget(
+                                  type: 'event', targetId: event.pk.toString(), // int
+                                ),
+                              ),
+                            );
+                          },
                           child: Container(
                             width: 70, height: 70,
                             decoration: const BoxDecoration(

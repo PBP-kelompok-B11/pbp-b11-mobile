@@ -6,7 +6,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 
 class PlayerEntryService {
-  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/json/";
+  static const String baseUrl = "http://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/json/";
   
 
   // CLUB

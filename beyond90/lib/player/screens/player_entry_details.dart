@@ -107,7 +107,7 @@ class _PlayerDetailEntryState extends State<PlayerDetailEntry> {
                           errorBuilder: (context, error, stackTrace) {
                             // 🔁 fallback ke proxy
                             final proxyUrl =
-                                'https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/players/proxy-image/?url=${Uri.encodeComponent(player.thumbnail)}';
+                                'https://localhost:8000/players/proxy-image/?url=${Uri.encodeComponent(player.thumbnail)}';
 
                             return Image.network(
                               proxyUrl,
