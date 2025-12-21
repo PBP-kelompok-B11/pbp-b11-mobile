@@ -6,9 +6,6 @@ class ClubService {
   static const String baseUrl =
       "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/clubs/api/";
 
-  // =====================
-  // CLUB
-  // =====================
 
   static Future<List<Club>> fetchClubs() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -62,9 +59,6 @@ class ClubService {
     }
   }
 
-  // =====================
-  // RANKING (API YANG ADA)
-  // =====================
 
   static Future<void> updateRanking(int rankingId, int ranking) async {
     final response = await http.put(

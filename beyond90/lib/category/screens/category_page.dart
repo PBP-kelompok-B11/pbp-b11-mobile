@@ -51,9 +51,9 @@ class CategoryPage extends StatelessWidget {
                 actionText: 'See all clubs',
                 onTap: () {
                   if (AuthService.isAdmin) {
-                    Navigator.pushReplacementNamed(context, '/clubs/admin');
+                    Navigator.pushNamed(context, '/clubs/admin');
                   } else {
-                    Navigator.pushReplacementNamed(context, '/clubs');
+                    Navigator.pushNamed(context, '/clubs');
                   }
                 },
               ),

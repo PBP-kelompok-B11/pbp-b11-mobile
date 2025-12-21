@@ -2,7 +2,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class AuthService {
   //static const String baseUrl = "http://localhost:8000";
-  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id/";
+  static const String baseUrl = "https://a-sheriqa-beyond-90.pbp.cs.ui.ac.id";
   // Variabel Global untuk status Admin
   static bool isAdmin = false;
   static String? currentUsername;
