@@ -10,7 +10,7 @@ class EventService {
     final String url = filterByUser 
         ? '$baseUrl/my-events-json/' 
         : '$baseUrl/json/';
-    
+    // testrs
     final response = await request.get(url);
 
     if (response is List) {
