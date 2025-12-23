@@ -161,7 +161,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   ),
                 ),
               ),
-
+//testes
               _buildSection<Club>(
                 title: "Club",
                 future: _clubs,
