@@ -158,6 +158,12 @@ class _MediaEntryListPageState extends State<MediaEntryListPage> {
       return const SizedBox(height: 16);
     }
 
+    bool isAdmin = request.jsonData['is_admin'] ?? false; 
+
+  if (!isAdmin) {
+    return const SizedBox.shrink(); // Jika bukan admin, jangan tampilkan apa-apa
+  }
+
     return Padding(
       padding: const EdgeInsets.only(right: 20),
       child: ElevatedButton(
