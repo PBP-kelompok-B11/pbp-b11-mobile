@@ -241,6 +241,8 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
     // Tentukan apakah ini mode "Wide" (Lebar) seperti tampilan Django di Web
     bool isWideScreen = screenWidth > 600;
     final request = context.watch<CookieRequest>();
+    bool isAdmin = request.loggedIn && (request.jsonData['is_admin'] ?? false);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Column(
@@ -259,7 +261,7 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
               ),
               
               const Spacer(),
-              if(request.loggedIn)
+              if(isAdmin)
                 ElevatedButton.icon(
                   onPressed: () async {
                     final confirm = await showDialog<bool>(
@@ -308,7 +310,7 @@ class _MediaDetailPageState extends State<MediaDetailPage>{
               ),
 
               const SizedBox(width: 8),
-              if(request.loggedIn)
+              if(isAdmin)
                 ElevatedButton.icon(
                   onPressed: () async {
                     final updated = await Navigator.push(context, MaterialPageRoute(builder: (_) => MediaEditPage(media: media)));
